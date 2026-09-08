@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Mirrors of the Tailwind tokens, for surfaces that can't use utilities
+       (SVG, inline gradients, scrollbars). Monochrome by design. */
+    --obsidian: #08090d;
+    --surface: #0f1117;
+    --surface-raised: #141721;
+    --ink: #ffffff;
+    --ink-bright: #f8fafc;
+    --ink-muted: #94a3b8;
+    --ink-faint: #64748b;
+    --hairline: rgba(255, 255, 255, 0.07);
+    --hairline-strong: rgba(255, 255, 255, 0.15);
+    /* The single chromatic value in the system — status dots only. */
+    --live: #10b981;
+
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: var(--hairline);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Sections clear the fixed navbar when jumped to. */
+    scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--obsidian);
+    color: var(--ink-muted);
+    /* Keeps white-on-near-black type crisp rather than bloomed on macOS. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--ink);
+    text-wrap: balance;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: var(--ink);
+  }
+
+  /* One neutral focus ring for the whole site. */
+  :focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.55);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Flat matte canvas. No radial glows, no colour washes. */
+  .surface-obsidian {
+    background-color: var(--obsidian);
+  }
+
+  /* Standard translucent panel: hairline border, barely-there fill. */
+  .panel {
+    @apply rounded-xl border border-white/[0.07] bg-white/[0.02];
+  }
+
+  /* Primary action: high-contrast solid white. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white font-medium text-black transition-colors duration-200 hover:bg-zinc-200;
+  }
+
+  /* Secondary action: matte obsidian glass. */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] font-medium text-white transition-colors duration-200 hover:bg-white/[0.07];
+  }
+}
+
+@layer utilities {
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
