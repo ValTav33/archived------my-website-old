@@ -18,7 +18,7 @@ const GUARANTEES = [
 export default function DirectContactCard() {
   return (
     <div>
-      <p className="font-mono text-xs tracking-wider text-zinc-500">
+      <p className="font-mono text-xs tracking-wider text-ink-faint">
         [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
       </p>
 
@@ -60,7 +60,7 @@ export default function DirectContactCard() {
             key={guarantee}
             className="flex items-baseline gap-2.5 font-mono text-[11.5px] leading-relaxed text-zinc-400"
           >
-            <span aria-hidden className="shrink-0 text-ink-ghost">
+            <span aria-hidden className="shrink-0 text-decor">
               •
             </span>
             {guarantee}

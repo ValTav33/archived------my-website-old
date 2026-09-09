@@ -120,7 +120,7 @@ export default function HeroSection() {
                 <li key={point} className="flex items-center gap-3">
                   {point}
                   {index < TRUST_POINTS.length - 1 && (
-                    <span aria-hidden className="text-ink-ghost">
+                    <span aria-hidden className="text-decor">
                       •
                     </span>
                   )}

@@ -197,7 +197,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
               key={metric}
               className="flex items-baseline gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.02] px-2.5 py-1 font-mono text-[11px] text-zinc-400"
             >
-              <span aria-hidden className="text-ink-ghost">
+              <span aria-hidden className="text-decor">
                 •
               </span>
               {metric}

@@ -24,7 +24,7 @@ export default function TechStackStrip() {
       className="border-y border-white/[0.07] py-10 sm:py-12"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="text-center font-mono text-xs uppercase tracking-widest text-zinc-500">
+        <p className="text-center font-mono text-xs uppercase tracking-widest text-ink-faint">
           Engineered with modern infrastructure &amp; automation protocols
         </p>
 

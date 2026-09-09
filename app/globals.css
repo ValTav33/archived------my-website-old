@@ -12,7 +12,10 @@
     --ink: #ffffff;
     --ink-bright: #f8fafc;
     --ink-muted: #94a3b8;
-    --ink-faint: #64748b;
+    --ink-faint: #8b98ac;
+    --ink-ghost: #788699;
+    /* Decorative only — fails AA by design. aria-hidden marks, never text. */
+    --decor: #475569;
     --hairline: rgba(255, 255, 255, 0.07);
     --hairline-strong: rgba(255, 255, 255, 0.15);
     /* The single chromatic value in the system — status dots only. */
@@ -21,6 +24,11 @@
     color-scheme: dark;
   }
 
+  /* Every element defaults to the hairline border colour, so a component can
+     set a border width alone and get the right colour for free. The trade-off:
+     a component that sets a width WITHOUT a colour silently inherits this
+     instead of the browser default. Intentional — check here first if a border
+     looks wrong. */
   * {
     border-color: var(--hairline);
   }

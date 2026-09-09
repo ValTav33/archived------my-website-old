@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.4 · 2026-09-09
+**Last slice:** S0.5 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -21,7 +21,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 - [ ] **S0.2** Identity constants — domain, email, brand, split hours ⛔ *blocked*
 - [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
 - [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
-- [ ] **S0.5** WCAG AA colour remediation
+- [x] **S0.5** WCAG AA colour remediation · 2026-09-09
 - [ ] **S0.6** Form security & PII hygiene
 - [ ] **S0.7** Accessibility — focus, motion, semantics
 - [ ] **S0.8** Copy truth pass
@@ -62,6 +62,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill class strings duplicated ~16× with drifting opacity | Audit | 1 |
 | 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) should be tokens | Audit | 1 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` — tokenise | Audit | 1 |
+| `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` — tokenise alongside the trace connector | S0.5 | 1 |
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |

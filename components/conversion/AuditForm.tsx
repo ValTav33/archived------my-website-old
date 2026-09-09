@@ -23,7 +23,7 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 /* Shared between input/select/textarea so focus and error styling stay
    identical across control types. */
 const FIELD_BASE =
-  "w-full rounded-lg border bg-[#12151E] px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:outline-none disabled:opacity-60";
+  "w-full rounded-lg border bg-[#12151E] px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-ink-ghost focus:outline-none disabled:opacity-60";
 
 const fieldTone = (hasError: boolean) =>
   hasError
@@ -260,10 +260,10 @@ export default function AuditForm() {
                 FIELD_BASE,
                 fieldTone(Boolean(errors.intent)),
                 "appearance-none pr-11",
-                values.intent ? "text-zinc-100" : "text-zinc-600",
+                values.intent ? "text-zinc-100" : "text-ink-ghost",
               )}
             >
-              <option value="" disabled className="bg-[#12151E] text-zinc-500">
+              <option value="" disabled className="bg-[#12151E] text-ink-faint">
                 Επιλέξτε προτεραιότητα…
               </option>
               {AUDIT_INTENTS.map((intent) => (
@@ -361,11 +361,11 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-500"
+        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint"
       >
         {label}
         {required && (
-          <span aria-hidden className="ml-1 text-zinc-600">
+          <span aria-hidden className="ml-1 text-ink-ghost">
             *
           </span>
         )}
