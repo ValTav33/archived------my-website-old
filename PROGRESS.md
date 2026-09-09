@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.3 · 2026-09-09
+**Last slice:** S0.4 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -20,7 +20,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 - [x] **S0.1** Repo hygiene & tooling — ESLint 9, README, docs · 2026-09-09
 - [ ] **S0.2** Identity constants — domain, email, brand, split hours ⛔ *blocked*
 - [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
-- [ ] **S0.4** Delete placeholder sections, fix page order
+- [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
 - [ ] **S0.5** WCAG AA colour remediation
 - [ ] **S0.6** Form security & PII hygiene
 - [ ] **S0.7** Accessibility — focus, motion, semantics
