@@ -22,9 +22,15 @@ export default function DirectContactCard() {
         [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
       </p>
 
-      <h3 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.02em] text-white sm:text-3xl">
+      {/* The conversion section's heading. An h2 rather than an h3 because
+          nothing above it in the section carries one — it is the section's
+          own title, not a subheading of the form beside it. */}
+      <h2
+        id="audit-heading"
+        className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.02em] text-white sm:text-3xl"
+      >
         Ας συζητήσουμε την υποδομή της επιχείρησής σας.
-      </h3>
+      </h2>
 
       <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
         Είτε χρειάζεστε ανακατασκευή της ιστοσελίδας σας σε Next.js είτε

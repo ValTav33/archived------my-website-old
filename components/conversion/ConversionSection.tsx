@@ -13,6 +13,7 @@ export default function ConversionSection() {
   return (
     <section
       id="audit"
+      aria-labelledby="audit-heading"
       className="mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6 lg:px-8"
     >
       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">

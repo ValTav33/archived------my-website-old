@@ -90,6 +90,16 @@ export default function RootLayout({
   return (
     <html lang="el" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="surface-obsidian min-h-dvh font-sans antialiased">
+        {/* First stop in the tab order: lets a keyboard user jump the fixed
+            header and the whole hero instead of tabbing through them on every
+            page load. Invisible until focused. */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:border focus:border-white/[0.15] focus:bg-obsidian-750 focus:px-4 focus:py-2.5 focus:text-sm focus:text-white"
+        >
+          Μετάβαση στο περιεχόμενο
+        </a>
+
         {children}
         <JsonLd />
       </body>

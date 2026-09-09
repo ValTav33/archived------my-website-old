@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.6 · 2026-09-09
+**Last slice:** S0.7 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -23,7 +23,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 - [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
 - [x] **S0.5** WCAG AA colour remediation · 2026-09-09
 - [x] **S0.6** Form security & PII hygiene · 2026-09-09
-- [ ] **S0.7** Accessibility — focus, motion, semantics
+- [x] **S0.7** Accessibility — focus, motion, semantics · 2026-09-09
 - [ ] **S0.8** Copy truth pass
 
 **Exit gate:** no placeholders, no placeholder data, all text ≥ 4.5:1, form
@@ -68,6 +68,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
+| Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
 | Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
 

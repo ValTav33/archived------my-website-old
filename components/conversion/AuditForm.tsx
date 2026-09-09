@@ -54,6 +54,15 @@ export default function AuditForm() {
     renderedAtRef.current = Date.now();
   }, []);
 
+  /* On success the whole form is replaced by the confirmation card. Without
+     moving focus, a screen reader user is left on a submit button that no
+     longer exists and hears nothing at all. */
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (status === "success") successHeadingRef.current?.focus();
+  }, [status]);
+
   const isSubmitting = status === "submitting";
 
   /* Editing a field clears only that field's error, so the rest of the
@@ -132,13 +141,24 @@ export default function AuditForm() {
   /* ------------------------ Success confirmation ------------------------ */
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8">
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
+      >
         <div className="flex flex-col items-start">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-live/30 bg-live/10 text-live">
+          <span
+            aria-hidden
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-live/30 bg-live/10 text-live"
+          >
             <Check className="h-5 w-5" strokeWidth={2.5} />
           </span>
 
-          <h3 className="mt-5 text-xl font-semibold text-white">
+          <h3
+            ref={successHeadingRef}
+            tabIndex={-1}
+            className="mt-5 text-xl font-semibold text-white"
+          >
             Το αίτημα καταχωρήθηκε.
           </h3>
 

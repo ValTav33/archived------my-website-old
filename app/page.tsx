@@ -17,7 +17,9 @@ export default function Home() {
     <>
       <Navbar />
 
-      <main>
+      {/* `tabIndex={-1}` so the skip link's target actually receives focus
+          rather than only scrolling into view. */}
+      <main id="main-content" tabIndex={-1}>
         <HeroSection />
         <TechStackStrip />
         <ShowcaseGrid />

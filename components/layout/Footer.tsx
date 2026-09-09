@@ -63,9 +63,9 @@ export default function Footer() {
 
           {/* -------------------- Col 2 · Core tracks --------------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
               Υπηρεσίες
-            </h2>
+            </h3>
             {/* Plain text, not links: there are no dedicated service pages
                 yet, and a link to nowhere is worse than no link. */}
             <ul className="mt-4 space-y-2.5">
@@ -79,9 +79,9 @@ export default function Footer() {
 
           {/* --------------------- Col 3 · Navigation --------------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
               Πλοήγηση
-            </h2>
+            </h3>
             <ul className="mt-4 space-y-2.5">
               {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
                 <li key={link.id}>
@@ -98,9 +98,9 @@ export default function Footer() {
 
           {/* ------------------ Col 4 · Social & protocols ---------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
               Protocols
-            </h2>
+            </h3>
             <ul className="mt-4 space-y-2.5">
               {SOCIAL_LINKS.map((link) => (
                 <li key={link.label}>
