@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /* The infrastructure this studio actually builds on. Order is deliberate:
    framework -> language -> styling -> data -> orchestration -> voice -> transport. */
 const STACK = [
-  "Next.js 15",
+  "Next.js",
   "TypeScript",
   "Tailwind CSS",
   "Supabase / PostgreSQL",
@@ -25,7 +25,7 @@ export default function TechStackStrip() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <p className="text-center font-mono text-xs uppercase tracking-widest text-ink-faint">
-          Engineered with modern infrastructure &amp; automation protocols
+          Η υποδομή πάνω στην οποία χτίζουμε
         </p>
 
         {/*

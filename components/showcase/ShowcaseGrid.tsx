@@ -24,7 +24,7 @@ type ShowcaseCase = {
 const CASES: readonly ShowcaseCase[] = [
   {
     id: "ai-concierge",
-    category: "AI Operations • Hospitality & Clinics",
+    category: "Αυτοματισμοί AI • Φιλοξενία & Ιατρεία",
     title: "Αυτόνομο AI Concierge Portal & 24/7 Εξυπηρέτηση",
     problem:
       "Χιλιάδες επαναλαμβανόμενες ερωτήσεις επισκεπτών (κρατήσεις, οδηγίες, check-in) δεσμεύουν ώρες καθημερινής ανθρώπινης επικοινωνίας και προκαλούν καθυστερήσεις.",
@@ -32,9 +32,9 @@ const CASES: readonly ShowcaseCase[] = [
       "Ανάπτυξη custom web portal με ενσωματωμένο πολύγλωσσο Voice & Text AI agent, συνδεδεμένο σε πραγματικό χρόνο με τη βάση γνώσεων και το σύστημα κρατήσεων της επιχείρησης.",
     stack: ["Next.js", "Voice AI / Vapi", "n8n", "Supabase"],
     metrics: [
-      "0s Χρόνος Απόκρισης",
-      "24/7 Αυτόνομη Λειτουργία",
-      "100% Zero-Touch Check-in Support",
+      "Άμεση απόκριση, χωρίς αναμονή",
+      "Αυτόνομη λειτουργία 24/7",
+      "Check-in χωρίς ανθρώπινη παρέμβαση",
     ],
     architecture: [
       "Client Audio/Text",
@@ -46,17 +46,17 @@ const CASES: readonly ShowcaseCase[] = [
   },
   {
     id: "client-portal",
-    category: "Web Development • Medical & Consulting",
+    category: "Κατασκευή web εφαρμογών • Ιατρικά & Συμβουλευτική",
     title: "Custom Web Application & Ενοποιημένο Client Portal",
     problem:
       "Κατακερματισμένα δεδομένα σε emails και WhatsApp. Χάσιμο χρόνου σε χειροκίνητη αποστολή φορμών, ερασιτεχνική εικόνα προς τους πελάτες και έλλειψη κεντρικού ελέγχου.",
     solution:
       "Κατασκευή bespoke web εφαρμογής με ασφαλές περιβάλλον διαχείρισης (Admin Dashboard), ρόλους χρηστών, αυτόματο onboarding και κεντρική αποθήκευση εγγράφων.",
-    stack: ["Next.js 15", "Tailwind CSS", "Secure Auth", "PostgreSQL"],
+    stack: ["Next.js", "Tailwind CSS", "Secure Auth", "PostgreSQL"],
     metrics: [
-      "100% Συγκεντρωτική Διαχείριση",
-      "Μηδενικός Χρόνος Αναζήτησης Αρχείων",
-      "Enterprise-Grade UI/UX",
+      "Όλα τα δεδομένα σε ένα σημείο",
+      "Τα αρχεία βρίσκονται χωρίς αναζήτηση",
+      "Επαγγελματικό περιβάλλον χρήσης",
     ],
     architecture: [
       "Secure Auth",
@@ -67,7 +67,7 @@ const CASES: readonly ShowcaseCase[] = [
   },
   {
     id: "lead-engine",
-    category: "Data Infrastructure • B2B Agencies",
+    category: "Υποδομή δεδομένων • B2B agencies",
     title: "Αυτοματοποιημένο Pipeline Συλλογής & Εμπλουτισμού Leads",
     problem:
       "Χειροκίνητο copy-paste από spreadsheets, ανεπιβεβαίωτα emails που καταλήγουν στα spam και αργή δρομολόγηση νέων ευκαιριών.",
@@ -75,9 +75,9 @@ const CASES: readonly ShowcaseCase[] = [
       "End-to-end αυτοματοποιημένο pipeline που αναζητά, επικυρώνει (waterfall verification), βαθμολογεί με AI και τροφοδοτεί άμεσα τα κατάλληλα leads στο CRM.",
     stack: ["n8n / Make", "Enrichment APIs", "AI Scoring", "CRM Sync"],
     metrics: [
-      "Zero Manual Data Entry",
-      "Αυτόματο Lead Scoring & Cleaning",
-      "Άμεση Κλιμάκωση Outbound Όγκου",
+      "Χωρίς χειροκίνητη καταχώριση δεδομένων",
+      "Αυτόματη αξιολόγηση και καθαρισμός leads",
+      "Άμεση κλιμάκωση του όγκου επικοινωνίας",
     ],
     architecture: [
       "Inbound/List Trigger",
@@ -101,20 +101,23 @@ export default function ShowcaseGrid() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         {/* ---------------------------- Header --------------------------- */}
         <header className="max-w-3xl">
-          {/* `live-soft` is the exact value of emerald-400 — kept as a token
-              so the one accent in the system stays defined in one place. */}
-          <p className="font-mono text-xs tracking-wider text-live-soft">
-            [ 01 // ΕΠΙΛΕΓΜΕΝΑ ΣΥΣΤΗΜΑΤΑ ]
+          {/* Emerald is reserved for live status dots — playbook §2.4. Both
+              section eyebrows use the neutral label token. */}
+          <p className="font-mono text-xs tracking-wider text-ink-ghost">
+            [ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]
           </p>
 
+          {/* Named "ενδεικτικές" on purpose. These describe systems we build,
+              not projects we have shipped and can name — content truth policy
+              §8.2. The heading has to say so before the cards do. */}
           <h2 className="mt-4 text-3xl font-semibold leading-[1.15] tracking-[-0.025em] text-white sm:text-4xl lg:text-[2.75rem]">
-            Λύσεις Υψηλής Απόδοσης για Πραγματικές Επιχειρήσεις.
+            Ενδεικτικές Αρχιτεκτονικές.
           </h2>
 
           <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
-            Bespoke web εφαρμογές και αυτόνομες υποδομές AI σχεδιασμένες για να
-            εξαλείφουν τη χειροκίνητη εργασία και να κλιμακώνουν τις λειτουργίες
-            σας.
+            Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που
+            κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα πρώτα ονομαστικά
+            case studies προστίθενται σύντομα.
           </p>
         </header>
 
@@ -215,7 +218,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           aria-controls={panelId}
           className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3.5 py-2.5 font-mono text-[11.5px] text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
         >
-          Τεχνική Αρχιτεκτονική (View Architecture)
+          Τεχνική αρχιτεκτονική
           <ChevronDown
             className={cn(
               "h-3.5 w-3.5 shrink-0 text-ink-faint transition-transform duration-300",

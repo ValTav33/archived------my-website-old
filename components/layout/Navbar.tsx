@@ -140,10 +140,6 @@ export default function Navbar() {
           <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
             Valsamis
           </span>
-          {/* Discipline badge — quiet, hairline-framed, never accented. */}
-          <span className="hidden rounded border border-white/[0.08] px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-ink-ghost transition-colors duration-200 group-hover:text-ink-faint sm:inline-block">
-            SYS.ENG
-          </span>
         </button>
 
         {/* ------------------------ Desktop links ------------------------ */}

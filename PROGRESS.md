@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.7 · 2026-09-09
+**Last slice:** S0.8 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -24,7 +24,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 - [x] **S0.5** WCAG AA colour remediation · 2026-09-09
 - [x] **S0.6** Form security & PII hygiene · 2026-09-09
 - [x] **S0.7** Accessibility — focus, motion, semantics · 2026-09-09
-- [ ] **S0.8** Copy truth pass
+- [x] **S0.8** Copy truth pass · 2026-09-09
 
 **Exit gate:** no placeholders, no placeholder data, all text ≥ 4.5:1, form
 spam-resistant, no PII in logs, keyboard + screen-reader complete, lint +
@@ -63,6 +63,8 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) should be tokens | Audit | 1 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` — tokenise | Audit | 1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` — tokenise alongside the trace connector | S0.5 | 1 |
+| `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Latency: 380ms`, `score 0.91`) on a Greek page, and its invented numbers can read as real telemetry. Outside S0.8's file list | S0.8 | 1 |
+| `SITE.locationLabel` mixes languages — "Θεσσαλονίκη, Ελλάδα (Remote Worldwide)". Fix while editing `lib/site.ts` | S0.8 | 0 (in S0.2) |
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |

@@ -1,13 +1,16 @@
 import { Mail, MessageCircle, Phone, Send } from "lucide-react";
 import { SITE } from "@/lib/site";
 
-/* Operational facts, stated flatly. These answer the three questions a Greek
-   business actually has before calling: where are you, how fast do you reply,
-   and what does this cost me. */
+/* Operational facts, stated flatly. These answer what a Greek business
+   actually asks before calling: what exactly do I get, how fast, from where,
+   and what am I signing up to. The first line is the audit's definition —
+   an undefined "free audit" is a promise nobody can hold you to, which cuts
+   both ways. */
 const GUARANTEES = [
-  "Τοποθεσία: Θεσσαλονίκη (Εξυπηρέτηση Πανελλαδικά & Remote)",
-  "Χρόνος απόκρισης: < 24 ώρες για κάθε audit",
-  "Χωρίς δεσμεύσεις: 100% τεχνική & λειτουργική αξιολόγηση",
+  "Τι παίρνετε: κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες κινήσεις",
+  "Χρόνος απόκρισης: εντός 24 ωρών",
+  "Τοποθεσία: Θεσσαλονίκη — εξυπηρέτηση πανελλαδικά και remote",
+  "Χωρίς δεσμεύσεις: ο κώδικας κάθε έργου παραδίδεται δικός σας",
 ] as const;
 
 /**
@@ -18,7 +21,7 @@ const GUARANTEES = [
 export default function DirectContactCard() {
   return (
     <div>
-      <p className="font-mono text-xs tracking-wider text-ink-faint">
+      <p className="font-mono text-xs tracking-wider text-ink-ghost">
         [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
       </p>
 

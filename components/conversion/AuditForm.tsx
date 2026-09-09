@@ -163,15 +163,15 @@ export default function AuditForm() {
           </h3>
 
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Λάβαμε το αίτημά σας. Θα λάβετε την τεχνική ανάλυση και πρόταση
-            εντός 24 ωρών.
+            Λάβαμε το αίτημά σας. Θα επικοινωνήσουμε για την κλήση των 15
+            λεπτών και θα στείλουμε τη γραπτή σύνοψη εντός 24 ωρών.
           </p>
 
           <div className="mt-6 w-full rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5 font-mono text-[11.5px]">
             <p className="text-ink-ghost">$ audit --status</p>
             <p className="mt-2 flex gap-2 text-zinc-300">
               <span className="text-ink-ghost">01</span>
-              Request queued · ETA &lt; 24h
+              Το αίτημα καταχωρήθηκε · απάντηση εντός 24 ωρών
             </p>
           </div>
 
@@ -393,8 +393,9 @@ export default function AuditForm() {
       )}
 
       <p className="mt-4 text-center text-[11.5px] leading-relaxed text-ink-faint">
-        Τα δεδομένα σας χρησιμοποιούνται αποκλειστικά για την τεχνική ανάλυση
-        του project.
+        Θα λάβετε κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες
+        κινήσεις, εντός 24 ωρών. Τα στοιχεία σας χρησιμοποιούνται μόνο για
+        αυτό.
       </p>
     </form>
   );

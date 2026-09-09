@@ -5,10 +5,12 @@ import PipelineSimulator from "@/components/hero/PipelineSimulator";
 import { SITE } from "@/lib/site";
 import { scrollToId } from "@/lib/utils";
 
+/* What the client walks away with, not what the build lacks. Each of these
+   is demonstrable today — see playbook §11.5. */
 const TRUST_POINTS = [
-  "Zero Slow Plugins",
-  "100% Custom Code",
-  "Instant Response",
+  "Ο κώδικας παραδίδεται δικός σας",
+  "Ταχύτητα χωρίς βαριά πρόσθετα",
+  "Απάντηση εντός 24 ωρών",
 ] as const;
 
 /*
@@ -50,7 +52,7 @@ export default function HeroSection() {
                   <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
                 </span>
-                Διαθέσιμος για νέα projects
+                Διαθέσιμοι για νέα projects
                 <span className="text-ink-ghost">•</span>
                 <span className="text-ink-faint">Θεσσαλονίκη &amp; Remote</span>
               </span>
