@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.5 · 2026-09-09
+**Last slice:** S0.6 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -22,7 +22,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 - [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
 - [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
 - [x] **S0.5** WCAG AA colour remediation · 2026-09-09
-- [ ] **S0.6** Form security & PII hygiene
+- [x] **S0.6** Form security & PII hygiene · 2026-09-09
 - [ ] **S0.7** Accessibility — focus, motion, semantics
 - [ ] **S0.8** Copy truth pass
 
@@ -66,6 +66,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
+| Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
 | Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |

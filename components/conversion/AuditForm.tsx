@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, LoaderCircle } from "lucide-react";
 import {
   AUDIT_INTENTS,
   EMPTY_AUDIT_PAYLOAD,
+  HONEYPOT_FIELD,
   validateAuditPayload,
+  type AuditField,
   type AuditFieldErrors,
   type AuditPayload,
 } from "@/lib/audit";
@@ -36,11 +38,27 @@ export default function AuditForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [submitMessage, setSubmitMessage] = useState("");
 
+  /* Honeypot. Kept out of `values` so it never touches validation, delivery
+     or the error map — it exists only to be read back on submit. */
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
+  /* Stamped once, on mount. The gap between this and the submit is what
+     separates a person from a script. A ref rather than state because
+     changing it must never trigger a re-render, and stamped in an effect
+     rather than in the initialiser because `Date.now()` during render is
+     impure. Left at 0 until the effect runs, which reads as an enormous
+     elapsed time — the check fails open, toward the human. */
+  const renderedAtRef = useRef(0);
+
+  useEffect(() => {
+    renderedAtRef.current = Date.now();
+  }, []);
+
   const isSubmitting = status === "submitting";
 
   /* Editing a field clears only that field's error, so the rest of the
      summary stays visible while the visitor works through it. */
-  const update = (field: keyof AuditPayload, value: string) => {
+  const update = (field: AuditField, value: string) => {
     setValues((previous) => ({ ...previous, [field]: value }));
     setErrors((previous) => {
       if (!previous[field]) return previous;
@@ -71,7 +89,11 @@ export default function AuditForm() {
       const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(validation.data),
+        body: JSON.stringify({
+          ...validation.data,
+          [HONEYPOT_FIELD]: honeypotRef.current?.value ?? "",
+          elapsedMs: Date.now() - renderedAtRef.current,
+        }),
       });
 
       const result = await response.json().catch(() => null);
@@ -102,6 +124,9 @@ export default function AuditForm() {
     setErrors({});
     setSubmitMessage("");
     setStatus("idle");
+    /* Restart the timing window — the next submission is timed from here, not
+       from the original mount. */
+    renderedAtRef.current = Date.now();
   };
 
   /* ------------------------ Success confirmation ------------------------ */
@@ -149,6 +174,21 @@ export default function AuditForm() {
       noValidate
       className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
     >
+      {/* Honeypot. Hidden from sight, from the tab order and from assistive
+          tech — a human cannot reach it, so anything in it is a bot. */}
+      <div aria-hidden className="sr-only">
+        <label htmlFor="audit-company">Εταιρεία (μην συμπληρώσετε)</label>
+        <input
+          ref={honeypotRef}
+          id="audit-company"
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
+
       <div className="space-y-5">
         <Field
           id="audit-name"
