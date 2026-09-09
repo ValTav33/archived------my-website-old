@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.1 · 2026-09-09
+**Last slice:** S0.3 · 2026-09-09
 **Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
 Every other Phase 0 slice can proceed.
 
@@ -19,7 +19,7 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 
 - [x] **S0.1** Repo hygiene & tooling — ESLint 9, README, docs · 2026-09-09
 - [ ] **S0.2** Identity constants — domain, email, brand, split hours ⛔ *blocked*
-- [ ] **S0.3** Shared navigation source — `lib/nav.ts`
+- [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
 - [ ] **S0.4** Delete placeholder sections, fix page order
 - [ ] **S0.5** WCAG AA colour remediation
 - [ ] **S0.6** Form security & PII hygiene
@@ -67,6 +67,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
+| Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
 
 ---
 

@@ -1,4 +1,5 @@
 import { ArrowUp } from "lucide-react";
+import { FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 
 /* Capability tracks, phrased for humans rather than for the schema. */
@@ -7,13 +8,6 @@ const CORE_TRACKS = [
   "AI Customer Support & Voice Agents",
   "Lead Pipelines & Data Enrichment",
   "Custom Client Dashboards",
-] as const;
-
-const NAV_LINKS = [
-  { label: "Αρχική", href: "#" },
-  { label: "Λύσεις", href: "#solutions" },
-  { label: "Δωρεάν Audit", href: "#audit" },
-  { label: SITE.phoneDisplay, href: `tel:${SITE.phoneTel}` },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -89,10 +83,10 @@ export default function Footer() {
               Πλοήγηση
             </h2>
             <ul className="mt-4 space-y-2.5">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label}>
+              {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
+                <li key={link.id}>
                   <a
-                    href={link.href}
+                    href={navHref(link)}
                     className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}

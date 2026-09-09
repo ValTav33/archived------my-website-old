@@ -3,19 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
+import { NAV_LINKS } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import { cn, scrollToId } from "@/lib/utils";
-
-/* ------------------------------------------------------------------ */
-/*  Static nav data — single source of truth for desktop + mobile      */
-/* ------------------------------------------------------------------ */
-
-const NAV_LINKS = [
-  { label: "Υπηρεσίες", id: "services" },
-  { label: "Λύσεις", id: "solutions" },
-  { label: "Έργα", id: "work" },
-  { label: "Διαδικασία", id: "process" },
-] as const;
 
 type Language = "EL" | "EN";
 
