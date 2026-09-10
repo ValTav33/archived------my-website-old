@@ -3,7 +3,7 @@
 **Status:** Active
 **Owner:** Valsamis Tavlikos
 **Repo:** `github.com/ValTav33/my-website`
-**Last updated:** 2026-09-09
+**Last updated:** 2026-09-10
 **Playbook version:** 1.0
 
 ---
@@ -59,10 +59,10 @@ These are settled. Changing one requires editing this section and noting it in
 
 | Field | Value |
 |---|---|
-| Public brand | **Tavlikos** — bare surname, category carried by the tagline: *"Tavlikos — Web Development & AI Automation"* *(confirm at S0.2)* |
+| Public brand | **Tavlikos Systems** — confirmed and registered 2026-09-10. See §14. |
 | Person | Valsamis Tavlikos |
-| Domain | `tavlikos.com` primary. Buy `tavlikos.gr` too if free — it supports the local SEO the whole strategy rests on. |
-| Email | `hello@<domain>` via Zoho Mail free tier or Google Workspace. **Not Gmail.** |
+| Domain | `tavlikossystems.com` — registered. |
+| Email | `info@tavlikossystems.com` |
 | Phone | +30 698 832 7654 (personal mobile, published as the business line) |
 | Hours | Mon–Fri 10:00–15:00 **and** 18:30–21:00 |
 | Voice | **First person plural — studio voice.** "Σχεδιάζουμε", "στήνουμε", "είμαστε διαθέσιμοι". See the guardrail below. |
@@ -495,6 +495,7 @@ Append here whenever a locked decision in §2 changes. Never edit §2 silently.
 | 2026-09-09 | Registration markers dropped from all phases | Staged for Phase 5 | Registration not planned; a claim with no legal fact behind it violates §8.6 |
 | 2026-09-09 | BTL Industries cleared for naming | Unverified | Freelance engagement, no NDA in force |
 | 2026-09-09 | roz-inn.com cleared as a live reference | Unverified | Confirmed live and permitted |
+| 2026-09-10 | **Brand set to Tavlikos Systems; domain `tavlikossystems.com`; email `info@tavlikossystems.com`** | Bare "Tavlikos" on `tavlikos.com` with `hello@` | Val registered the domain and mailbox. This reverses the 2026-09-09 brand entry above — "Systems" is back. The name follows the domain, not the other way round. Q1 and Q6 closed; S0.2 unblocked. |
 
 ---
 
@@ -504,12 +505,13 @@ Carried forward until answered. Each blocks something specific.
 
 | # | Question | Status | Blocks | Owner |
 |---|---|---|---|---|
-| Q1 | Domain registration | **Open.** Resolves together with Q6 — the name *is* the domain. Check `tavlikos.com`, then `tavlikos.gr`. Fallback `tavlikosv.com`. | S0.2, all of Phase 2 | Val |
+| Q1 | Domain registration | **Resolved 2026-09-10 — `tavlikossystems.com` registered**, with `info@` live. | — | — |
 | Q2 | BTL Industries naming permission | **Resolved — cleared.** Freelance engagement, no NDA in force. Worth a glance at any signed agreement before it goes live. | — | — |
 | Q3 | `roz-inn.com` live and linkable | **Resolved — yes.** Your only live client URL; it carries Phase 5 on its own until screenshots exist. | — | — |
 | Q4 | Fiverr reviews usable as testimonials | **Deferred.** Val supplies the specific quotes during Phase 5, with attribution per §8.4. | Phase 5 | Val |
 | Q5 | Registration (ΑΦΜ) timeline | **Resolved — not planned.** All invoicing/compliance claims removed from every phase. See §2.2. | — | — |
-| Q6 | Brand name | **Open.** Recommendation: bare **Tavlikos** + category tagline. Alternatives if you want abstract: Ergon (έργον), Telos (τέλος), Stoa (στοά), Domi (δομή) — all need a compound domain and build recognition from zero. | S0.2, Q1 | Val |
+| Q6 | Brand name | **Resolved 2026-09-10 — Tavlikos Systems**, matching the registered domain. | — | — |
 
-**Only two questions remain, they're the same decision, and they block the same
-slice.** Pick the name, buy the domain, and Phase 0 is fully unblocked.
+**Both closed on 2026-09-10.** The name, the domain and the mailbox landed
+together, which unblocked S0.2 and with it the whole of Phase 2. What remains
+open is Q4 — the Fiverr testimonial quotes — which gates Phase 5 only.

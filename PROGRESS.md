@@ -7,9 +7,8 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.8 · 2026-09-09
-**Blocked on:** Brand name + domain + business email (Val) → blocks S0.2 only.
-Every other Phase 0 slice can proceed.
+**Last slice:** S0.2 · 2026-09-10
+**Blocked on:** nothing. All eight Phase 0 slices are done.
 
 ---
 
@@ -18,7 +17,7 @@ Every other Phase 0 slice can proceed.
 Remove everything false, broken, inaccessible or insecure. No new sections.
 
 - [x] **S0.1** Repo hygiene & tooling — ESLint 9, README, docs · 2026-09-09
-- [ ] **S0.2** Identity constants — domain, email, brand, split hours ⛔ *blocked*
+- [x] **S0.2** Identity constants — domain, email, brand, split hours · 2026-09-10
 - [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
 - [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
 - [x] **S0.5** WCAG AA colour remediation · 2026-09-09
@@ -80,12 +79,13 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 
 | Blocker | Blocks | Owner | Due |
 |---|---|---|---|
-| **Brand name + domain** — one decision, not two. Recommendation: bare `Tavlikos` + category tagline, domain `tavlikos.com` (+ `.gr` if free). | S0.2, all of Phase 2 | Val | — |
-| Business email not set up — Zoho free tier or Google Workspace, **not Gmail** | S0.2 | Val | — |
 | Fiverr review quotes not selected | Phase 5 | Val | — |
+| `NEXT_PUBLIC_SITE_URL` not set in the Vercel project — the build now throws without it | deployment | Val | — |
 
 ### Resolved
 
+- ~~**Brand name + domain + business email**~~ — resolved 2026-09-10.
+  `Tavlikos Systems` on `tavlikossystems.com`, mailbox `info@tavlikossystems.com`.
 - ~~BTL Industries naming permission~~ — cleared, freelance engagement, no NDA
 - ~~`roz-inn.com` live and linkable~~ — confirmed yes; currently your only live client URL
 - ~~ΑΦΜ / registration~~ — not planned; all invoicing and compliance claims removed from every phase
@@ -97,6 +97,9 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 - **2026-09-09 — Voice reversed to first person plural.** The site speaks as
   "we". Guardrail: plural voice, singular facts — no team, department or
   headcount claims. Playbook §2.1 and §11.1.
+- **2026-09-10 — Brand reversed back to "Tavlikos Systems".** Val registered
+  `tavlikossystems.com`, so the name follows the domain. This undoes the
+  2026-09-09 decision for bare `Tavlikos`. Playbook §2.1 and §14.
 - **2026-09-09 — Registration markers dropped entirely.** Not deferred to
   Phase 5; deleted from the roadmap. Playbook §2.2.
 - **2026-09-09 — S0.1 uses the native `eslint-config-next` flat config**

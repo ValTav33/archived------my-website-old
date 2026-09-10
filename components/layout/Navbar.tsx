@@ -138,7 +138,7 @@ export default function Navbar() {
           className="group flex shrink-0 items-baseline gap-2"
         >
           <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
-            Valsamis
+            {SITE.brand}
           </span>
         </button>
 
