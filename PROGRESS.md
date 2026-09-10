@@ -29,6 +29,44 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 spam-resistant, no PII in logs, keyboard + screen-reader complete, lint +
 typecheck + build clean, Lighthouse A11y = 100.
 
+### Exit gate — measured 2026-09-11
+
+Run against a **local production build** (`next start`, `NEXT_PUBLIC_SITE_URL=
+https://tavlikossystems.com`). The Vercel preview could not be used: it sits
+behind Deployment Protection and answers anonymous requests with a Vercel
+login page.
+
+| Gate | Budget | Measured | |
+|---|---|---|---|
+| Lighthouse Performance (mobile) | ≥ 90 | **95** | ✅ |
+| Lighthouse Accessibility (mobile) | **100** | **100** | ✅ |
+| Lighthouse Best Practices (mobile) | ≥ 95 | **96** | ✅ |
+| Lighthouse SEO (mobile) | ≥ 95 | **100** | ✅ |
+| `npx tsc --noEmit` | clean | clean | ✅ |
+| `npm run lint` | clean | clean | ✅ |
+| `npm run build` | clean, no warnings | clean | ✅ |
+| No placeholder text or data | none | none | ✅ |
+| Text contrast | all ≥ 4.5:1 | 146 nodes, 0 failures exposed to AT | ✅ |
+| Form: normal / honeypot / fast / no-stamp | 200, deliver only the real one | 4× 200, 1 delivery | ✅ |
+| Form: rate limit | 5/hour per IP | 5 → 200, 6th → 429 | ✅ |
+| Form: PII in logs | none | 0 matches for name, email, phone | ✅ |
+| Origin check | reject foreign | canonical + preview 200, foreign & absent 403 | ✅ |
+| Heading order | no skips | 0 skips, one `h1` | ✅ |
+| Horizontal overflow | none at 375/768/1440 | none | ✅ |
+| Page ends on the CTA | `#audit` last | `#audit` last | ✅ |
+
+Best Practices is 96, not 100, because `/favicon.ico` 404s. The favicon is a
+**Phase 2** deliverable (`app/icon.tsx`, playbook §2.3), so it is not a Phase 0
+miss and the score still clears the Phase 0 budget.
+
+**Still owed by Val, cannot be automated:**
+
+- Open the preview on a real phone, portrait and landscape.
+- One keyboard-only pass with eyes on the screen. Tab order, focus trap and
+  focus-ring CSS were all verified programmatically, but the Browser pane runs
+  hidden, so `document.hasFocus()` is false and `:focus` never matches — no
+  focus ring was ever observed rendering.
+
 ---
 
 ## Upcoming phases
