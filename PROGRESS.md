@@ -7,7 +7,7 @@
 **Current phase:** 0 — Truth & Foundations
 **Branch:** `phase/0-foundations`
 **Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
-**Last slice:** S0.2 · 2026-09-10
+**Last slice:** S0.2 · 2026-09-11 (origin guard hardened)
 **Blocked on:** nothing. All eight Phase 0 slices are done.
 
 ---
@@ -69,6 +69,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
+| Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
 | Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
@@ -80,12 +81,17 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Blocker | Blocks | Owner | Due |
 |---|---|---|---|
 | Fiverr review quotes not selected | Phase 5 | Val | — |
-| `NEXT_PUBLIC_SITE_URL` not set in the Vercel project — the build now throws without it | deployment | Val | — |
 
 ### Resolved
 
 - ~~**Brand name + domain + business email**~~ — resolved 2026-09-10.
   `Tavlikos Systems` on `tavlikossystems.com`, mailbox `info@tavlikossystems.com`.
+- ~~**Vercel deploy failing**~~ — resolved 2026-09-11. The project's
+  `NEXT_PUBLIC_SITE_URL` entry existed with an empty value. The old `??`
+  fallback only guards `null`/`undefined`, so `""` reached
+  `new URL("")` and the build died on a bare `TypeError: Invalid URL`.
+  Fixed in Vercel, and the guard now validates rather than only checking
+  presence.
 - ~~BTL Industries naming permission~~ — cleared, freelance engagement, no NDA
 - ~~`roz-inn.com` live and linkable~~ — confirmed yes; currently your only live client URL
 - ~~ΑΦΜ / registration~~ — not planned; all invoicing and compliance claims removed from every phase

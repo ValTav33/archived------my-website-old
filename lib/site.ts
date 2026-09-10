@@ -16,15 +16,49 @@
  * and nothing about the running site would look wrong. A build that fails is
  * strictly better than a build that lies.
  */
-const rawUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const rawUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 if (!rawUrl) {
   throw new Error(
-    "NEXT_PUBLIC_SITE_URL is required. Set it in .env.local and in the Vercel project.",
+    "NEXT_PUBLIC_SITE_URL is required and must not be empty. Set it in " +
+      ".env.local and in the Vercel project, for every environment " +
+      "(Production, Preview and Development), e.g. https://tavlikossystems.com",
   );
 }
 
-export const SITE_URL = rawUrl.replace(/\/$/, "");
+/**
+ * Validates the origin and normalises it to `scheme://host`, dropping any
+ * path, query or trailing slash.
+ *
+ * A truthiness check alone is not enough. `NEXT_PUBLIC_SITE_URL` set to an
+ * empty string once shipped a production deploy that died on
+ * `new URL("")` with a bare `TypeError: Invalid URL` and no mention of the
+ * variable — the value came from a Vercel entry whose key existed and whose
+ * value did not. A schemeless `tavlikossystems.com` fails the same opaque
+ * way. Both are configuration mistakes, so both should say so.
+ */
+function assertOrigin(value: string): string {
+  let parsed: URL;
+
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(
+      `NEXT_PUBLIC_SITE_URL is not a valid URL: ${JSON.stringify(value)}. ` +
+        "It must include the scheme, e.g. https://tavlikossystems.com",
+    );
+  }
+
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    throw new Error(
+      `NEXT_PUBLIC_SITE_URL must be http or https, got ${JSON.stringify(parsed.protocol)}.`,
+    );
+  }
+
+  return `${parsed.protocol}//${parsed.host}`;
+}
+
+export const SITE_URL = assertOrigin(rawUrl);
 
 /**
  * Trading hours, as the two windows they actually are: a morning block and an
