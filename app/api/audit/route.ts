@@ -57,16 +57,38 @@ function clientIp(request: Request): string {
 }
 
 /**
+ * Origins allowed to POST this form: the canonical site, plus whatever domain
+ * this particular deployment is actually being served from.
+ *
+ * The second part matters. A Vercel preview is served from a generated
+ * domain that can never equal SITE_URL, so checking SITE_URL alone rejects
+ * every submission on every preview — the one environment where the form is
+ * supposed to be exercised before it ships. `VERCEL_URL` is the immutable
+ * per-deployment domain and `VERCEL_BRANCH_URL` the branch alias; both are
+ * server-side only and set by the platform, so neither is attacker-supplied.
+ */
+function allowedOrigins(): string[] {
+  const origins = [SITE_URL];
+
+  for (const host of [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]) {
+    if (host) origins.push(`https://${host}`);
+  }
+
+  return origins;
+}
+
+/**
  * Cheap CSRF mitigation: a browser cannot forge `Origin` on a cross-site POST.
- * Only enforced in production — local development and preview deployments run
- * on origins that will never match SITE_URL.
+ * Only enforced in production — local development runs on an origin that will
+ * never match.
  */
 function hasValidOrigin(request: Request): boolean {
   if (process.env.NODE_ENV !== "production") return true;
 
   const origin = request.headers.get("origin");
   if (!origin) return false;
-  return origin.replace(/\/$/, "") === SITE_URL;
+
+  return allowedOrigins().includes(origin.replace(/\/$/, ""));
 }
 
 /**
