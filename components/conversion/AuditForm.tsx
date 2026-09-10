@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, LoaderCircle } from "lucide-react";
 import {
   AUDIT_INTENTS,
   EMPTY_AUDIT_PAYLOAD,
+  HONEYPOT_FIELD,
   validateAuditPayload,
+  type AuditField,
   type AuditFieldErrors,
   type AuditPayload,
 } from "@/lib/audit";
@@ -23,7 +25,7 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 /* Shared between input/select/textarea so focus and error styling stay
    identical across control types. */
 const FIELD_BASE =
-  "w-full rounded-lg border bg-[#12151E] px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-zinc-600 focus:outline-none disabled:opacity-60";
+  "w-full rounded-lg border bg-[#12151E] px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-ink-ghost focus:outline-none disabled:opacity-60";
 
 const fieldTone = (hasError: boolean) =>
   hasError
@@ -36,11 +38,36 @@ export default function AuditForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [submitMessage, setSubmitMessage] = useState("");
 
+  /* Honeypot. Kept out of `values` so it never touches validation, delivery
+     or the error map — it exists only to be read back on submit. */
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
+  /* Stamped once, on mount. The gap between this and the submit is what
+     separates a person from a script. A ref rather than state because
+     changing it must never trigger a re-render, and stamped in an effect
+     rather than in the initialiser because `Date.now()` during render is
+     impure. Left at 0 until the effect runs, which reads as an enormous
+     elapsed time — the check fails open, toward the human. */
+  const renderedAtRef = useRef(0);
+
+  useEffect(() => {
+    renderedAtRef.current = Date.now();
+  }, []);
+
+  /* On success the whole form is replaced by the confirmation card. Without
+     moving focus, a screen reader user is left on a submit button that no
+     longer exists and hears nothing at all. */
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (status === "success") successHeadingRef.current?.focus();
+  }, [status]);
+
   const isSubmitting = status === "submitting";
 
   /* Editing a field clears only that field's error, so the rest of the
      summary stays visible while the visitor works through it. */
-  const update = (field: keyof AuditPayload, value: string) => {
+  const update = (field: AuditField, value: string) => {
     setValues((previous) => ({ ...previous, [field]: value }));
     setErrors((previous) => {
       if (!previous[field]) return previous;
@@ -71,7 +98,11 @@ export default function AuditForm() {
       const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(validation.data),
+        body: JSON.stringify({
+          ...validation.data,
+          [HONEYPOT_FIELD]: honeypotRef.current?.value ?? "",
+          elapsedMs: Date.now() - renderedAtRef.current,
+        }),
       });
 
       const result = await response.json().catch(() => null);
@@ -102,31 +133,45 @@ export default function AuditForm() {
     setErrors({});
     setSubmitMessage("");
     setStatus("idle");
+    /* Restart the timing window — the next submission is timed from here, not
+       from the original mount. */
+    renderedAtRef.current = Date.now();
   };
 
   /* ------------------------ Success confirmation ------------------------ */
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8">
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
+      >
         <div className="flex flex-col items-start">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-live/30 bg-live/10 text-live">
+          <span
+            aria-hidden
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-live/30 bg-live/10 text-live"
+          >
             <Check className="h-5 w-5" strokeWidth={2.5} />
           </span>
 
-          <h3 className="mt-5 text-xl font-semibold text-white">
+          <h3
+            ref={successHeadingRef}
+            tabIndex={-1}
+            className="mt-5 text-xl font-semibold text-white"
+          >
             Το αίτημα καταχωρήθηκε.
           </h3>
 
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Λάβαμε το αίτημά σας. Θα λάβετε την τεχνική ανάλυση και πρόταση
-            εντός 24 ωρών.
+            Λάβαμε το αίτημά σας. Θα επικοινωνήσουμε για την κλήση των 15
+            λεπτών και θα στείλουμε τη γραπτή σύνοψη εντός 24 ωρών.
           </p>
 
           <div className="mt-6 w-full rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5 font-mono text-[11.5px]">
             <p className="text-ink-ghost">$ audit --status</p>
             <p className="mt-2 flex gap-2 text-zinc-300">
               <span className="text-ink-ghost">01</span>
-              Request queued · ETA &lt; 24h
+              Το αίτημα καταχωρήθηκε · απάντηση εντός 24 ωρών
             </p>
           </div>
 
@@ -149,6 +194,21 @@ export default function AuditForm() {
       noValidate
       className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
     >
+      {/* Honeypot. Hidden from sight, from the tab order and from assistive
+          tech — a human cannot reach it, so anything in it is a bot. */}
+      <div aria-hidden className="sr-only">
+        <label htmlFor="audit-company">Εταιρεία (μην συμπληρώσετε)</label>
+        <input
+          ref={honeypotRef}
+          id="audit-company"
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
+
       <div className="space-y-5">
         <Field
           id="audit-name"
@@ -260,10 +320,10 @@ export default function AuditForm() {
                 FIELD_BASE,
                 fieldTone(Boolean(errors.intent)),
                 "appearance-none pr-11",
-                values.intent ? "text-zinc-100" : "text-zinc-600",
+                values.intent ? "text-zinc-100" : "text-ink-ghost",
               )}
             >
-              <option value="" disabled className="bg-[#12151E] text-zinc-500">
+              <option value="" disabled className="bg-[#12151E] text-ink-faint">
                 Επιλέξτε προτεραιότητα…
               </option>
               {AUDIT_INTENTS.map((intent) => (
@@ -333,8 +393,9 @@ export default function AuditForm() {
       )}
 
       <p className="mt-4 text-center text-[11.5px] leading-relaxed text-ink-faint">
-        Τα δεδομένα σας χρησιμοποιούνται αποκλειστικά για την τεχνική ανάλυση
-        του project.
+        Θα λάβετε κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες
+        κινήσεις, εντός 24 ωρών. Τα στοιχεία σας χρησιμοποιούνται μόνο για
+        αυτό.
       </p>
     </form>
   );
@@ -361,11 +422,11 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.12em] text-zinc-500"
+        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint"
       >
         {label}
         {required && (
-          <span aria-hidden className="ml-1 text-zinc-600">
+          <span aria-hidden className="ml-1 text-ink-ghost">
             *
           </span>
         )}

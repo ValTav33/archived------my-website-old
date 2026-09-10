@@ -29,13 +29,22 @@ const config: Config = {
           750: "#141721", // raised / hovered surface
           700: "#1A1D27", // strongest elevation
         },
-        /* Type ramp — pure white headings down to hairline labels. */
+        /* Type ramp — pure white headings down to hairline labels.
+           Every value here is TEXT and clears WCAG AA (4.5:1) against every
+           surface above, worst case being obsidian-750. Ratios are quoted
+           against obsidian-850, the card surface these mostly sit on. */
         ink: {
-          DEFAULT: "#FFFFFF",
-          bright: "#F8FAFC",
-          muted: "#94A3B8", // body copy + monospace
-          faint: "#64748B", // captions, timestamps
-          ghost: "#475569", // disabled / queued states
+          DEFAULT: "#FFFFFF", // 21.00  headings
+          bright: "#F8FAFC", // 19.13  emphasis
+          muted: "#94A3B8", //  7.47  body copy + monospace
+          faint: "#8B98AC", //  6.55  captions, timestamps
+          ghost: "#788699", //  5.17  labels, eyebrows, line numbers
+        },
+        /* Decorative only — 2.53:1, nowhere near AA. Bullets, separators and
+           other marks that carry no information. Every element using this
+           must also carry `aria-hidden`. Never use it for text. */
+        decor: {
+          DEFAULT: "#475569",
         },
         /* The only chromatic token in the system. Status dots only. */
         live: {

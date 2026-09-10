@@ -41,21 +41,17 @@ export default function JsonLd() {
     ],
     serviceType: "Remote / Worldwide",
 
+    /* One specification per trading window. A single 10:00-21:00 entry would
+       tell search engines we are open through the afternoon, which is the
+       kind of quiet inaccuracy that sends someone to a phone that nobody
+       answers. */
     openingHours: SITE.openingHoursSchema,
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-        ],
-        opens: SITE.hours.opens,
-        closes: SITE.hours.closes,
-      },
-    ],
+    openingHoursSpecification: SITE.hours.map((window) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: window.opens,
+      closes: window.closes,
+    })),
 
     /* Social profiles that identify the same business. */
     sameAs: SAME_AS,

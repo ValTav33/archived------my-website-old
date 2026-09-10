@@ -1,13 +1,16 @@
 import { Mail, MessageCircle, Phone, Send } from "lucide-react";
 import { SITE } from "@/lib/site";
 
-/* Operational facts, stated flatly. These answer the three questions a Greek
-   business actually has before calling: where are you, how fast do you reply,
-   and what does this cost me. */
+/* Operational facts, stated flatly. These answer what a Greek business
+   actually asks before calling: what exactly do I get, how fast, from where,
+   and what am I signing up to. The first line is the audit's definition —
+   an undefined "free audit" is a promise nobody can hold you to, which cuts
+   both ways. */
 const GUARANTEES = [
-  "Τοποθεσία: Θεσσαλονίκη (Εξυπηρέτηση Πανελλαδικά & Remote)",
-  "Χρόνος απόκρισης: < 24 ώρες για κάθε audit",
-  "Χωρίς δεσμεύσεις: 100% τεχνική & λειτουργική αξιολόγηση",
+  "Τι παίρνετε: κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες κινήσεις",
+  "Χρόνος απόκρισης: εντός 24 ωρών",
+  "Τοποθεσία: Θεσσαλονίκη — εξυπηρέτηση πανελλαδικά και remote",
+  "Χωρίς δεσμεύσεις: ο κώδικας κάθε έργου παραδίδεται δικός σας",
 ] as const;
 
 /**
@@ -18,13 +21,19 @@ const GUARANTEES = [
 export default function DirectContactCard() {
   return (
     <div>
-      <p className="font-mono text-xs tracking-wider text-zinc-500">
+      <p className="font-mono text-xs tracking-wider text-ink-ghost">
         [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
       </p>
 
-      <h3 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.02em] text-white sm:text-3xl">
+      {/* The conversion section's heading. An h2 rather than an h3 because
+          nothing above it in the section carries one — it is the section's
+          own title, not a subheading of the form beside it. */}
+      <h2
+        id="audit-heading"
+        className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.02em] text-white sm:text-3xl"
+      >
         Ας συζητήσουμε την υποδομή της επιχείρησής σας.
-      </h3>
+      </h2>
 
       <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
         Είτε χρειάζεστε ανακατασκευή της ιστοσελίδας σας σε Next.js είτε
@@ -60,7 +69,7 @@ export default function DirectContactCard() {
             key={guarantee}
             className="flex items-baseline gap-2.5 font-mono text-[11.5px] leading-relaxed text-zinc-400"
           >
-            <span aria-hidden className="shrink-0 text-ink-ghost">
+            <span aria-hidden className="shrink-0 text-decor">
               •
             </span>
             {guarantee}

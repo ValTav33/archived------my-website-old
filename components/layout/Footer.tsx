@@ -1,19 +1,13 @@
 import { ArrowUp } from "lucide-react";
+import { FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 
 /* Capability tracks, phrased for humans rather than for the schema. */
 const CORE_TRACKS = [
-  "Modern Web Development (Next.js)",
-  "AI Customer Support & Voice Agents",
-  "Lead Pipelines & Data Enrichment",
-  "Custom Client Dashboards",
-] as const;
-
-const NAV_LINKS = [
-  { label: "Αρχική", href: "#" },
-  { label: "Λύσεις", href: "#solutions" },
-  { label: "Δωρεάν Audit", href: "#audit" },
-  { label: SITE.phoneDisplay, href: `tel:${SITE.phoneTel}` },
+  "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
+  "AI εξυπηρέτηση πελατών & φωνητικοί agents",
+  "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
+  "Custom dashboards για πελάτες",
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -45,9 +39,6 @@ export default function Footer() {
               <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
                 {SITE.brand}
               </span>
-              <span className="rounded border border-white/[0.08] px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-ink-ghost">
-                SYS.ENG
-              </span>
             </div>
 
             <p className="mt-4 font-mono text-[11.5px] text-ink-faint tabular-nums">
@@ -57,21 +48,23 @@ export default function Footer() {
               {SITE.locationLabel}
             </p>
 
-            {/* Status pill — the single chromatic element in the footer. */}
+            {/* Status pill — the single chromatic element in the footer. The
+                dot signals availability for work, which is a fact we control,
+                not uptime, which we owe nobody. */}
             <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-[10.5px] tracking-wider text-zinc-400">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
               </span>
-              SYSTEMS OPERATIONAL • LATENCY: NORMAL
+              Διαθέσιμοι για νέα projects
             </span>
           </div>
 
           {/* -------------------- Col 2 · Core tracks --------------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
               Υπηρεσίες
-            </h2>
+            </h3>
             {/* Plain text, not links: there are no dedicated service pages
                 yet, and a link to nowhere is worse than no link. */}
             <ul className="mt-4 space-y-2.5">
@@ -85,14 +78,14 @@ export default function Footer() {
 
           {/* --------------------- Col 3 · Navigation --------------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
               Πλοήγηση
-            </h2>
+            </h3>
             <ul className="mt-4 space-y-2.5">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label}>
+              {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
+                <li key={link.id}>
                   <a
-                    href={link.href}
+                    href={navHref(link)}
                     className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
@@ -104,9 +97,9 @@ export default function Footer() {
 
           {/* ------------------ Col 4 · Social & protocols ---------------- */}
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
-              Protocols
-            </h2>
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+              Επικοινωνία
+            </h3>
             <ul className="mt-4 space-y-2.5">
               {SOCIAL_LINKS.map((link) => (
                 <li key={link.label}>
@@ -126,7 +119,7 @@ export default function Footer() {
               href="#"
               className="group mt-5 inline-flex items-center gap-1.5 font-mono text-[11.5px] text-ink-faint transition-colors duration-200 hover:text-white"
             >
-              Back to top
+              Επιστροφή στην αρχή
               <ArrowUp
                 className="h-3 w-3 transition-transform duration-200 group-hover:-translate-y-0.5"
                 strokeWidth={2}
@@ -138,10 +131,10 @@ export default function Footer() {
         {/* ---------------------------- Sub-bar --------------------------- */}
         <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-[11px] text-ink-ghost">
-            © {YEAR}. Engineered with Next.js, Tailwind &amp; TypeScript.
+            © {YEAR}. Κατασκευασμένο με Next.js, Tailwind &amp; TypeScript.
           </p>
           <p className="font-mono text-[11px] text-ink-ghost">
-            Zero slow templates. Built for pure performance.
+            Ο κώδικας παραδίδεται δικός σας — χωρίς εξάρτηση από πλατφόρμα.
           </p>
         </div>
       </div>

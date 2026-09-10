@@ -1,0 +1,160 @@
+# PROGRESS
+
+> Single source of truth for **where the project is right now**.
+> Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
+> Updated in the same commit as the slice it describes — never separately.
+
+**Current phase:** 0 — Truth & Foundations
+**Branch:** `phase/0-foundations`
+**Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
+**Last slice:** S0.6 · 2026-09-11 (origin allowlist — found by the exit gate)
+**Blocked on:** nothing. All eight Phase 0 slices are done.
+
+---
+
+## Phase 0 — Truth & Foundations
+
+Remove everything false, broken, inaccessible or insecure. No new sections.
+
+- [x] **S0.1** Repo hygiene & tooling — ESLint 9, README, docs · 2026-09-09
+- [x] **S0.2** Identity constants — domain, email, brand, split hours · 2026-09-10
+- [x] **S0.3** Shared navigation source — `lib/nav.ts` · 2026-09-09
+- [x] **S0.4** Delete placeholder sections, fix page order · 2026-09-09
+- [x] **S0.5** WCAG AA colour remediation · 2026-09-09
+- [x] **S0.6** Form security & PII hygiene · 2026-09-09
+- [x] **S0.7** Accessibility — focus, motion, semantics · 2026-09-09
+- [x] **S0.8** Copy truth pass · 2026-09-09
+
+**Exit gate:** no placeholders, no placeholder data, all text ≥ 4.5:1, form
+spam-resistant, no PII in logs, keyboard + screen-reader complete, lint +
+typecheck + build clean, Lighthouse A11y = 100.
+
+### Exit gate — measured 2026-09-11
+
+Run against a **local production build** (`next start`, `NEXT_PUBLIC_SITE_URL=
+https://tavlikossystems.com`). The Vercel preview could not be used: it sits
+behind Deployment Protection and answers anonymous requests with a Vercel
+login page.
+
+| Gate | Budget | Measured | |
+|---|---|---|---|
+| Lighthouse Performance (mobile) | ≥ 90 | **95** | ✅ |
+| Lighthouse Accessibility (mobile) | **100** | **100** | ✅ |
+| Lighthouse Best Practices (mobile) | ≥ 95 | **96** | ✅ |
+| Lighthouse SEO (mobile) | ≥ 95 | **100** | ✅ |
+| `npx tsc --noEmit` | clean | clean | ✅ |
+| `npm run lint` | clean | clean | ✅ |
+| `npm run build` | clean, no warnings | clean | ✅ |
+| No placeholder text or data | none | none | ✅ |
+| Text contrast | all ≥ 4.5:1 | 146 nodes, 0 failures exposed to AT | ✅ |
+| Form: normal / honeypot / fast / no-stamp | 200, deliver only the real one | 4× 200, 1 delivery | ✅ |
+| Form: rate limit | 5/hour per IP | 5 → 200, 6th → 429 | ✅ |
+| Form: PII in logs | none | 0 matches for name, email, phone | ✅ |
+| Origin check | reject foreign | canonical + preview 200, foreign & absent 403 | ✅ |
+| Heading order | no skips | 0 skips, one `h1` | ✅ |
+| Horizontal overflow | none at 375/768/1440 | none | ✅ |
+| Page ends on the CTA | `#audit` last | `#audit` last | ✅ |
+
+Best Practices is 96, not 100, because `/favicon.ico` 404s. The favicon is a
+**Phase 2** deliverable (`app/icon.tsx`, playbook §2.3), so it is not a Phase 0
+miss and the score still clears the Phase 0 budget.
+
+**Still owed by Val, cannot be automated:**
+
+- Open the preview on a real phone, portrait and landscape.
+- One keyboard-only pass with eyes on the screen. Tab order, focus trap and
+  focus-ring CSS were all verified programmatically, but the Browser pane runs
+  hidden, so `document.hasFocus()` is false and `:focus` never matches — no
+  focus ring was ever observed rendering.
+
+---
+
+## Upcoming phases
+
+| # | Phase | Status |
+|---|---|---|
+| 1 | Homepage Restructure | Not started |
+| 2 | Multipage & SEO | Not started |
+| 3 | Backend & Go-Live | Not started · **← LAUNCH** |
+| 4 | Craft & Motion | Not started |
+| 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
+| 6 | English | Not started |
+| 7 | Blog | Not started |
+| 8 | Operate | Ongoing after launch |
+
+---
+
+## Completed phases
+
+_(none yet)_
+
+---
+
+## Backlog
+
+Discovered outside the current slice. Do not fix in place — log here, schedule later.
+
+| Item | Found in | Target phase |
+|---|---|---|
+| Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill class strings duplicated ~16× with drifting opacity | Audit | 1 |
+| 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) should be tokens | Audit | 1 |
+| `ArchitectureTrace` dashed connector uses raw `zinc-700` — tokenise | Audit | 1 |
+| `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` — tokenise alongside the trace connector | S0.5 | 1 |
+| `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Latency: 380ms`, `score 0.91`) on a Greek page, and its invented numbers can read as real telemetry. Outside S0.8's file list | S0.8 | 1 |
+| `SITE.locationLabel` mixes languages — "Θεσσαλονίκη, Ελλάδα (Remote Worldwide)". Fix while editing `lib/site.ts` | S0.8 | 0 (in S0.2) |
+| Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
+| Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
+| Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
+| Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
+| Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
+| `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
+| Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
+| Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
+| `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
+| Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
+
+---
+
+## Blockers
+
+| Blocker | Blocks | Owner | Due |
+|---|---|---|---|
+| Fiverr review quotes not selected | Phase 5 | Val | — |
+
+### Resolved
+
+- ~~**Brand name + domain + business email**~~ — resolved 2026-09-10.
+  `Tavlikos Systems` on `tavlikossystems.com`, mailbox `info@tavlikossystems.com`.
+- ~~**Vercel deploy failing**~~ — resolved 2026-09-11. The project's
+  `NEXT_PUBLIC_SITE_URL` entry existed with an empty value. The old `??`
+  fallback only guards `null`/`undefined`, so `""` reached
+  `new URL("")` and the build died on a bare `TypeError: Invalid URL`.
+  Fixed in Vercel, and the guard now validates rather than only checking
+  presence.
+- ~~BTL Industries naming permission~~ — cleared, freelance engagement, no NDA
+- ~~`roz-inn.com` live and linkable~~ — confirmed yes; currently your only live client URL
+- ~~ΑΦΜ / registration~~ — not planned; all invoicing and compliance claims removed from every phase
+
+---
+
+## Decisions changed since the playbook was written
+
+- **2026-09-09 — Voice reversed to first person plural.** The site speaks as
+  "we". Guardrail: plural voice, singular facts — no team, department or
+  headcount claims. Playbook §2.1 and §11.1.
+- **2026-09-10 — Brand reversed back to "Tavlikos Systems".** Val registered
+  `tavlikossystems.com`, so the name follows the domain. This undoes the
+  2026-09-09 decision for bare `Tavlikos`. Playbook §2.1 and §14.
+- **2026-09-09 — Registration markers dropped entirely.** Not deferred to
+  Phase 5; deleted from the roadmap. Playbook §2.2.
+- **2026-09-09 — S0.1 uses the native `eslint-config-next` flat config**
+  instead of the `@eslint/eslintrc` `FlatCompat` wrapper the spec called
+  for. v16 of that package ships real flat configs; routing them through
+  `FlatCompat` throws `Converting circular structure to JSON`. `@eslint/eslintrc`
+  is therefore not a dependency.
+- **2026-09-09 — Slice entries record the date, not the commit SHA.**
+  Playbook §7.2 asks for both, but a commit cannot contain its own SHA and
+  §7.1 forbids a follow-up commit. One commit per slice plus
+  `git log --grep "Slice: S0.1"` gives the same traceability.
+
+_See `docs/PROJECT-PLAYBOOK.md` §14 for the full decision log._

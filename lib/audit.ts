@@ -33,6 +33,12 @@ export type AuditPayload = {
   website: string;
   intent: string;
   brief: string;
+  /**
+   * Honeypot. Rendered visually hidden and never shown to a human, so any
+   * value here means a bot filled the form. Optional because a legitimate
+   * submission simply leaves it empty.
+   */
+  company?: string;
 };
 
 export type AuditFieldErrors = Partial<Record<AuditField, string>>;
@@ -136,4 +142,43 @@ export function validateAuditPayload(input: unknown): AuditValidation {
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   return { ok: true, data: { name, email, phone, website, intent, brief } };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Anti-bot signals                                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Honeypot field name — bots fill anything called "company". Exported so the
+ * form and the route handler can never disagree about what to look at.
+ */
+export const HONEYPOT_FIELD = "company";
+
+/**
+ * Floor for the time between the form rendering and its submission landing.
+ * Six fields cannot be completed by a human in under two and a half seconds.
+ */
+export const MIN_SUBMIT_MS = 2500;
+
+/**
+ * True when a submission carries a bot signature: a filled honeypot, or a
+ * round-trip too fast to be human.
+ *
+ * A missing or non-numeric `elapsedMs` also counts, because the real form
+ * always sends one — a body without it did not come from this form.
+ *
+ * The caller must answer a positive exactly as it answers a real submission.
+ * Telling a bot which check it tripped is how the check gets tuned around.
+ */
+export function looksAutomated(input: unknown): boolean {
+  if (typeof input !== "object" || input === null) return true;
+  const raw = input as Record<string, unknown>;
+
+  const honeypot = raw[HONEYPOT_FIELD];
+  if (typeof honeypot === "string" && honeypot.trim() !== "") return true;
+
+  const elapsed = raw.elapsedMs;
+  if (typeof elapsed !== "number" || !Number.isFinite(elapsed)) return true;
+
+  return elapsed < MIN_SUBMIT_MS;
 }
