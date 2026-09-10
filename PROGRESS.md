@@ -4,17 +4,30 @@
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
 
-**Current phase:** 0 — Truth & Foundations
-**Branch:** `phase/0-foundations`
-**Spec:** `docs/phases/PHASE-0-FOUNDATION.md`
+**Current phase:** between phases — 0 is merged and live, 1 not started
+**Branch:** `main`
+**Spec:** next phase spec not yet written
 **Last slice:** S0.6 · 2026-09-11 (origin allowlist — found by the exit gate)
-**Blocked on:** nothing. All eight Phase 0 slices are done.
+**Blocked on:** nothing.
+
+> **The site is live but NOT launched.** `deliverAuditRequest` is still a stub:
+> a submitted form is validated and then discarded, while the visitor is told
+> they will hear back within 24 hours. Phase 3 wires delivery and is the real
+> launch gate. Playbook §12 rates this Severe — consider bringing Phase 3
+> forward ahead of Phases 1 and 2, since the site is already public and
+> indexable, which is not what the phase order assumed.
 
 ---
 
-## Phase 0 — Truth & Foundations
+## Phase 0 — Truth & Foundations ✅ MERGED 2026-09-11 (`07038ea`)
 
 Remove everything false, broken, inaccessible or insecure. No new sections.
+
+Squash-merged into `main` and deployed. `https://tavlikossystems.com` now
+serves this work; the placeholder site it replaced had been publicly
+indexable. Slice history is preserved on the `phase/0-foundations` branch —
+no PR was opened, because neither the `gh` CLI nor an authorised GitHub
+connector was available in the session.
 
 - [x] **S0.1** Repo hygiene & tooling — ESLint 9, README, docs · 2026-09-09
 - [x] **S0.2** Identity constants — domain, email, brand, split hours · 2026-09-10
@@ -29,7 +42,21 @@ Remove everything false, broken, inaccessible or insecure. No new sections.
 spam-resistant, no PII in logs, keyboard + screen-reader complete, lint +
 typecheck + build clean, Lighthouse A11y = 100.
 
-### Exit gate — measured 2026-09-11
+### Exit gate — re-measured on LIVE production, 2026-09-11
+
+`https://tavlikossystems.com`, after the merge:
+
+| Metric | Budget | Live |
+|---|---|---|
+| Performance (mobile) | ≥ 90 | **95** |
+| Accessibility (mobile) | **100** | **100** |
+| Best Practices (mobile) | ≥ 95 | **96** |
+| SEO (mobile) | ≥ 95 | **100** |
+
+`color-contrast` and `heading-order` both pass. The only console error is the
+`/favicon.ico` 404 — a Phase 2 deliverable.
+
+### Exit gate — first measured pre-merge, 2026-09-11
 
 Run against a **local production build** (`next start`, `NEXT_PUBLIC_SITE_URL=
 https://tavlikossystems.com`). The Vercel preview could not be used: it sits
@@ -86,7 +113,9 @@ miss and the score still clears the Phase 0 budget.
 
 ## Completed phases
 
-_(none yet)_
+| # | Phase | Merged | Result |
+|---|---|---|---|
+| 0 | Truth & Foundations | 2026-09-11 · `07038ea` | 8 slices. Placeholders, wrong identity data, sub-AA contrast, unprotected form and PII logging all removed. Live Lighthouse mobile: **95 / 100 / 96 / 100**. |
 
 ---
 
