@@ -56,7 +56,7 @@ export default function Footer() {
                 not uptime, which we owe nobody. */}
             <Badge variant="status" className="mt-5 tracking-wider">
               <StatusDot />
-              Διαθέσιμοι για νέα projects
+              {SITE.availability}
             </Badge>
           </div>
 

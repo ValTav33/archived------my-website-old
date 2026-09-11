@@ -49,7 +49,7 @@ export default function HeroSection() {
               <Badge variant="status">
                 {/* The single chromatic element in the layout: a live dot. */}
                 <StatusDot />
-                Διαθέσιμοι για νέα projects
+                {SITE.availability}
                 <span className="text-ink-ghost">•</span>
                 <span className="text-ink-faint">Θεσσαλονίκη &amp; Remote</span>
               </Badge>

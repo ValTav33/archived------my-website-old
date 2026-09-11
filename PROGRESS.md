@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.7 · 2026-09-11 (process section — three steps, and the audit promise made unforgeable)
+**Last slice:** S1.8 · 2026-09-11 (about section — plural voice, singular facts)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -35,7 +35,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.5** Greek pass on the pipeline simulator · 2026-09-11
 - [x] **S1.6** Proof strip · 2026-09-11
 - [x] **S1.7** Process section · 2026-09-11
-- [ ] **S1.8** About section
+- [x] **S1.8** About section · 2026-09-11
 - [ ] **S1.9** FAQ section
 - [ ] **S1.10** Navigation and final assembly
 
@@ -396,6 +396,46 @@ S1.10, the eyebrows are now numbered in final page order: solutions `01`,
 process `02`, about `03` (S1.8), faq `04` (S1.9), audit `05`. S1.10 verifies
 them instead of renumbering them.
 
+**S1.8.** The highest-risk copy in the phase, and the risk is one specific
+failure: a prospect reads about a team, then meets one person, and feels
+misled at the worst moment in the sale. Four sentences — where we work and the
+real hours, what we build, what you own at the end, and what we will not do.
+It closes on the refusals, because those are the claims that cost the writer
+something and therefore the ones worth reading.
+
+**The §2.1 sweep is clean, repo-wide.** No possessive plural naming staff, no
+premises noun, no department, no founding narrative, no headcount, no
+years-of-experience figure. The rendered section contains exactly two kinds of
+digit: the `03` eyebrow, and the trading hours — which arrive from
+`SITE.hoursLong` and are never retyped.
+
+*The portrait slot renders literally nothing.* The section markup contains
+**zero** `<img>` and **zero** `<svg>`: no frame, no silhouette, no grey circle.
+`PORTRAIT` is a `null` constant and setting it is the entire Phase 5 change —
+the card already switches to a two-column layout when it is present, so no
+redesign waits on the photo.
+
+*One file touched beyond the spec's list, twice over.* The availability claim
+«Διαθέσιμοι για νέα projects» was hand-typed in the hero and the footer, and
+this section would have been the third copy. It is now `SITE.availability`,
+read by all three. The day it stops being true it has to stop being true in one
+place. S1.7 made the same call for the audit promise; the reasoning is
+identical and the alternative was knowingly creating the third copy.
+
+**Verified at 375 / 768 / 1024 / 1440:** zero tap targets under 44, zero text
+below 12px, no overflow, contrast worst case **5.37:1** with no failures. Line
+measure at 1440 is **71 characters** — inside the 65–75 band the phase's
+typography finding asks for, measured against a real Greek character advance
+rather than estimated from a font size. Page order is now
+hero → proof → tech → solutions → process → about → audit, and heading order
+runs h1 → h2 → h3 with no skips.
+
+*The comment trap, twice now.* Both S1.7 and S1.8 first shipped doc comments
+that quoted the banned phrases verbatim in order to explain the ban — which
+made the review grep return hits in the very files that comply with it. Both
+were reworded. If a future slice documents a forbidden string, describe it;
+do not quote it, or the sweep stops being a sweep.
+
 ---
 
 ## Phase 0 — Closeout ✅ MERGED 2026-09-11 (`9a23cbc`)
@@ -633,7 +673,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 7/10 slices |
+| 1 | Homepage Restructure | **In progress** · 8/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |

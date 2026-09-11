@@ -4,6 +4,7 @@ import ProofStrip from "@/components/proof/ProofStrip";
 import TechStackStrip from "@/components/showcase/TechStackStrip";
 import ShowcaseGrid from "@/components/showcase/ShowcaseGrid";
 import ProcessSection from "@/components/process/ProcessSection";
+import AboutSection from "@/components/about/AboutSection";
 import ConversionSection from "@/components/conversion/ConversionSection";
 import Footer from "@/components/layout/Footer";
 
@@ -29,6 +30,7 @@ export default function Home() {
         <TechStackStrip />
         <ShowcaseGrid />
         <ProcessSection />
+        <AboutSection />
         <ConversionSection />
       </main>
 

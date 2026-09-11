@@ -105,6 +105,12 @@ export const SITE = {
   country: "GR",
   locationLabel: "Θεσσαλονίκη, Ελλάδα — εξυπηρέτηση remote",
 
+  /* Availability for work — a fact we control, unlike uptime, which we owe
+     nobody. Printed beside a `StatusDot` in the hero, the footer and the
+     about section; the day this stops being true it has to stop being true
+     in one place, not three. */
+  availability: "Διαθέσιμοι για νέα projects",
+
   social: {
     /* Share/QR tracking params (stkn, mibextid, utm_source) stripped — they
        are tied to a single share session and don't belong in public markup. */
