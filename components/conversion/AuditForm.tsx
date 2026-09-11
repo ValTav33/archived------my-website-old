@@ -12,6 +12,7 @@ import {
   type AuditPayload,
 } from "@/lib/audit";
 import Card from "@/components/ui/Card";
+import { AUDIT_DELIVERABLE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /*
@@ -391,9 +392,8 @@ export default function AuditForm() {
       )}
 
       <p className="mt-4 text-center text-xs leading-relaxed text-ink-faint">
-        Θα λάβετε κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες
-        κινήσεις, εντός 24 ωρών. Τα στοιχεία σας χρησιμοποιούνται μόνο για
-        αυτό.
+        Θα λάβετε {AUDIT_DELIVERABLE}. Τα στοιχεία σας χρησιμοποιούνται μόνο
+        για αυτό.
       </p>
     </Card>
   );

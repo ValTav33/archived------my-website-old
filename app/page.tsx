@@ -3,6 +3,7 @@ import HeroSection from "@/components/hero/HeroSection";
 import ProofStrip from "@/components/proof/ProofStrip";
 import TechStackStrip from "@/components/showcase/TechStackStrip";
 import ShowcaseGrid from "@/components/showcase/ShowcaseGrid";
+import ProcessSection from "@/components/process/ProcessSection";
 import ConversionSection from "@/components/conversion/ConversionSection";
 import Footer from "@/components/layout/Footer";
 
@@ -27,6 +28,7 @@ export default function Home() {
         <ProofStrip />
         <TechStackStrip />
         <ShowcaseGrid />
+        <ProcessSection />
         <ConversionSection />
       </main>
 

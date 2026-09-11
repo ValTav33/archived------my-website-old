@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.6 · 2026-09-11 (proof strip — the first named client on the site)
+**Last slice:** S1.7 · 2026-09-11 (process section — three steps, and the audit promise made unforgeable)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -34,7 +34,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.4** Push the client boundary down · 2026-09-11
 - [x] **S1.5** Greek pass on the pipeline simulator · 2026-09-11
 - [x] **S1.6** Proof strip · 2026-09-11
-- [ ] **S1.7** Process section
+- [x] **S1.7** Process section · 2026-09-11
 - [ ] **S1.8** About section
 - [ ] **S1.9** FAQ section
 - [ ] **S1.10** Navigation and final assembly
@@ -335,7 +335,7 @@ badges **7.19:1**. Any future contrast check on this codebase must composite
 translucent layers, because this design system is built almost entirely out of
 them.
 
-### Open question for Val — raised by S1.6, deliberately not decided
+### Open question from S1.6 — ✅ ANSWERED 2026-09-11: option 3
 
 The showcase's third card, `lead-engine`, describes the BTL system and sits
 under **"Ενδεικτικές Αρχιτεκτονικές"** — *indicative* architectures, explicitly
@@ -344,16 +344,57 @@ was correct when nothing could be named. BTL is now named twenty pixels further
 up the page, which makes the same system appear twice: once as proof and once
 as a hypothesis.
 
-Three options, none of them actioned:
+**Val's decision: re-frame the section in Phase 2, once `/work` exists.**
+Nothing changes on the homepage during Phase 1 — the heading Phase 0 wrote on
+purpose stays, and the proof strip carries the name. Phase 2 owns the rewrite
+and should treat it as part of building `/work`, not as a homepage tweak.
 
-1. Leave it. The proof strip carries the name; the showcase stays a capability
-   catalogue. Cheapest, and the mismatch is subtle.
-2. Split the delivered project out of the indicative set, so the showcase holds
-   two hypotheses and BTL is only ever proof.
-3. Re-frame the whole section once `/work` exists in Phase 2.
+Rejected on the way: leaving it permanently (the mismatch is real, just not
+urgent) and splitting the delivered project out now (it would rewrite the
+showcase twice, once here and again in Phase 2).
 
-The phase spec says explicitly not to decide this inside a slice, because it
-changes a heading Phase 0 wrote on purpose.
+**S1.7.** Three steps between the showcase and the form: what the audit
+delivers, how the build runs, and what you own at the end. The third is the
+solo-operator objection (§11.6, and the §12 risk register's "kills deals
+silently") answered in structure, before the FAQ answers it in words — the
+repository is yours, the deployment is documented, another developer can pick
+it up without us.
+
+**The audit promise can no longer drift.** The spec asked for the step-01 copy
+to match the form's promise word for word. Rather than verify two hand-typed
+copies, the sentence moved into `lib/site.ts` as `AUDIT_DELIVERABLE` and both
+surfaces interpolate it. A site that offers a 15-minute call in one place and a
+20-minute call in another loses the visitor who notices, and this is the only
+concrete promise on the page. `TIMELINE_RANGE` got the same treatment, because
+S1.9's «Πόσο θα πάρει;» answer is the third place that sentence would have been
+retyped. Verified on the rendered DOM: the phrase in the form and the phrase in
+step 01 are byte-identical.
+
+*Every number on the section accounted for.* A digit sweep of the rendered
+markup returns `02` (the section eyebrow), `01`/`02`/`03` (step numbers,
+`aria-hidden` — the `<ol>` already tells assistive tech the sequence), `15` and
+`24` from the §2.2 audit definition, and `3` and `2` from the §2.2 timeline
+range. Nothing invented, no average, no percentage.
+
+*No icons.* The spec allows Lucide "only if they add meaning". The step number
+and the title already carry the sequence, so a glyph beside each would be
+decoration — §2.4 asks for simple over dense, and the showcase's architecture
+traces sit directly above this section.
+
+**Verified at 375 / 768 / 1024 / 1440:** one column at 375 and 768, three at
+1024 and 1440, exactly as the spec describes. Zero tap targets under 44, zero
+text below 12px, no overflow. Contrast worst case **5.37:1**; the only values
+below AA are the three step numbers at 5.17 — which also pass, and are
+`aria-hidden` regardless. Heading order across the whole page is now
+h1 → h2 → h3 with no skips.
+
+*Two files touched that the spec's list does not name.* `AuditForm.tsx`, to
+read the shared constant rather than hold a second copy of the promise. And
+`DirectContactCard.tsx`, whose eyebrow read `[ 02 // ]` — the number this
+section takes. Rather than ship a duplicate `02` for three slices and fix it in
+S1.10, the eyebrows are now numbered in final page order: solutions `01`,
+process `02`, about `03` (S1.8), faq `04` (S1.9), audit `05`. S1.10 verifies
+them instead of renumbering them.
 
 ---
 
@@ -592,7 +633,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 6/10 slices |
+| 1 | Homepage Restructure | **In progress** · 7/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -700,6 +741,10 @@ weigh it then.
 
 ## Decisions changed since the playbook was written
 
+- **2026-09-11 — The showcase's "Ενδεικτικές Αρχιτεκτονικές" framing is
+  re-examined in Phase 2, not Phase 1.** BTL is now named in the proof strip
+  while the same system still sits in the showcase as a hypothesis. Val chose
+  to fix that when `/work` exists rather than rewrite the section twice.
 - **2026-09-09 — Voice reversed to first person plural.** The site speaks as
   "we". Guardrail: plural voice, singular facts — no team, department or
   headcount claims. Playbook §2.1 and §11.1.

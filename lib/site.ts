@@ -222,3 +222,31 @@ export type Testimonial = {
 };
 
 export const TESTIMONIALS: readonly Testimonial[] = [];
+
+/* ------------------------------------------------------------------ */
+/*  The two promises                                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * What the free audit actually delivers, playbook §2.2, as **one string**.
+ *
+ * This sentence is the site's only concrete promise, and it now appears in the
+ * audit form and in the process section. Two hand-typed copies of a promise is
+ * how a site ends up offering a 15-minute call in one place and a 20-minute
+ * call in another, and the visitor who spots it stops believing the rest of
+ * the page. Both surfaces interpolate this constant, so they cannot disagree.
+ *
+ * Written lowercase and unterminated so it can be embedded in a sentence
+ * ("Θα λάβετε …", "Παίρνετε …") without the grammar fighting the constant.
+ */
+export const AUDIT_DELIVERABLE =
+  "κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες κινήσεις, εντός 24 ωρών";
+
+/**
+ * Delivery time, playbook §2.2. **A range, never a promise**, and never an
+ * average — an "average delivery time" is a number nobody can defend in a
+ * sales call, which is what §8.1 exists to prevent.
+ *
+ * Phase 1's FAQ answers «Πόσο θα πάρει;» with this same constant.
+ */
+export const TIMELINE_RANGE = "3 ημέρες έως 2 μήνες, ανάλογα με το εύρος";
