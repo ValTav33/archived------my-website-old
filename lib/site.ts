@@ -84,6 +84,15 @@ export const SITE = {
      ends up introducing itself differently in the navbar, the OG card and the
      structured data. */
   brand: "Tavlikos Systems",
+  /* The person. Playbook §2.1 lists him under Identity; until S1.8 he
+     appeared nowhere on the site. The about section names him because its
+     own heading asks «Με ποιον θα δουλέψετε» — a question the page should
+     not pose and then dodge, and because the §12 risk register says the
+     solo-operator objection is the one that kills deals silently. Naming one
+     real person is the maximally §2.1-compliant move: the guardrail forbids
+     claiming MORE people, never stating the actual one. Phase 2's `/about`
+     route and its `Person` schema read this. */
+  person: "Βαλσάμης Ταυλίκος",
   siteName: "Tavlikos Systems",
   /** Name used in structured data. Not a registered entity — see playbook §2.2. */
   legalName: "Tavlikos Systems",

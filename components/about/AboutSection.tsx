@@ -37,7 +37,11 @@ import { SITE } from "@/lib/site";
 const PORTRAIT: { src: string; alt: string } | null = null;
 
 const PARAGRAPHS = [
-  `Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα, remote. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
+  /* The heading asks who. This answers it, in the first line, with a name —
+     §2.1's guardrail bans claiming more people than exist, not stating the
+     one who does. A prospect who reads this and then meets Val meets exactly
+     who the page said. */
+  `Το ${SITE.brand} είναι ο ${SITE.person}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα, remote. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
   "Κατασκευάζουμε δύο πράγματα. Γρήγορα site και web εφαρμογές σε Next.js, και αυτοματισμούς που αναλαμβάνουν δουλειά ρουτίνας που σήμερα γίνεται με το χέρι.",
   "Κάθε έργο παραδίδεται με τον κώδικα δικό σας και τεκμηριωμένη εγκατάσταση. Δεν κλειδώνετε ούτε σε πλατφόρμα ούτε σε προμηθευτή.",
   /* The "what we do not do" line. Every clause here is a promise NOT to do

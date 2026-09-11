@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.8 · 2026-09-11 (about section — plural voice, singular facts)
+**Last slice:** S1.9 · 2026-09-11 (FAQ section — six objections answered on the page)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -36,7 +36,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.6** Proof strip · 2026-09-11
 - [x] **S1.7** Process section · 2026-09-11
 - [x] **S1.8** About section · 2026-09-11
-- [ ] **S1.9** FAQ section
+- [x] **S1.9** FAQ section · 2026-09-11
 - [ ] **S1.10** Navigation and final assembly
 
 **S1.1.** Every count in the spec was re-measured against the tree rather than
@@ -436,6 +436,76 @@ made the review grep return hits in the very files that comply with it. Both
 were reworded. If a future slice documents a forbidden string, describe it;
 do not quote it, or the sweep stops being a sweep.
 
+**S1.9.** Six questions in `lib/faq.ts` as data, so Phase 2's `/faq` route and
+its `FAQPage` schema read this array instead of forking the copy — a schema
+whose text has drifted from the visible answer is a markup problem search
+engines notice and visitors do not, which is the worst combination. **No
+`FAQPage` JSON-LD ships here**; confirmed absent from the rendered page.
+
+Three answers interpolate shared constants rather than restating them: the
+timeline range, the trading hours and the audit deliverable. That makes
+«Τι ακριβώς παίρνω από το δωρεάν audit;» word-for-word identical to the form
+and to process step 01 by construction.
+
+*Every digit in every answer traced,* with all six panels open so nothing was
+hiding in an unmounted panel: `3`/`2` from `TIMELINE_RANGE`, `10:00`/`15:00`/
+`18:30`/`21:00` from `SITE.hoursLong`, `15`/`24` from `AUDIT_DELIVERABLE`.
+**«Πόσο κοστίζει;» contains no digit at all** — the model, never a figure,
+per §2.2.
+
+*Disclosure wiring, verified on the live DOM rather than read off the source:*
+all six questions are `<button type="button">` wrapped in `<h3>`, each with
+`aria-expanded` and `aria-controls`; each panel is `role="region"` with
+`aria-labelledby` pointing back at the button whose `aria-controls` points at
+it — the link was checked in both directions. Focus stays on the button after
+toggling. **Two panels open at once was tested and works**: single-open is
+deliberately not enforced, because comparing "what if I lose you" against
+"what does it cost" is exactly what someone does before calling.
+
+On the keyboard: these are native `<button>` elements, so Enter and Space
+activate them through the browser with no key handling of our own — which is
+the reason for not building this out of a `div` with `role="button"`.
+Synthetic `KeyboardEvent`s cannot trigger native activation, so that half is
+**not** machine-verified here and belongs to Val's keyboard pass.
+
+### The hidden-pane finding, which explains several earlier oddities
+
+`document.visibilityState` is `"hidden"` in the Browser pane and
+**`requestAnimationFrame` never fires** — measured directly. Consequences seen
+across this phase, all environment and none of them bugs:
+
+- Framer Motion mounts a panel and stays on its `initial` frame:
+  `style.height: "0px"` while `scrollHeight` is 179. The content is laid out;
+  only the animation is frozen.
+- `scrollIntoView({ behavior: "smooth" })` appears to do nothing (S1.4).
+- Screenshots taken right after a scroll come back black.
+
+Workarounds that do prove the real behaviour: force
+`scroll-behavior: auto` before scrolling, and paint an animation's end state
+by hand before screenshotting. Both were used here.
+
+### Backlog row raised against a §10 non-negotiable
+
+§10.6 says motion degrades and **everything** respects `prefers-reduced-motion`.
+`globals.css` collapses CSS animations and transitions under the media query,
+but Framer Motion drives height and opacity through JavaScript, so that rule
+does not reach it. This FAQ, `ShowcaseCard` and the `Navbar` drawer all animate
+at full duration for a visitor who has asked for reduced motion.
+
+S1.9's spec says to animate "exactly as `ShowcaseCard` does", and fixing only
+this section would leave the page with two disclosure behaviours — so the fix
+belongs across all three at once, in Phase 4, which owns motion. Logged, not
+silently inherited.
+
+**Verified at 375 / 768 / 1024 / 1440:** zero tap targets under 44 (smallest
+question button is 52px), zero text below 12px, no overflow, contrast worst
+case **5.37:1** with no failures.
+
+**The page order is now complete** and matches the phase spec's target block:
+hero → proof → tech → solutions → process → about → faq → audit. Eyebrows run
+`01`–`05` with no duplicates. Six `h2`s; the tech strip is the seventh section
+and still carries only an `aria-label` — S1.10 owns giving it a real heading.
+
 ---
 
 ## Phase 0 — Closeout ✅ MERGED 2026-09-11 (`9a23cbc`)
@@ -673,7 +743,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 8/10 slices |
+| 1 | Homepage Restructure | **In progress** · 9/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -707,6 +777,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
 | Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
 | Proof strip ships with two named references and an empty testimonial slot. The **assets** half is still open: Fiverr quotes, screenshots and Val's photo | S0.12 · structure closed S1.6 | 5 |
+| Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
@@ -781,6 +852,12 @@ weigh it then.
 
 ## Decisions changed since the playbook was written
 
+- **2026-09-11 — The about section names Valsamis Ταυλίκος.** Val delegated
+  the call. Its heading asks «Με ποιον θα δουλέψετε» and left it unanswered,
+  and §12 rates the solo-operator objection as the one that kills deals
+  silently. §2.1's guardrail forbids claiming *more* people than exist, never
+  stating the one who does, so naming him is the maximally compliant move.
+  `SITE.person` now holds the name for Phase 2's `/about` and `Person` schema.
 - **2026-09-11 — The showcase's "Ενδεικτικές Αρχιτεκτονικές" framing is
   re-examined in Phase 2, not Phase 1.** BTL is now named in the proof strip
   while the same system still sits in the showcase as a hypothesis. Val chose
