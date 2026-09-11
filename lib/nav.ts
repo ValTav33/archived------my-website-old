@@ -16,24 +16,38 @@ export type NavLink = {
 };
 
 /**
- * Primary navigation — header and footer. Max 5 items, see playbook §2.3.
+ * Primary navigation — header and footer. Playbook §2.3 caps this at five
+ * items **including the CTA**, so three text links plus `CTA_LINK` is four.
  *
- * Phase 0 lists only the sections that actually exist on the page. The
- * `#services`, `#work` and `#process` anchors are deleted in S0.4 and return
- * as real routes in Phase 2; a two-item nav that works beats a four-item nav
- * where three lead nowhere.
+ * "Επικοινωνία" is gone. It pointed at `#audit`, the same destination as the
+ * Δωρεάν Audit button sitting beside it — two controls, one place, and the
+ * visitor has to guess whether they differ.
+ *
+ * Every id here resolves to a section that exists on the page. Phase 2 turns
+ * these into routes by filling in `href`; nothing else has to change.
  */
 export const NAV_LINKS: readonly NavLink[] = [
   { id: "solutions", label: "Λύσεις" },
-  { id: "audit", label: "Επικοινωνία" },
+  { id: "process", label: "Διαδικασία" },
+  { id: "faq", label: "Ερωτήσεις" },
 ] as const;
 
 /**
- * Footer-only links, rendered after the primary nav. `/privacy` and `/terms`
- * join this list in Phase 2.
+ * The call to action, kept separate because it is styled as a button and
+ * appears in three places — the header, the mobile drawer and the footer's
+ * navigation column. One definition, so the label and the destination cannot
+ * drift apart across them.
+ */
+export const CTA_LINK: NavLink = { id: "audit", label: "Δωρεάν Audit" };
+
+/**
+ * Footer-only links, rendered after the primary nav. §2.3 puts About, FAQ,
+ * Privacy and Terms in the footer; About joins here now that the section
+ * exists, and `/privacy` and `/terms` join in Phase 2.
  */
 export const FOOTER_LINKS: readonly NavLink[] = [
   { id: "hero", label: "Αρχική" },
+  { id: "about", label: "Ποιοι είμαστε" },
   { id: "phone", label: SITE.phoneDisplay, href: `tel:${SITE.phoneTel}` },
 ] as const;
 

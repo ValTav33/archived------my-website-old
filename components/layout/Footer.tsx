@@ -1,5 +1,5 @@
 import { ArrowUp } from "lucide-react";
-import { FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
+import { CTA_LINK, FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import Badge from "@/components/ui/Badge";
 import Eyebrow from "@/components/ui/Eyebrow";
@@ -82,7 +82,11 @@ export default function Footer() {
               Πλοήγηση
             </Eyebrow>
             <ul className="mt-4">
-              {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
+              {/* The CTA is spliced in explicitly: dropping "Επικοινωνία"
+                  from NAV_LINKS removed the footer's only path to the form,
+                  and a footer that cannot reach the conversion block is a
+                  dead end at the exact moment someone has finished reading. */}
+              {[...NAV_LINKS, CTA_LINK, ...FOOTER_LINKS].map((link) => (
                 <li key={link.id}>
                   <a
                     href={navHref(link)}

@@ -21,13 +21,22 @@ const STACK = [
 export default function TechStackStrip() {
   return (
     <section
-      aria-label="Τεχνολογίες"
-      className="border-y border-hairline py-10 sm:py-12"
+      id="tech"
+      aria-labelledby="tech-heading"
+      className="scroll-mt-24 border-y border-hairline py-10 sm:py-12"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="text-center font-mono text-mono-xs uppercase tracking-widest text-ink-faint">
+        {/* A real `h2`, not an `aria-label`. This was the only section whose
+            name existed for assistive tech but not in the heading outline —
+            a screen-reader user listing headings skipped straight from the
+            proof strip to the showcase. The visible line was already the
+            section's title; it just was not marked up as one. */}
+        <h2
+          id="tech-heading"
+          className="text-center font-mono text-mono-xs font-normal uppercase tracking-widest text-ink-faint"
+        >
           Η υποδομή πάνω στην οποία χτίζουμε
-        </p>
+        </h2>
 
         {/*
           Mobile: a single horizontal scroll lane, bled to the screen edges so

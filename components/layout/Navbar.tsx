@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
-import { NAV_LINKS } from "@/lib/nav";
+import { CTA_LINK, NAV_LINKS } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import Badge from "@/components/ui/Badge";
-import { cn, scrollToId, scrollToTop } from "@/lib/utils";
+import ScrollLink from "@/components/ui/ScrollLink";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   /* `scrolled` drives the header hairline: the border is invisible while the
@@ -105,15 +106,11 @@ export default function Navbar() {
     };
   }, [open, closeDrawer]);
 
-  /* Every in-page link funnels through here so the drawer always closes
-     before the scroll animation starts. */
-  const goTo = useCallback(
-    (id: string) => {
-      closeDrawer(false);
-      scrollToId(id);
-    },
-    [closeDrawer],
-  );
+  /* Handed to every `ScrollLink` in the header. The link itself performs the
+     navigation — this only dismisses the drawer first, and deliberately does
+     NOT return focus to the hamburger: focusing a fixed element can scroll
+     the page and undo the jump the visitor just asked for. */
+  const dismissDrawer = useCallback(() => closeDrawer(false), [closeDrawer]);
 
   return (
     <header
@@ -127,27 +124,30 @@ export default function Navbar() {
         className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8"
       >
         {/* ---------------------------- Brand ---------------------------- */}
-        <button
-          type="button"
-          onClick={scrollToTop}
+        {/* A link, not a button: it navigates, so assistive tech should
+            announce it as a link and a middle-click should open a new tab.
+            Becomes `/` in Phase 2 with no markup change. */}
+        <ScrollLink
+          to="hero"
+          onClick={dismissDrawer}
           className="group flex min-h-tap shrink-0 items-center gap-2"
         >
           <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
             {SITE.brand}
           </span>
-        </button>
+        </ScrollLink>
 
         {/* ------------------------ Desktop links ------------------------ */}
         <ul className="hidden items-center gap-7 lg:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.id}>
-              <button
-                type="button"
-                onClick={() => goTo(link.id)}
+              <ScrollLink
+                to={link.id}
+                onClick={dismissDrawer}
                 className="inline-flex min-h-tap items-center text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
               >
                 {link.label}
-              </button>
+              </ScrollLink>
             </li>
           ))}
         </ul>
@@ -177,13 +177,13 @@ export default function Navbar() {
           {/* The EL|EN switch returns in Phase 6, with real /en locale routing. */}
 
           {/* Primary CTA — solid white, the highest-contrast element on screen. */}
-          <button
-            type="button"
-            onClick={() => goTo("audit")}
+          <ScrollLink
+            to={CTA_LINK.id}
+            onClick={dismissDrawer}
             className="btn-primary hidden min-h-tap px-4 py-2 text-xs sm:inline-flex"
           >
-            Δωρεάν Audit
-          </button>
+            {CTA_LINK.label}
+          </ScrollLink>
 
           {/* Hamburger — hidden once the full desktop nav is visible. */}
           <button
@@ -239,17 +239,18 @@ export default function Navbar() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 + index * 0.04, duration: 0.22 }}
                     >
-                      <button
-                        type="button"
-                        onClick={() => goTo(link.id)}
+                      <ScrollLink
+                        to={link.id}
+                        onClick={dismissDrawer}
                         className="flex w-full items-center justify-between border-b border-hairline py-3.5 text-base text-zinc-400 transition-colors duration-200 hover:text-white"
                       >
                         {link.label}
                         <ArrowRight
+                          aria-hidden
                           className="h-4 w-4 text-ink-ghost"
                           strokeWidth={1.8}
                         />
-                      </button>
+                      </ScrollLink>
                     </motion.li>
                   ))}
                 </ul>
@@ -271,13 +272,13 @@ export default function Navbar() {
                   </span>
                 </a>
 
-                <button
-                  type="button"
-                  onClick={() => goTo("audit")}
-                  className="btn-primary flex min-h-tap w-full px-4 py-2.5 text-sm"
+                <ScrollLink
+                  to={CTA_LINK.id}
+                  onClick={dismissDrawer}
+                  className="btn-primary flex min-h-tap w-full justify-center px-4 py-2.5 text-sm"
                 >
-                  Δωρεάν Audit
-                </button>
+                  {CTA_LINK.label}
+                </ScrollLink>
               </div>
             </motion.div>
           </>

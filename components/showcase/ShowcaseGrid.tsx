@@ -84,6 +84,7 @@ export default function ShowcaseGrid() {
   return (
     <section
       id="solutions"
+      aria-labelledby="solutions-heading"
       className="scroll-mt-24 py-20 sm:py-28 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -95,6 +96,7 @@ export default function ShowcaseGrid() {
             not projects we have shipped and can name — content truth policy
             §8.2. The heading has to say so before the cards do. */}
         <SectionHeader
+          id="solutions-heading"
           eyebrow="[ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]"
           title="Ενδεικτικές Αρχιτεκτονικές."
           lede="Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα πρώτα ονομαστικά case studies προστίθενται σύντομα."

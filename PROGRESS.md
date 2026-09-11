@@ -7,8 +7,8 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.9 · 2026-09-11 (FAQ section — six objections answered on the page)
-**Blocked on:** nothing.
+**Last slice:** S1.10 · 2026-09-11 (navigation and final assembly — all ten slices done)
+**Blocked on:** nothing. **Next:** phase closeout — one open exit-gate item (see below), then the manual passes, Lighthouse and the PR.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
@@ -37,7 +37,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.7** Process section · 2026-09-11
 - [x] **S1.8** About section · 2026-09-11
 - [x] **S1.9** FAQ section · 2026-09-11
-- [ ] **S1.10** Navigation and final assembly
+- [x] **S1.10** Navigation and final assembly · 2026-09-11
 
 **S1.1.** Every count in the spec was re-measured against the tree rather than
 trusted, and all three matched: 11 hardcoded hex values, 5 raw decorative
@@ -506,6 +506,82 @@ hero → proof → tech → solutions → process → about → faq → audit. E
 `01`–`05` with no duplicates. Six `h2`s; the tech strip is the seventh section
 and still carries only an `aria-label` — S1.10 owns giving it a real heading.
 
+**S1.10.** The nav still listed the two sections that existed in Phase 0 and
+offered two controls pointing at the same anchor. `NAV_LINKS` is now
+**Λύσεις · Διαδικασία · Ερωτήσεις** plus `CTA_LINK`, four items inside §2.3's
+cap of five. "Επικοινωνία" is gone: it resolved to `#audit`, the same place as
+the Δωρεάν Audit button beside it, leaving the visitor to guess whether they
+differed. About joined `FOOTER_LINKS` as «Ποιοι είμαστε», per §2.3.
+
+*The footer keeps a path to the form.* Dropping "Επικοινωνία" from `NAV_LINKS`
+silently removed the footer's only link to `#audit` — a dead end at the exact
+moment someone has finished reading — so `CTA_LINK` is spliced into the
+footer's navigation column explicitly.
+
+**The two-nav-mechanisms row is fully closed.** S1.4 converted the footer and
+both section CTAs to `ScrollLink` and left the navbar for this slice, which
+rebuilds that markup anyway. Every header control is now a real anchor: the
+brand, the three links, the header CTA, the drawer links and the drawer CTA.
+They work before hydration, announce as links, and honour ⌘-click. `goTo` is
+gone; a `dismissDrawer` callback closes the drawer and `ScrollLink` does the
+navigating.
+
+*The tech strip got a real `h2`.* It was the only section whose name existed
+for assistive tech (`aria-label`) but not in the heading outline, so a
+screen-reader user listing headings jumped straight from the proof strip to
+the showcase. Its visible line was already the section's title; it just was
+not marked up as one. `#solutions` was also the only section without
+`aria-labelledby` — both fixed.
+
+**The 1024–1279px band, which the S0.12 backlog row asked for specifically.**
+Measured at 1024, 1100, 1279 and 1280 with the new four-item nav: brand plus
+three links plus the CTA, five visible controls, **28px minimum gap**, no nav
+overflow and no page overflow anywhere in the band. At 1280 the phone pill
+appears as a sixth control and the minimum gap drops to the designed 8px.
+Row closed.
+
+### Exit gate — measured
+
+| Gate | Result |
+|---|---|
+| Page order matches the target block; `#audit` last | ✅ hero → proof → tech → solutions → process → about → faq → audit |
+| `components/ui/` primitives exist and are used | ✅ Badge, Card, SectionHeader, Eyebrow, StatusDot, ScrollLink |
+| No hardcoded `#0D0F16` / `#12151E` / `#08090D` | ✅ grep returns nothing |
+| No raw `zinc-600/700/800` | ✅ grep returns nothing |
+| No text below 12px | ✅ grep returns nothing; 0 rendered nodes under 12px at four widths |
+| Every interactive element ≥ 44×44 at 375px | ✅ 0 under 44 at 375 / 768 / 1024 / 1440 |
+| One `h1`; 7 `h2`s; no skipped levels | ✅ 1 / **7** / 0 skips |
+| Hero and showcase shells render on the server | ✅ 6 `"use client"` files, all genuine leaves |
+| `NAV_LINKS` resolves; every anchor lands somewhere | ✅ 14 in-page anchors, **0 broken** |
+| `npx tsc --noEmit`, `npm run lint`, `npm run build` | ✅ all clean |
+| Zero English in visitor copy except product nouns | ⚠️ **NOT MET — see below** |
+| Manual pass at four widths + a real phone | ⏳ Val |
+| Lighthouse mobile on the preview | ⏳ closeout |
+
+Also verified, beyond the gate: tab order follows document order across 39
+focusable elements with **zero inversions and zero positive `tabindex`**, and
+no `FAQPage` schema is present in the rendered page.
+
+### The one open gate item
+
+**`ShowcaseGrid`'s case copy is still substantially English**, and no slice
+owned it. S1.5 translated the pipeline simulator because the S0.8 backlog row
+named that component; the showcase was never assigned. What remains:
+
+- three card titles that mix languages — e.g. «Αυτόνομο AI Concierge Portal &
+  24/7 Εξυπηρέτηση», «Custom Web Application & Ενοποιημένο Client Portal»
+- thirteen architecture-trace nodes that are English prose rather than product
+  nouns — `Instant Dynamic Response`, `Role Gate (Admin/Client)`,
+  `Real-time Status Sync`, `Waterfall Verification`, `AI Relevancy Filter`,
+  `Inbound/List Trigger`, `CRM / Outreach Tool` and similar
+- one footer track, «Custom dashboards για πελάτες»
+
+This was deliberately **not** fixed inside S1.10, which is navigation and
+assembly. It is a closeout decision, and it interacts with Val's 2026-09-11
+call to re-frame this section in Phase 2: the architecture nodes and card
+titles would survive that re-frame, so translating them is not wasted, but the
+section heading and the indicative framing around them will change.
+
 ---
 
 ## Phase 0 — Closeout ✅ MERGED 2026-09-11 (`9a23cbc`)
@@ -743,7 +819,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 9/10 slices |
+| 1 | Homepage Restructure | **10/10 slices done** · closeout pending |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -769,17 +845,16 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 
 | Item | Found in | Target phase |
 |---|---|---|
-| Navbar still renders nav links as `<button onClick>`: announced as buttons, not links, and dead without JS. S1.4 gave the footer and both section CTAs a shared `ScrollLink`; the navbar is the remaining half, and S1.10 rebuilds that markup anyway | Audit · half-closed S1.4 | 1 · S1.10 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
-| Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
 | Proof strip ships with two named references and an empty testimonial slot. The **assets** half is still open: Fiverr quotes, screenshots and Val's photo | S0.12 · structure closed S1.6 | 5 |
 | Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
+| **`ShowcaseGrid` case copy is still English** — three mixed-language card titles, thirteen architecture-trace nodes that are English prose rather than product nouns, and one footer track. The only unmet Phase 1 exit-gate item; bundles naturally with Val's decision to re-frame this section in Phase 2 | S1.10 exit gate | 2 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
@@ -803,6 +878,10 @@ this into the phase summary.
 | `PipelineSimulator` copy entirely English on a Greek page | S0.8 | S1.5 |
 | No proof section between the hero's claim and the form (structure half) | S0.12 | S1.6 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
+| `PipelineSimulator` node ring used raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
+| 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
+| Footer and Navbar used two different nav mechanisms | Audit | S1.4 + S1.10 |
+| 1024–1279px was a third, unexercised nav state | S0.12 | S1.10 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
 
