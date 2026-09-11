@@ -1,11 +1,9 @@
-"use client";
-
 import { ArrowRight, Phone } from "lucide-react";
 import PipelineSimulator from "@/components/hero/PipelineSimulator";
 import Badge from "@/components/ui/Badge";
+import ScrollLink from "@/components/ui/ScrollLink";
 import StatusDot from "@/components/ui/StatusDot";
 import { SITE } from "@/lib/site";
-import { scrollToId } from "@/lib/utils";
 
 /* What the client walks away with, not what the build lacks. Each of these
    is demonstrable today — see playbook §11.5. */
@@ -81,16 +79,15 @@ export default function HeroSection() {
               style={delay(240)}
             >
               {/* Primary: solid white, arrow revealed on hover. */}
-              <button
-                type="button"
-                onClick={() => scrollToId("audit")}
+              <ScrollLink
+                to="audit"
                 className="btn-primary group gap-1 px-6 py-3.5 text-sm"
               >
                 Ζητήστε Δωρεάν Audit
                 <span className="flex w-0 items-center overflow-hidden opacity-0 transition-all duration-300 group-hover:w-5 group-hover:opacity-100">
                   <ArrowRight className="h-4 w-4" strokeWidth={2} />
                 </span>
-              </button>
+              </ScrollLink>
 
               {/* Secondary: matte glass card with the direct line + hours. */}
               <a

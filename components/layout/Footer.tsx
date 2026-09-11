@@ -116,7 +116,7 @@ export default function Footer() {
             </ul>
 
             <a
-              href="#"
+              href="#hero"
               className="group mt-5 inline-flex min-h-tap items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
             >
               Επιστροφή στην αρχή

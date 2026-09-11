@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.3 · 2026-09-11 (tap targets — 22 elements raised to 44×44)
+**Last slice:** S1.4 · 2026-09-11 (client boundary — hero and showcase shells now render on the server)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -31,7 +31,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.1** Tokens — surfaces, hairlines, type scale · 2026-09-11
 - [x] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot · 2026-09-11
 - [x] **S1.3** Tap targets raised to 44×44 · 2026-09-11
-- [ ] **S1.4** Push the client boundary down
+- [x] **S1.4** Push the client boundary down · 2026-09-11
 - [ ] **S1.5** Greek pass on the pipeline simulator
 - [ ] **S1.6** Proof strip
 - [ ] **S1.7** Process section
@@ -180,6 +180,65 @@ variants never apply — the same limitation Phase 0 recorded. Its compiled rule
 was checked in the stylesheet instead
 (`focus\:min-h-tap:focus{min-height:44px}`), but seeing it render belongs to
 Val's keyboard pass.
+
+**S1.4.** `HeroSection` and `ShowcaseGrid` were Client Components for one
+`onClick` each. `components/ui/ScrollLink.tsx` takes that job as a leaf, and
+`ShowcaseCard` moved to its own file to carry the disclosure state, leaving the
+section shell, its header, the banner and the `CASES` array on the server.
+
+*Measured, not asserted.* The build was run on this slice, stashed, run again
+on the previous tree, and the two sets of client chunks were searched for copy
+that only these components render:
+
+| String | Before S1.4 | After |
+|---|---|---|
+| `Σύγχρονα Web Apps` (the `h1`, the LCP element) | in client JS | **not in client JS** |
+| `Αυτόνομο AI Concierge Portal` (the `CASES` array) | in client JS | **not in client JS** |
+
+Client chunks went from 764 KB to 756 KB. That 8 KB is the honest number and it
+is not the point — the point is that the LCP element and every word of the
+showcase now reach the visitor without a bundle, and that both CTAs are real
+`<a href="#audit">` elements that work with JavaScript switched off entirely.
+`curl` on the running server returns the `h1`, all three `#audit` anchors and
+the `id="audit"` they resolve to, with no script involved.
+
+*Five `"use client"` files remain, and all five earn it:* `Navbar` (drawer
+state and focus trap), `AuditForm` (form state), `PipelineSimulator` (the
+simulation), `ShowcaseCard` (disclosure state) and `ScrollLink` itself.
+
+*`ScrollLink`'s contract, asserted directly* by stubbing `scrollIntoView` and
+`matchMedia` rather than watching the page move:
+
+- motion allowed → `scrollIntoView({ behavior: "smooth", block: "start" })`
+- reduced motion → `behavior: "auto"`, which is the reduced-motion contract
+  from `lib/utils.ts` carried through intact
+- ⌘-click and Ctrl-click → **not** hijacked: `defaultPrevented` stays false and
+  no scroll runs, so "open in new tab" still works. This is the most common way
+  a hand-rolled link handler becomes a bug, so it is tested.
+- plain click → prevented exactly once, and `replaceState` means clicking four
+  CTAs leaves four fewer entries in the back-stack
+
+Confirmed end to end as well: the CTA scrolls to 4198px and leaves `#audit`
+192px from the top, clear of the 64px fixed header, with `history.length`
+unchanged.
+
+*Two notes for whoever verifies this next.* The Browser pane runs hidden, so
+`requestAnimationFrame` is throttled and **smooth scrolling does not visibly
+run** — a click appears to do nothing while the hash updates correctly. That is
+the harness, not the code. And `behavior: "auto"` does not mean "instant": per
+spec it defers to CSS `scroll-behavior`, which `globals.css` sets to `auto`
+only inside the reduced-motion media query. The JS and the CSS halves are
+designed to meet; patching `matchMedia` alone does not reproduce it.
+
+*Footer back-to-top* now resolves to `#hero` instead of a bare `#`, closing the
+S0.3 backlog row.
+
+**The "two nav mechanisms" row is only half closed.** The footer and both
+section CTAs are anchors now, but `Navbar` still renders its links as
+`<button onClick>` — they are announced as buttons rather than links and do
+nothing without JavaScript. S1.4's file list deliberately excludes `Navbar`
+and S1.10 rebuilds the navigation wholesale, so converting it here would be
+work done twice. The row is retargeted to S1.10 rather than marked done.
 
 ---
 
@@ -418,7 +477,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 3/10 slices |
+| 1 | Homepage Restructure | **In progress** · 4/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -445,7 +504,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Item | Found in | Target phase |
 |---|---|---|
 | `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Inbound payload received`) on a Greek page. The invented numbers were removed in S0.10; the Greek rewrite is what remains | S0.8 | 1 |
-| Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
+| Navbar still renders nav links as `<button onClick>`: announced as buttons, not links, and dead without JS. S1.4 gave the footer and both section CTAs a shared `ScrollLink`; the navbar is the remaining half, and S1.10 rebuilds that markup anyway | Audit · half-closed S1.4 | 1 · S1.10 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
@@ -459,7 +518,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
-| Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
 
 ### Closed during Phase 1
 
@@ -475,6 +533,7 @@ this into the phase summary.
 | Three "Τεχνική αρχιτεκτονική" buttons at 39px, simulator run button at 38px | S0.12 | S1.3 |
 | Contact card: phone 28px, email 34px, WhatsApp and Telegram 34px | S0.12 | S1.3 |
 | Brand button 168×20 | S0.12 | S1.3 |
+| Footer "Back to top" used a bare `href="#"` | S0.3 | S1.4 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
