@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import JsonLd from "@/components/seo/JsonLd";
 import { SITE } from "@/lib/site";
+import { OBSIDIAN_950 } from "@/lib/tokens";
 import "./globals.css";
 
 /* Variable Inter for UI copy; JetBrains Mono for terminal/telemetry surfaces. */
@@ -80,7 +81,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08090D",
+  /* Same literal Tailwind paints the page with, so the mobile browser chrome
+     can never show a seam against the top of the page. */
+  themeColor: OBSIDIAN_950,
   colorScheme: "dark",
 };
 

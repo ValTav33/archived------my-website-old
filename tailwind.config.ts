@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+import { OBSIDIAN_950 } from "./lib/tokens";
+
 /**
  * "Obsidian Minimalist Engineering".
  *
@@ -21,11 +23,12 @@ const config: Config = {
         /* Canvas + surfaces, darkest -> lightest. Almost black, faint slate
            tint, never saturated blue. */
         obsidian: {
-          DEFAULT: "#08090D",
-          950: "#08090D", // page background
+          DEFAULT: OBSIDIAN_950,
+          950: OBSIDIAN_950, // page background
           900: "#0B0C12", // sunken / footer
           850: "#0D0F16", // terminal card
           800: "#0F1117", // standard card surface
+          775: "#12151E", // input / control fill
           750: "#141721", // raised / hovered surface
           700: "#1A1D27", // strongest elevation
         },
@@ -46,11 +49,34 @@ const config: Config = {
         decor: {
           DEFAULT: "#475569",
         },
+        /* Decorative structure inside the pipeline and architecture widgets:
+           window dots, dashed connectors, node rings. Cool greys on the same
+           axis as the surfaces, unlike the neutral `zinc-*` these replaced.
+           Named for what they draw so nobody mistakes them for a text ramp —
+           none of these clears AA and every element using them is either
+           `aria-hidden` or purely structural. */
+        trace: {
+          node: "#2A2F3B", // node ring, idle
+          line: "#3F4654", // window dots, dashed connectors
+          active: "#525A6B", // node ring, running or done
+        },
         /* The only chromatic token in the system. Status dots only. */
         live: {
           DEFAULT: "#10B981",
           soft: "#34D399",
         },
+      },
+      /* Modular type scale. Every step is named; arbitrary `text-[11.5px]`
+         values are not allowed back in. 12px is the floor for rendered text,
+         which is why `xs` is 13 rather than Tailwind's default 12 — the two
+         steps are deliberately distinct, not a rounding of each other.
+         Headline sizes stay arbitrary on purpose: they are optical sizes on
+         single elements, not a scale. */
+      fontSize: {
+        "mono-xs": ["0.75rem", { lineHeight: "1rem" }], // 12 — mono labels, eyebrows, log lines. The floor.
+        xs: ["0.8125rem", { lineHeight: "1.125rem" }], // 13 — captions, chip text, footer links
+        sm: ["0.875rem", { lineHeight: "1.25rem" }], // 14 — secondary body
+        base: ["1rem", { lineHeight: "1.5rem" }], // 16 — body
       },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],

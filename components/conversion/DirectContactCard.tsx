@@ -21,7 +21,7 @@ const GUARANTEES = [
 export default function DirectContactCard() {
   return (
     <div>
-      <p className="font-mono text-xs tracking-wider text-ink-ghost">
+      <p className="font-mono text-mono-xs tracking-wider text-ink-ghost">
         [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
       </p>
 
@@ -42,7 +42,7 @@ export default function DirectContactCard() {
       </p>
 
       {/* -------------------------- Direct line -------------------------- */}
-      <div className="mt-8 rounded-xl border border-white/[0.08] bg-[#0D0F16] p-5">
+      <div className="mt-8 rounded-xl border border-white/[0.08] bg-obsidian-850 p-5">
         <div className="flex items-start gap-3.5">
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400">
             <Phone className="h-4 w-4" strokeWidth={1.8} />
@@ -55,7 +55,7 @@ export default function DirectContactCard() {
             >
               {SITE.phoneDisplay}
             </a>
-            <p className="mt-1 font-mono text-[11.5px] text-ink-faint">
+            <p className="mt-1 font-mono text-mono-xs text-ink-faint">
               {`Τηλεφωνική εξυπηρέτηση: ${SITE.hoursLong}`}
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function DirectContactCard() {
         {GUARANTEES.map((guarantee) => (
           <li
             key={guarantee}
-            className="flex items-baseline gap-2.5 font-mono text-[11.5px] leading-relaxed text-zinc-400"
+            className="flex items-baseline gap-2.5 font-mono text-mono-xs leading-relaxed text-zinc-400"
           >
             <span aria-hidden className="shrink-0 text-decor">
               •
@@ -79,14 +79,14 @@ export default function DirectContactCard() {
 
       {/* ----------------------- Alternative channels --------------------- */}
       <div className="mt-8 border-t border-white/[0.07] pt-6">
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+        <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
           Εναλλακτικά
         </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <a
             href={`mailto:${SITE.email}`}
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
           >
             <Mail className="h-3.5 w-3.5 text-ink-faint" strokeWidth={1.8} />
             {SITE.email}
@@ -98,7 +98,7 @@ export default function DirectContactCard() {
             href={SITE.social.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
           >
             <MessageCircle
               className="h-3.5 w-3.5 text-ink-faint"
@@ -111,7 +111,7 @@ export default function DirectContactCard() {
             href={SITE.social.telegram}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
           >
             <Send className="h-3.5 w-3.5 text-ink-faint" strokeWidth={1.8} />
             Telegram

@@ -103,7 +103,7 @@ export default function ShowcaseGrid() {
         <header className="max-w-3xl">
           {/* Emerald is reserved for live status dots — playbook §2.4. Both
               section eyebrows use the neutral label token. */}
-          <p className="font-mono text-xs tracking-wider text-ink-ghost">
+          <p className="font-mono text-mono-xs tracking-wider text-ink-ghost">
             [ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]
           </p>
 
@@ -134,7 +134,7 @@ export default function ShowcaseGrid() {
 
         {/* --------------------- Transition banner ----------------------- */}
         <div className="mt-14 flex flex-col items-start justify-between gap-5 rounded-xl border border-white/[0.08] bg-white/[0.015] px-6 py-6 sm:flex-row sm:items-center">
-          <p className="text-sm text-zinc-400 sm:text-[15px]">
+          <p className="text-sm text-zinc-400 sm:text-base">
             Χρειάζεστε ένα custom σύστημα προσαρμοσμένο στις δικές σας
             λειτουργίες;
           </p>
@@ -142,7 +142,7 @@ export default function ShowcaseGrid() {
           <button
             type="button"
             onClick={() => scrollToId("audit")}
-            className="btn-primary shrink-0 px-5 py-3 text-[13px]"
+            className="btn-primary shrink-0 px-5 py-3 text-xs"
           >
             Σχεδιάστε τη λύση σας — Κλείστε ένα 15-λεπτο Audit
           </button>
@@ -163,10 +163,10 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
   const panelId = `${item.id}-architecture`;
 
   return (
-    <article className="flex flex-col justify-between rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 transition-colors duration-300 hover:border-white/[0.18]">
+    <article className="flex flex-col justify-between rounded-xl border border-white/[0.08] bg-obsidian-850 p-6 transition-colors duration-300 hover:border-white/[0.18]">
       <div>
         {/* Category */}
-        <span className="inline-block rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-xs text-zinc-300">
+        <span className="inline-block rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-mono-xs text-zinc-300">
           {item.category}
         </span>
 
@@ -185,7 +185,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           {item.stack.map((tech) => (
             <li
               key={tech}
-              className="rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-xs text-zinc-300"
+              className="rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-mono-xs text-zinc-300"
             >
               {tech}
             </li>
@@ -198,7 +198,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           {item.metrics.map((metric) => (
             <li
               key={metric}
-              className="flex items-baseline gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.02] px-2.5 py-1 font-mono text-[11px] text-zinc-400"
+              className="flex items-baseline gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.02] px-2.5 py-1 font-mono text-mono-xs text-zinc-400"
             >
               <span aria-hidden className="text-decor">
                 •
@@ -216,7 +216,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           onClick={() => setOpen((previous) => !previous)}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3.5 py-2.5 font-mono text-[11.5px] text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+          className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3.5 py-2.5 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
         >
           Τεχνική αρχιτεκτονική
           <ChevronDown
@@ -257,7 +257,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
 function Field({ label, body }: { label: string; body: string }) {
   return (
     <div>
-      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+      <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
         {label}
       </p>
       <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">{body}</p>
@@ -272,14 +272,14 @@ function Field({ label, body }: { label: string; body: string }) {
 function ArchitectureTrace({ nodes }: { nodes: readonly string[] }) {
   return (
     <div className="mt-3 rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5">
-      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+      <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
         $ trace --flow
       </p>
 
       <ol className="mt-3">
         {nodes.map((node, index) => (
           <li key={node}>
-            <div className="flex items-baseline gap-2.5 font-mono text-[11.5px]">
+            <div className="flex items-baseline gap-2.5 font-mono text-mono-xs">
               <span className="shrink-0 text-ink-ghost tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -289,7 +289,7 @@ function ArchitectureTrace({ nodes }: { nodes: readonly string[] }) {
             {index < nodes.length - 1 && (
               <div
                 aria-hidden
-                className="my-1 ml-[7px] h-3 w-px border-l border-dashed border-zinc-700"
+                className="my-1 ml-[7px] h-3 w-px border-l border-dashed border-trace-line"
               />
             )}
           </li>

@@ -24,7 +24,7 @@ export default function TechStackStrip() {
       className="border-y border-white/[0.07] py-10 sm:py-12"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <p className="text-center font-mono text-xs uppercase tracking-widest text-ink-faint">
+        <p className="text-center font-mono text-mono-xs uppercase tracking-widest text-ink-faint">
           Η υποδομή πάνω στην οποία χτίζουμε
         </p>
 
@@ -44,7 +44,7 @@ export default function TechStackStrip() {
           {STACK.map((tech) => (
             <li
               key={tech}
-              className="shrink-0 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1 font-mono text-xs text-zinc-400 transition-colors duration-200 hover:border-white/[0.15] hover:text-zinc-200"
+              className="shrink-0 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1 font-mono text-mono-xs text-zinc-400 transition-colors duration-200 hover:border-white/[0.15] hover:text-zinc-200"
             >
               {tech}
             </li>

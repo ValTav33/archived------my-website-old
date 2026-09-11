@@ -4,24 +4,82 @@
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
 
-**Current phase:** between phases — Phase 0 is complete and closed out
-**Branch:** `main`
-**Spec:** next phase spec not yet written
-**Last slice:** S0.12 · 2026-09-11 (first skill review — 9 findings logged, 5 rejected)
+**Current phase:** 1 — Homepage Restructure
+**Branch:** `phase/1-homepage`
+**Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
+**Last slice:** S1.1 · 2026-09-11 (tokens — surfaces, decorative greys, type scale)
 **Blocked on:** nothing.
 
-> **Next phase undecided.** Val is choosing whether Phase 3 (Backend &
-> Go-Live) runs ahead of Phases 1 and 2. The argument for jumping: the site is
-> already public and indexable, and `deliverAuditRequest` is still a stub — a
-> submitted form is validated and then discarded while the visitor is told
-> they will hear back within 24 hours. Playbook §12 rates that Severe.
+> **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
+> Phase 3. The question is closed; do not re-raise it.
 
 > **The site is live but NOT launched.** `deliverAuditRequest` is still a stub:
 > a submitted form is validated and then discarded, while the visitor is told
 > they will hear back within 24 hours. Phase 3 wires delivery and is the real
-> launch gate. Playbook §12 rates this Severe — consider bringing Phase 3
-> forward ahead of Phases 1 and 2, since the site is already public and
-> indexable, which is not what the phase order assumed.
+> launch gate, and Playbook §12 rates the stub Severe. Phase 1 is deliberately
+> front end only — see *Backend is out of scope* in the phase spec, which
+> records Val's decision verbatim. **Do not "helpfully" wire a transport.**
+
+---
+
+## Phase 1 — Homepage Restructure 🚧 IN PROGRESS
+
+Correct the funnel order, add the sections that carry credibility, and pay
+down the design-system debt the Phase 0 audit logged against this phase.
+Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
+
+- [x] **S1.1** Tokens — surfaces, hairlines, type scale · 2026-09-11
+- [ ] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot
+- [ ] **S1.3** Tap targets raised to 44×44
+- [ ] **S1.4** Push the client boundary down
+- [ ] **S1.5** Greek pass on the pipeline simulator
+- [ ] **S1.6** Proof strip
+- [ ] **S1.7** Process section
+- [ ] **S1.8** About section
+- [ ] **S1.9** FAQ section
+- [ ] **S1.10** Navigation and final assembly
+
+**S1.1.** Every count in the spec was re-measured against the tree rather than
+trusted, and all three matched: 11 hardcoded hex values, 5 raw decorative
+`zinc-*` greys, 28 text usages below 12px. Fixed together because the four new
+sections landing later in this phase would otherwise inherit all of it.
+
+Measured after, at 375 / 768 / 1024 / 1440px: **zero** rendered text below 12px
+and **zero** horizontal overflow at any width. The rendered size histogram
+collapses onto the scale — 12 / 13 / 14 / 16 / 18 for everything except the
+headings and the two hero optical sizes. All four exit-gate greps return
+nothing.
+
+*Four deviations from the spec, all deliberate:*
+
+1. **The input-fill token is `obsidian-775`, not `obsidian-825`.** In this ramp
+   a higher number is *darker* (950 is the page, 700 the strongest elevation).
+   `#12151E` is lighter than `800` (`#0F1117`) and darker than `750`
+   (`#141721`), so it belongs between those two. `825` would have claimed it
+   sits between `850` and `800`, which is false, and every later phase would
+   have inherited a misordered ramp.
+2. **Three `trace` steps, not two.** The spec offered `line` / `node` "or
+   equivalent", but three distinct greys were actually in use, and two of them
+   encode the simulator's active-vs-idle node ring. Collapsing them would have
+   quietly removed a state distinction, so the ramp is `trace-node` (idle),
+   `trace-line` (window dots, dashed connectors) and `trace-active` (running or
+   done). All three are decorative; the rings sit inside `aria-hidden`.
+3. **`lib/tokens.ts` is new**, holding `OBSIDIAN_950`. The spec asked for the
+   `themeColor` metadata to come from "one exported constant"; this is the only
+   arrangement where the Tailwind config and `app/layout.tsx` read the *same*
+   literal and physically cannot drift.
+4. **`#12151E` had 3 usages, not the 4 the spec states.** No consequence.
+
+*What actually changed size.* The 28 sub-12px usages rise to the 12px floor
+(+0.5 to +2px each) — that is the intended change. Beyond it: `xs` is now 13px
+rather than Tailwind's 12, so the 13 monospace `text-xs` usages were moved to
+`text-mono-xs` and hold 12px exactly, unchanged. Six further arbitrary values
+snapped onto the scale: 12.5 → 12 or 13, 13.5 → 14, 15 → 16. The only element
+that grew without being below the floor is the header CTA (12 → 13px). The
+Footer — the spec's stated risk, with 8 of the 28 — needed no spacing
+adjustment: it still reads as a list at 375px with its 19px gaps intact.
+
+No text colour, position or layout changed, so contrast is untouched.
 
 ---
 
@@ -260,9 +318,9 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | Not started |
+| 1 | Homepage Restructure | **In progress** · 1/10 slices |
 | 2 | Multipage & SEO | Not started |
-| 3 | Backend & Go-Live | Not started · **← LAUNCH** · may run first, Val deciding |
+| 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
 | 6 | English | Not started |
@@ -287,9 +345,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Item | Found in | Target phase |
 |---|---|---|
 | Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill class strings duplicated ~16× with drifting opacity | Audit | 1 |
-| 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) should be tokens | Audit | 1 |
-| `ArchitectureTrace` dashed connector uses raw `zinc-700` — tokenise | Audit | 1 |
-| `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` — tokenise alongside the trace connector | S0.5 | 1 |
 | `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Inbound payload received`) on a Greek page. The invented numbers were removed in S0.10; the Greek rewrite is what remains | S0.8 | 1 |
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
@@ -302,14 +357,26 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Three "Τεχνική αρχιτεκτονική" buttons at 39px and the simulator run button at 38px — a few pixels under 44 | S0.12 | 1 |
 | Contact card: phone link 28px tall, email 34px, WhatsApp and Telegram 34px each — all under 44 | S0.12 | 1 |
 | Brand button in the header is 168×20px — 20px tall, under both 44 and 24 | S0.12 | 1 |
-| 28 usages of 10–11.5px text across 7 files (Footer 8, ShowcaseGrid 5, PipelineSimulator 4, AuditForm 4, DirectContactCard 3, Navbar 2, HeroSection 2). Contrast passes; size is the issue | S0.12 | 1 |
 | Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
 | Landing pattern puts Proof (logos, stats, case studies) between hero and solution; the homepage has no proof section at all | S0.12 | 1 structure · 5 assets |
+| 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
 | Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
+
+### Closed during Phase 1
+
+Kept per §7.5 — completed work collapses, it does not disappear. S1.10 folds
+this into the phase summary.
+
+| Item | Found in | Closed by |
+|---|---|---|
+| 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) | Audit | S1.1 |
+| `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
+| `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
+| 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
 
 ---
 

@@ -117,7 +117,7 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b bg-[#08090D]/80 backdrop-blur-md transition-colors duration-300",
+        "fixed inset-x-0 top-0 z-50 border-b bg-obsidian-950/80 backdrop-blur-md transition-colors duration-300",
         scrolled ? "border-white/[0.07]" : "border-transparent",
       )}
     >
@@ -131,7 +131,7 @@ export default function Navbar() {
           onClick={scrollToTop}
           className="group flex shrink-0 items-baseline gap-2"
         >
-          <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
+          <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
             {SITE.brand}
           </span>
         </button>
@@ -157,7 +157,7 @@ export default function Navbar() {
           <div className="group relative hidden xl:block">
             <a
               href={`tel:${SITE.phoneTel}`}
-              className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.15] hover:text-white"
+              className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.15] hover:text-white"
             >
               <Phone className="h-3 w-3 text-ink-faint" strokeWidth={2} />
               <span className="font-mono tabular-nums">{SITE.phoneDisplay}</span>
@@ -165,7 +165,7 @@ export default function Navbar() {
 
             <span
               role="tooltip"
-              className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-white/[0.08] bg-obsidian-750 px-2.5 py-1.5 font-mono text-[11px] text-ink-muted opacity-0 shadow-raise transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+              className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-white/[0.08] bg-obsidian-750 px-2.5 py-1.5 font-mono text-mono-xs text-ink-muted opacity-0 shadow-raise transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
             >
               {`Δευτ-Παρ: ${SITE.hoursShort}`}
             </span>
@@ -223,7 +223,7 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-white/[0.07] bg-[#08090D]/95 backdrop-blur-xl lg:hidden"
+              className="overflow-hidden border-t border-white/[0.07] bg-obsidian-950/95 backdrop-blur-xl lg:hidden"
             >
               <div className="space-y-5 px-5 pb-7 pt-4 sm:px-8">
                 <ul>
@@ -239,7 +239,7 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={() => goTo(link.id)}
-                        className="flex w-full items-center justify-between border-b border-white/[0.05] py-3.5 text-[15px] text-zinc-400 transition-colors duration-200 hover:text-white"
+                        className="flex w-full items-center justify-between border-b border-white/[0.05] py-3.5 text-base text-zinc-400 transition-colors duration-200 hover:text-white"
                       >
                         {link.label}
                         <ArrowRight
@@ -262,7 +262,7 @@ export default function Navbar() {
                     <span className="font-mono text-sm text-white tabular-nums">
                       {SITE.phoneDisplay}
                     </span>
-                    <span className="font-mono text-[11px] text-ink-faint">
+                    <span className="font-mono text-mono-xs text-ink-faint">
                       {`Δευτ-Παρ: ${SITE.hoursShort}`}
                     </span>
                   </span>

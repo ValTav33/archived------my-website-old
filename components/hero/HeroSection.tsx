@@ -46,7 +46,7 @@ export default function HeroSection() {
           <div className="lg:col-span-7">
             {/* ---- Live availability pill ---- */}
             <div className={RISE} style={delay(0)}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-xs text-zinc-400">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-mono-xs text-zinc-400">
                 {/* The single chromatic element in the layout: a live dot. */}
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
@@ -103,10 +103,10 @@ export default function HeroSection() {
                   strokeWidth={1.8}
                 />
                 <span className="flex flex-col text-left">
-                  <span className="font-mono text-[13.5px] text-white tabular-nums">
+                  <span className="font-mono text-sm text-white tabular-nums">
                     Κλήση: {SITE.phoneDisplay}
                   </span>
-                  <span className="font-mono text-[11px] text-ink-faint">
+                  <span className="font-mono text-mono-xs text-ink-faint">
                     {SITE.hoursShort}
                   </span>
                 </span>
@@ -115,7 +115,7 @@ export default function HeroSection() {
 
             {/* ---- Micro-trust footer ---- */}
             <ul
-              className={`${RISE} mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11.5px] uppercase tracking-[0.1em] text-ink-faint`}
+              className={`${RISE} mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-mono-xs uppercase tracking-[0.1em] text-ink-faint`}
               style={delay(320)}
             >
               {TRUST_POINTS.map((point, index) => (

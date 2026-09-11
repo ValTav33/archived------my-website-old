@@ -36,22 +36,22 @@ export default function Footer() {
           {/* ---------------- Col 1 · Identity & coordinates -------------- */}
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
+              <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
                 {SITE.brand}
               </span>
             </div>
 
-            <p className="mt-4 font-mono text-[11.5px] text-ink-faint tabular-nums">
+            <p className="mt-4 font-mono text-mono-xs text-ink-faint tabular-nums">
               {SITE.geoStamp}
             </p>
-            <p className="mt-1 text-[12.5px] text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-400">
               {SITE.locationLabel}
             </p>
 
             {/* Status pill — the single chromatic element in the footer. The
                 dot signals availability for work, which is a fact we control,
                 not uptime, which we owe nobody. */}
-            <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-[10.5px] tracking-wider text-zinc-400">
+            <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-mono-xs tracking-wider text-zinc-400">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
@@ -62,14 +62,14 @@ export default function Footer() {
 
           {/* -------------------- Col 2 · Core tracks --------------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
               Υπηρεσίες
             </h3>
             {/* Plain text, not links: there are no dedicated service pages
                 yet, and a link to nowhere is worse than no link. */}
             <ul className="mt-4 space-y-2.5">
               {CORE_TRACKS.map((track) => (
-                <li key={track} className="text-[12.5px] leading-relaxed text-zinc-400">
+                <li key={track} className="text-xs leading-relaxed text-zinc-400">
                   {track}
                 </li>
               ))}
@@ -78,7 +78,7 @@ export default function Footer() {
 
           {/* --------------------- Col 3 · Navigation --------------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
               Πλοήγηση
             </h3>
             <ul className="mt-4 space-y-2.5">
@@ -86,7 +86,7 @@ export default function Footer() {
                 <li key={link.id}>
                   <a
                     href={navHref(link)}
-                    className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
+                    className="text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -97,7 +97,7 @@ export default function Footer() {
 
           {/* ------------------ Col 4 · Social & protocols ---------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <h3 className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
               Επικοινωνία
             </h3>
             <ul className="mt-4 space-y-2.5">
@@ -107,7 +107,7 @@ export default function Footer() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
+                    className="text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -117,7 +117,7 @@ export default function Footer() {
 
             <a
               href="#"
-              className="group mt-5 inline-flex items-center gap-1.5 font-mono text-[11.5px] text-ink-faint transition-colors duration-200 hover:text-white"
+              className="group mt-5 inline-flex items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
             >
               Επιστροφή στην αρχή
               <ArrowUp
@@ -130,10 +130,10 @@ export default function Footer() {
 
         {/* ---------------------------- Sub-bar --------------------------- */}
         <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[11px] text-ink-ghost">
+          <p className="font-mono text-mono-xs text-ink-ghost">
             © {YEAR}. Κατασκευασμένο με Next.js, Tailwind &amp; TypeScript.
           </p>
-          <p className="font-mono text-[11px] text-ink-ghost">
+          <p className="font-mono text-mono-xs text-ink-ghost">
             Ο κώδικας παραδίδεται δικός σας — χωρίς εξάρτηση από πλατφόρμα.
           </p>
         </div>

@@ -121,20 +121,20 @@ export default function PipelineSimulator() {
   const badgeLabel = isRunning ? "RUNNING" : isComplete ? "DONE" : "READY";
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#0D0F16] shadow-panel">
+    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-obsidian-850 shadow-panel">
       {/* --------------------------- Window chrome -------------------------- */}
       <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
         </div>
 
-        <span className="truncate font-mono text-xs text-ink-faint">
+        <span className="truncate font-mono text-mono-xs text-ink-faint">
           pipeline-lead-engine.ts
         </span>
 
-        <span className="ml-auto flex shrink-0 items-center gap-1.5 rounded border border-white/[0.08] px-1.5 py-0.5 font-mono text-[10px] tracking-[0.12em] text-ink-muted">
+        <span className="ml-auto flex shrink-0 items-center gap-1.5 rounded border border-white/[0.08] px-1.5 py-0.5 font-mono text-mono-xs tracking-[0.12em] text-ink-muted">
           {/* The only colour in the component: a 6px live-status dot. */}
           <span className="h-1.5 w-1.5 rounded-full bg-live" />
           {badgeLabel}
@@ -162,7 +162,7 @@ export default function PipelineSimulator() {
       <div className="border-t border-white/[0.07] bg-obsidian-950/60 px-4 py-3">
         <div
           ref={logViewRef}
-          className="scrollbar-slim h-[92px] space-y-1 overflow-y-auto font-mono text-[11.5px] leading-relaxed"
+          className="scrollbar-slim h-[92px] space-y-1 overflow-y-auto font-mono text-mono-xs leading-relaxed"
           aria-live="polite"
         >
           {logs.length === 0 ? (
@@ -196,7 +196,7 @@ export default function PipelineSimulator() {
           onClick={runSimulation}
           disabled={isRunning}
           className={cn(
-            "w-full rounded-lg border px-4 py-2.5 font-mono text-xs transition-colors duration-200",
+            "w-full rounded-lg border px-4 py-2.5 font-mono text-mono-xs transition-colors duration-200",
             isRunning
               ? "cursor-not-allowed border-white/[0.06] bg-white/[0.02] text-ink-ghost"
               : "border-white/[0.12] bg-white/[0.03] text-white hover:border-white/[0.22] hover:bg-white/[0.07]",
@@ -247,7 +247,7 @@ function PipelineStep({
       {/* Slot number — the constant left rail of the monitor. */}
       <span
         className={cn(
-          "shrink-0 font-mono text-[11px] tabular-nums transition-colors duration-500",
+          "shrink-0 font-mono text-mono-xs tabular-nums transition-colors duration-500",
           isActive || isDone ? "text-ink-muted" : "text-ink-ghost",
         )}
       >
@@ -256,7 +256,7 @@ function PipelineStep({
 
       <p
         className={cn(
-          "min-w-0 flex-1 truncate font-mono text-[12.5px] transition-colors duration-500",
+          "min-w-0 flex-1 truncate font-mono text-mono-xs transition-colors duration-500",
           isActive || isDone ? "text-white" : "text-ink-muted",
         )}
       >
@@ -277,7 +277,7 @@ function PipelineStep({
         ) : (
           <span
             className={cn(
-              "font-mono text-[10px] tracking-[0.12em] transition-colors duration-300",
+              "font-mono text-mono-xs tracking-[0.12em] transition-colors duration-300",
               isActive ? "text-white" : "text-ink-ghost",
             )}
           >
@@ -299,7 +299,7 @@ function Connector({ status }: { status: LinkStatus }) {
       <div
         className={cn(
           "absolute inset-0 border-l border-dashed transition-colors duration-500",
-          isDone || isTracing ? "border-zinc-600" : "border-zinc-800",
+          isDone || isTracing ? "border-trace-active" : "border-trace-node",
         )}
       />
 
