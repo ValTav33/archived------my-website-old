@@ -202,7 +202,7 @@ export default function PipelineSimulator() {
           onClick={runSimulation}
           disabled={isRunning}
           className={cn(
-            "w-full rounded-lg border px-4 py-2.5 font-mono text-mono-xs transition-colors duration-200",
+            "flex min-h-tap w-full items-center justify-center rounded-lg border px-4 py-2.5 font-mono text-mono-xs transition-colors duration-200",
             isRunning
               ? "cursor-not-allowed border-hairline bg-white/[0.02] text-ink-ghost"
               : "border-white/[0.12] bg-white/[0.03] text-white hover:border-white/[0.22] hover:bg-white/[0.07]",

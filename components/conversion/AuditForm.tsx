@@ -175,7 +175,7 @@ export default function AuditForm() {
           <button
             type="button"
             onClick={reset}
-            className="btn-secondary mt-6 px-4 py-2.5 text-xs"
+            className="btn-secondary mt-6 min-h-tap px-4 py-2.5 text-xs"
           >
             Νέο αίτημα
           </button>

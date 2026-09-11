@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.2 · 2026-09-11 (UI primitives — and an S1.1 regression caught and fixed)
+**Last slice:** S1.3 · 2026-09-11 (tap targets — 22 elements raised to 44×44)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -30,7 +30,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 
 - [x] **S1.1** Tokens — surfaces, hairlines, type scale · 2026-09-11
 - [x] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot · 2026-09-11
-- [ ] **S1.3** Tap targets raised to 44×44
+- [x] **S1.3** Tap targets raised to 44×44 · 2026-09-11
 - [ ] **S1.4** Push the client boundary down
 - [ ] **S1.5** Greek pass on the pipeline simulator
 - [ ] **S1.6** Proof strip
@@ -134,6 +134,52 @@ renders its 230px panel. Lint, typecheck and build clean.
 *Two things deleted rather than migrated.* `.panel` in `globals.css` was dead
 code — nothing referenced it, and `Card tone="glass"` is now that pattern.
 `btn-secondary`'s raw `0.08` border moved onto the token.
+
+**S1.3.** A full `getBoundingClientRect` sweep at 375px **with the mobile
+drawer open** found 22 interactive elements under the bar — seven more than
+the spec's table, because S0.12 measured the page as it stood in Phase 0 and
+never opened the drawer. The extra five were the header CTA (40), the drawer
+CTA (40), the desktop navigation links (20, only visible from 1024px up), the
+showcase banner CTA (42, only under 44 once it stops wrapping at 768px) and
+the success-state "Νέο αίτημα" button, which renders only after a submit
+succeeds. The skip link's focus state was the sixth.
+
+**Result: zero elements under 44 in either axis, at 375 / 768 / 1024 / 1440.**
+31–34 interactive elements measured per width, smallest box exactly 44×44, no
+horizontal overflow anywhere.
+
+*The 44 lives in one place.* Tailwind 3.4's `minHeight` scale does not carry
+the spacing steps, so the choice was `min-h-[44px]` typed into fifteen
+components or a named token. `tailwind.config.ts` gains
+`minHeight: { tap: "44px" }` and its `minWidth` twin, consumed as
+`min-h-tap` — playbook §6's rule as a single greppable value, with the S0.12
+correction (WCAG 2.2 AA's web requirement is 24px; 44 is our own bar) written
+beside it.
+
+*Deviation from the spec's fix column, and the reason.* The table prescribes
+`py-2.5` and `py-3`. Neither reaches 44 on this type scale: a 13px caption has
+an 18px line box, so `py-2.5` yields 38 and `py-3` yields 42 — the exact
+height the showcase banner CTA was already failing at. `min-h-tap` with the
+existing padding left in place hits 44 exactly, grows only the hit area, and
+leaves every element that already cleared the bar untouched.
+
+*What moved.* The nine footer links became full-row hit areas (343×44), and
+their two lists dropped `space-y-2.5` because the hit areas now set the
+rhythm — pitch went from 34px to 44px, and the footer still reads as a list
+rather than a stack of buttons. The plain-text services list keeps its
+spacing, since nothing in it is clickable. The brand button went from
+`items-baseline` to `items-center`; it has one child, so the wordmark does not
+move. Nothing else changed position and no type size changed — S1.1 owns
+those.
+
+*Still verified, and still not verified.* The drawer opens, Escape closes it
+and focus returns to the hamburger with `aria-expanded="false"`. The skip link
+is the one control that could not be measured: the Browser pane runs hidden,
+so `document.hasFocus()` is false, `:focus` never matches and the `focus:`
+variants never apply — the same limitation Phase 0 recorded. Its compiled rule
+was checked in the stylesheet instead
+(`focus\:min-h-tap:focus{min-height:44px}`), but seeing it render belongs to
+Val's keyboard pass.
 
 ---
 
@@ -372,7 +418,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 2/10 slices |
+| 1 | Homepage Restructure | **In progress** · 3/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -405,11 +451,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
-| Mobile menu button renders 36×36px — under the 44×44px DoD rule (passes WCAG 2.2 AA's 24px web minimum) | S0.12 | 1 |
-| Nine footer links render 15px tall ("Επιστροφή στην αρχή" 17px) — under the 44×44px rule. They clear WCAG 2.2 AA only via the spacing exception: 19px gaps give 34px centre-to-centre, over the 24px circle | S0.12 | 1 |
-| Three "Τεχνική αρχιτεκτονική" buttons at 39px and the simulator run button at 38px — a few pixels under 44 | S0.12 | 1 |
-| Contact card: phone link 28px tall, email 34px, WhatsApp and Telegram 34px each — all under 44 | S0.12 | 1 |
-| Brand button in the header is 168×20px — 20px tall, under both 44 and 24 | S0.12 | 1 |
 | Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
 | Landing pattern puts Proof (logos, stats, case studies) between hero and solution; the homepage has no proof section at all | S0.12 | 1 structure · 5 assets |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
@@ -429,6 +470,11 @@ this into the phase summary.
 |---|---|---|
 | 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) | Audit | S1.1 |
 | Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill string duplicated ~16× with drifting opacity | Audit | S1.2 |
+| Mobile menu button 36×36 | S0.12 | S1.3 |
+| Nine footer links 15–17px tall | S0.12 | S1.3 |
+| Three "Τεχνική αρχιτεκτονική" buttons at 39px, simulator run button at 38px | S0.12 | S1.3 |
+| Contact card: phone 28px, email 34px, WhatsApp and Telegram 34px | S0.12 | S1.3 |
+| Brand button 168×20 | S0.12 | S1.3 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |

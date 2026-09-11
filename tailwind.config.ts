@@ -87,6 +87,16 @@ const config: Config = {
         sm: ["0.875rem", { lineHeight: "1.25rem" }], // 14 — secondary body
         base: ["1rem", { lineHeight: "1.5rem" }], // 16 — body
       },
+      /* The tap-target floor, as one value in one place — playbook §6's
+         Definition-of-Done rule. Deliberately NOT `44px` typed into fifteen
+         components: if the bar ever moves it moves here.
+
+         Note the correction recorded in S0.12: WCAG 2.2 AA's web requirement
+         is 24×24 CSS px, which every control on this site already cleared.
+         44 is our own bar, chosen for a phone-first Greek SMB audience, so
+         missing it is a quality failure and not a conformance one. */
+      minHeight: { tap: "44px" },
+      minWidth: { tap: "44px" },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],

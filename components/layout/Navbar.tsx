@@ -130,7 +130,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={scrollToTop}
-          className="group flex shrink-0 items-baseline gap-2"
+          className="group flex min-h-tap shrink-0 items-center gap-2"
         >
           <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
             {SITE.brand}
@@ -144,7 +144,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => goTo(link.id)}
-                className="text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
+                className="inline-flex min-h-tap items-center text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
               >
                 {link.label}
               </button>
@@ -160,7 +160,7 @@ export default function Navbar() {
               as="a"
               href={`tel:${SITE.phoneTel}`}
               interactive
-              className="py-1.5 hover:text-white"
+              className="min-h-tap py-1.5 hover:text-white"
             >
               <Phone className="h-3 w-3 text-ink-faint" strokeWidth={2} />
               <span className="tabular-nums">{SITE.phoneDisplay}</span>
@@ -180,7 +180,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => goTo("audit")}
-            className="btn-primary hidden px-4 py-2 text-xs sm:inline-flex"
+            className="btn-primary hidden min-h-tap px-4 py-2 text-xs sm:inline-flex"
           >
             Δωρεάν Audit
           </button>
@@ -192,7 +192,7 @@ export default function Navbar() {
             onClick={() => (open ? closeDrawer(true) : setOpen(true))}
             aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
             aria-expanded={open}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
           >
             {open ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.8} />
@@ -274,7 +274,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => goTo("audit")}
-                  className="btn-primary flex w-full px-4 py-2.5 text-sm"
+                  className="btn-primary flex min-h-tap w-full px-4 py-2.5 text-sm"
                 >
                   Δωρεάν Audit
                 </button>

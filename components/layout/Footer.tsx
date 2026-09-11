@@ -81,12 +81,12 @@ export default function Footer() {
             <Eyebrow as="h3" variant="label">
               Πλοήγηση
             </Eyebrow>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4">
               {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
                 <li key={link.id}>
                   <a
                     href={navHref(link)}
-                    className="text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                    className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -100,14 +100,14 @@ export default function Footer() {
             <Eyebrow as="h3" variant="label">
               Επικοινωνία
             </Eyebrow>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4">
               {SOCIAL_LINKS.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                    className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -117,7 +117,7 @@ export default function Footer() {
 
             <a
               href="#"
-              className="group mt-5 inline-flex items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
+              className="group mt-5 inline-flex min-h-tap items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
             >
               Επιστροφή στην αρχή
               <ArrowUp

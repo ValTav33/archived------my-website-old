@@ -21,7 +21,7 @@ const GUARANTEES = [
    with their own padding, and forcing them into the pill primitive would
    have changed their geometry. */
 const CHANNEL_LINK =
-  "inline-flex items-center gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white";
+  "inline-flex min-h-tap items-center gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white";
 
 /**
  * The left rail of the conversion section: credibility and an immediate,
@@ -54,7 +54,7 @@ export default function DirectContactCard() {
           <div className="min-w-0">
             <a
               href={`tel:${SITE.phoneTel}`}
-              className="block font-mono text-lg font-medium text-white transition-colors duration-200 hover:text-zinc-300 tabular-nums"
+              className="flex min-h-tap items-center font-mono text-lg font-medium text-white transition-colors duration-200 hover:text-zinc-300 tabular-nums"
             >
               {SITE.phoneDisplay}
             </a>

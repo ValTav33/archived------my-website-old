@@ -140,7 +140,7 @@ export default function ShowcaseGrid() {
           <button
             type="button"
             onClick={() => scrollToId("audit")}
-            className="btn-primary shrink-0 px-5 py-3 text-xs"
+            className="btn-primary min-h-tap shrink-0 px-5 py-3 text-xs"
           >
             Σχεδιάστε τη λύση σας — Κλείστε ένα 15-λεπτο Audit
           </button>
@@ -216,7 +216,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           onClick={() => setOpen((previous) => !previous)}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex w-full items-center justify-between gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3.5 py-2.5 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white"
+          className="flex min-h-tap w-full items-center justify-between gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3.5 py-2.5 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white"
         >
           Τεχνική αρχιτεκτονική
           <ChevronDown
