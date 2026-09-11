@@ -4,11 +4,17 @@
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
 
-**Current phase:** 0 — Closeout
-**Branch:** `phase/0-closeout`
-**Spec:** `docs/phases/PHASE-0-CLOSEOUT.md`
+**Current phase:** between phases — Phase 0 is complete and closed out
+**Branch:** `main`
+**Spec:** next phase spec not yet written
 **Last slice:** S0.12 · 2026-09-11 (first skill review — 9 findings logged, 5 rejected)
 **Blocked on:** nothing.
+
+> **Next phase undecided.** Val is choosing whether Phase 3 (Backend &
+> Go-Live) runs ahead of Phases 1 and 2. The argument for jumping: the site is
+> already public and indexable, and `deliverAuditRequest` is still a stub — a
+> submitted form is validated and then discarded while the visitor is told
+> they will hear back within 24 hours. Playbook §12 rates that Severe.
 
 > **The site is live but NOT launched.** `deliverAuditRequest` is still a stub:
 > a submitted form is validated and then discarded, while the visitor is told
@@ -19,7 +25,7 @@
 
 ---
 
-## Phase 0 — Closeout 🔄 IN PROGRESS
+## Phase 0 — Closeout ✅ MERGED 2026-09-11 (`9a23cbc`)
 
 Close the gaps between Phase 0's objective and what actually shipped, then
 install UI UX Pro Max as an advisory reviewer. No new sections, no redesign,
@@ -34,7 +40,7 @@ stale backlog row, and the two manual checks that were never run.
 - [x] **S0.10** Truth pass — numbers, structured data, labels · 2026-09-11
 - [x] **S0.11** Install UI UX Pro Max with a locked-design guardrail · 2026-09-11
 - [x] **S0.12** First skill review (read-only) · 2026-09-11
-- [ ] Closeout — Val's phone + keyboard passes, merge, production check, Lighthouse
+- [x] Closeout — manual passes, merge, production check, Lighthouse · 2026-09-11
 
 **S0.9.** The EL|EN pill rendered in two places, the desktop utility row and
 the mobile drawer, putting `aria-pressed` on four buttons that changed
@@ -134,6 +140,43 @@ quality bar, not a conformance requirement — every "below 44px" row in the
 Backlog still passes WCAG 2.2 AA. Worth knowing before someone files them as
 audit failures.
 
+### Closeout — verified on LIVE production, 2026-09-11
+
+Squash-merged as `9a23cbc` and pushed. Vercel deployment
+`dpl_8aQpcqJD6iYNkLcWyChxB85qeiiB` is READY on target `production` and its
+commit SHA matches the merge — no stale-deploy drift this time (contrast with
+the Phase 0 merge, where production sat on `867f6a1` for eight commits).
+
+`https://tavlikossystems.com` served fresh and checked directly: JSON-LD reads
+`"inLanguage":"el"`, and the markup contains no EL/EN toggle, no `Latency`, no
+`score 0.91` and no "Business Email".
+
+| Metric (mobile) | Budget | Phase 0 | Now |
+|---|---|---|---|
+| Performance | ≥ 90 | 95 | **97** |
+| Accessibility | **100** | 100 | **100** |
+| Best Practices | ≥ 95 | 96 | **96** |
+| SEO | ≥ 95 | 100 | **100** |
+
+Zero failing accessibility audits. Best Practices stays at 96 for the same
+reason as before — `/favicon.ico` 404s, and the favicon is a Phase 2
+deliverable (`app/icon.tsx`, playbook §2.3).
+
+**Manual checks.** Val ran the phone pass and the keyboard pass on 2026-09-11
+and reported both fine. They were run against the **pre-closeout** build, by
+his choice — he elected to publish first and test the new build afterwards.
+Everything those checks cover is unchanged except the mobile drawer, which
+S0.9 edited. The drawer was verified programmatically at 375px: focus trap
+wraps in both directions, Escape closes it and returns focus to the hamburger
+with `aria-expanded="false"`, and the CTA measures 335px inside a 375px
+viewport. A quick re-check of the drawer on the live build is worth doing but
+nothing is blocked on it.
+
+This closeout was committed directly to `main` after the merge, matching the
+precedent set by `4ed610f` at the end of Phase 0. Playbook §5 otherwise
+forbids committing to `main`; a post-merge docs commit recording a production
+measurement cannot exist on the branch it describes.
+
 ---
 
 ## Phase 0 — Truth & Foundations ✅ MERGED 2026-09-11 (`07038ea`)
@@ -219,7 +262,7 @@ miss and the score still clears the Phase 0 budget.
 |---|---|---|
 | 1 | Homepage Restructure | Not started |
 | 2 | Multipage & SEO | Not started |
-| 3 | Backend & Go-Live | Not started · **← LAUNCH** |
+| 3 | Backend & Go-Live | Not started · **← LAUNCH** · may run first, Val deciding |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
 | 6 | English | Not started |
@@ -233,6 +276,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Merged | Result |
 |---|---|---|---|
 | 0 | Truth & Foundations | 2026-09-11 · `07038ea` | 8 slices. Placeholders, wrong identity data, sub-AA contrast, unprotected form and PII logging all removed. Live Lighthouse mobile: **95 / 100 / 96 / 100**. |
+| 0 | Closeout | 2026-09-11 · `9a23cbc` | 4 slices. Dead language toggle, invented hero metrics and the false English claim removed; ui-ux-pro-max installed as an advisory reviewer with a `CLAUDE.md` guardrail; first review logged 9 backlog findings and rejected 5 recommendations. Live Lighthouse mobile: **97 / 100 / 96 / 100**. |
 
 ---
 
