@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
 import { NAV_LINKS } from "@/lib/nav";
 import { SITE } from "@/lib/site";
+import Badge from "@/components/ui/Badge";
 import { cn, scrollToId, scrollToTop } from "@/lib/utils";
 
 export default function Navbar() {
@@ -118,7 +119,7 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b bg-obsidian-950/80 backdrop-blur-md transition-colors duration-300",
-        scrolled ? "border-white/[0.07]" : "border-transparent",
+        scrolled ? "border-hairline" : "border-transparent",
       )}
     >
       <nav
@@ -155,17 +156,19 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {/* Direct phone pill + hover/focus tooltip with office hours. */}
           <div className="group relative hidden xl:block">
-            <a
+            <Badge
+              as="a"
               href={`tel:${SITE.phoneTel}`}
-              className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.02] px-3 py-1.5 text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.15] hover:text-white"
+              interactive
+              className="py-1.5 hover:text-white"
             >
               <Phone className="h-3 w-3 text-ink-faint" strokeWidth={2} />
-              <span className="font-mono tabular-nums">{SITE.phoneDisplay}</span>
-            </a>
+              <span className="tabular-nums">{SITE.phoneDisplay}</span>
+            </Badge>
 
             <span
               role="tooltip"
-              className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-white/[0.08] bg-obsidian-750 px-2.5 py-1.5 font-mono text-mono-xs text-ink-muted opacity-0 shadow-raise transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+              className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md border border-hairline bg-obsidian-750 px-2.5 py-1.5 font-mono text-mono-xs text-ink-muted opacity-0 shadow-raise transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
             >
               {`Δευτ-Παρ: ${SITE.hoursShort}`}
             </span>
@@ -189,7 +192,7 @@ export default function Navbar() {
             onClick={() => (open ? closeDrawer(true) : setOpen(true))}
             aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
             aria-expanded={open}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-white/[0.15] hover:text-white lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
           >
             {open ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.8} />
@@ -223,7 +226,7 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-white/[0.07] bg-obsidian-950/95 backdrop-blur-xl lg:hidden"
+              className="overflow-hidden border-t border-hairline bg-obsidian-950/95 backdrop-blur-xl lg:hidden"
             >
               <div className="space-y-5 px-5 pb-7 pt-4 sm:px-8">
                 <ul>
@@ -239,7 +242,7 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={() => goTo(link.id)}
-                        className="flex w-full items-center justify-between border-b border-white/[0.05] py-3.5 text-base text-zinc-400 transition-colors duration-200 hover:text-white"
+                        className="flex w-full items-center justify-between border-b border-hairline py-3.5 text-base text-zinc-400 transition-colors duration-200 hover:text-white"
                       >
                         {link.label}
                         <ArrowRight
@@ -255,7 +258,7 @@ export default function Navbar() {
                     on a touch device. */}
                 <a
                   href={`tel:${SITE.phoneTel}`}
-                  className="flex items-center gap-3 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3.5 py-3 transition-colors duration-200 hover:border-white/[0.15] hover:bg-white/[0.04]"
+                  className="flex items-center gap-3 rounded-lg border border-hairline bg-white/[0.02] px-3.5 py-3 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.04]"
                 >
                   <Phone className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
                   <span className="flex flex-col">

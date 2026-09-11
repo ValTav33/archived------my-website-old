@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.1 · 2026-09-11 (tokens — surfaces, decorative greys, type scale)
+**Last slice:** S1.2 · 2026-09-11 (UI primitives — and an S1.1 regression caught and fixed)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -29,7 +29,7 @@ down the design-system debt the Phase 0 audit logged against this phase.
 Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 
 - [x] **S1.1** Tokens — surfaces, hairlines, type scale · 2026-09-11
-- [ ] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot
+- [x] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot · 2026-09-11
 - [ ] **S1.3** Tap targets raised to 44×44
 - [ ] **S1.4** Push the client boundary down
 - [ ] **S1.5** Greek pass on the pipeline simulator
@@ -80,6 +80,60 @@ Footer — the spec's stated risk, with 8 of the 28 — needed no spacing
 adjustment: it still reads as a list at 375px with its 19px gaps intact.
 
 No text colour, position or layout changed, so contrast is untouched.
+
+**S1.2.** Five primitives in `components/ui/`, and all eight consumers moved
+onto them. The pill class string was written 14 times with four different
+border/fill opacity combinations; the card shell 6 times; the status dot
+twice; the `[ 01 // ]` eyebrow twice and its uppercase sibling six times.
+
+*The page now paints exactly one structural hairline.* Measured on the
+rendered document, not in the source: 252 white border edges at
+`rgba(255,255,255,0.07)` and nothing else, where before 0.05, 0.06, 0.07 and
+0.08 were all on screen at once. The only other white border left is
+`0.12` on four edges — the simulator's run button and its completed node,
+which are a control emphasis pair rather than a hairline. Backlogged, not
+silently folded in.
+
+**The hairline values follow the playbook, not the spec.** S1.2's text says to
+keep the card's `0.18` as the single hover value; §10.3 names `0.07` structural
+and `0.15` hover, and `globals.css` has declared exactly that pair as
+`--hairline` / `--hairline-strong` since Phase 0. The playbook governs the spec
+(`CLAUDE.md`, and the spec's own header), so the two values are now
+`hairline` and `hairline-strong` **Tailwind tokens** — which also means §10.3
+is greppable for the first time. Reverting to 0.08/0.18 is a two-line change in
+`tailwind.config.ts` if Val disagrees.
+
+*An S1.1 regression, found by this slice and fixed here.* `tailwind-merge`
+knows Tailwind's own font-size scale but not ours. It classified
+`text-mono-xs` as a **text colour**, so `cn("text-mono-xs", "text-zinc-400")`
+returned only `text-zinc-400` and the element silently inherited the 16px body
+size. S1.1 shipped that on three pipeline-simulator elements; routing every
+badge through `cn` in this slice spread it to twenty-one and made it visible as
+a 512px-taller document. `lib/utils.ts` now registers the step in the
+`font-size` class group. The rendered histogram at 375px moved from 98 to 119
+elements at 12px, and 19 down to 9 at 16px.
+
+Worth recording why S1.1's verification missed it: that check asked "is any
+text below 12px?" and the answer was honestly no — the broken elements were at
+**16px**, above the floor, not below it. A floor check cannot catch text that
+is too large. The before/after geometry diff this slice ran is what caught it,
+and it is the check worth keeping.
+
+*Verified.* A `getBoundingClientRect` fingerprint of eleven key elements was
+captured after the refactor, the slice was stashed, the fingerprint recaptured
+on the pre-slice tree, and the two compared. Every element matches to the pixel
+except the showcase card, which measures 719.5px and rounds either way — the
+category badge went from `inline-block` to `inline-flex` and the line box lands
+half a pixel differently. Document height is 31px shorter, which is the
+simulator text returning to its intended 12px. Zero text below 12px and zero
+horizontal overflow at 375 / 768 / 1024 / 1440. One `h1`, two `h2`s, six `h3`s
+— the footer's three eyebrows kept their heading level through `Eyebrow`'s
+`as` prop. The architecture accordion still toggles `aria-expanded` and still
+renders its 230px panel. Lint, typecheck and build clean.
+
+*Two things deleted rather than migrated.* `.panel` in `globals.css` was dead
+code — nothing referenced it, and `Card tone="glass"` is now that pattern.
+`btn-secondary`'s raw `0.08` border moved onto the token.
 
 ---
 
@@ -318,7 +372,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 1/10 slices |
+| 1 | Homepage Restructure | **In progress** · 2/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -344,7 +398,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 
 | Item | Found in | Target phase |
 |---|---|---|
-| Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill class strings duplicated ~16× with drifting opacity | Audit | 1 |
 | `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Inbound payload received`) on a Greek page. The invented numbers were removed in S0.10; the Greek rewrite is what remains | S0.8 | 1 |
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
@@ -359,6 +412,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Brand button in the header is 168×20px — 20px tall, under both 44 and 24 | S0.12 | 1 |
 | Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
 | Landing pattern puts Proof (logos, stats, case studies) between hero and solution; the homepage has no proof section at all | S0.12 | 1 structure · 5 assets |
+| `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
@@ -374,6 +428,7 @@ this into the phase summary.
 | Item | Found in | Closed by |
 |---|---|---|
 | 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) | Audit | S1.1 |
+| Extract `Badge` / `Card` / `SectionHeader` / `Eyebrow` primitives — pill string duplicated ~16× with drifting opacity | Audit | S1.2 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |

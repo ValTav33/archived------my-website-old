@@ -11,6 +11,7 @@ import {
   type AuditFieldErrors,
   type AuditPayload,
 } from "@/lib/audit";
+import Card from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
 /*
@@ -30,7 +31,7 @@ const FIELD_BASE =
 const fieldTone = (hasError: boolean) =>
   hasError
     ? "border-red-500/40 focus:border-red-500/60"
-    : "border-white/[0.08] focus:border-white/[0.25]";
+    : "border-hairline focus:border-white/[0.25]";
 
 export default function AuditForm() {
   const [values, setValues] = useState<AuditPayload>(EMPTY_AUDIT_PAYLOAD);
@@ -141,11 +142,7 @@ export default function AuditForm() {
   /* ------------------------ Success confirmation ------------------------ */
   if (status === "success") {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="rounded-xl border border-white/[0.08] bg-obsidian-850 p-6 md:p-8"
-      >
+      <Card role="status" aria-live="polite" className="p-6 md:p-8">
         <div className="flex flex-col items-start">
           <span
             aria-hidden
@@ -167,13 +164,13 @@ export default function AuditForm() {
             λεπτών και θα στείλουμε τη γραπτή σύνοψη εντός 24 ωρών.
           </p>
 
-          <div className="mt-6 w-full rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5 font-mono text-mono-xs">
+          <Card tone="sunken" className="mt-6 w-full p-3.5 font-mono text-mono-xs">
             <p className="text-ink-ghost">$ audit --status</p>
             <p className="mt-2 flex gap-2 text-zinc-300">
               <span className="text-ink-ghost">01</span>
               Το αίτημα καταχωρήθηκε · απάντηση εντός 24 ωρών
             </p>
-          </div>
+          </Card>
 
           <button
             type="button"
@@ -183,16 +180,17 @@ export default function AuditForm() {
             Νέο αίτημα
           </button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   /* ------------------------------- Form -------------------------------- */
   return (
-    <form
+    <Card
+      as="form"
       onSubmit={handleSubmit}
       noValidate
-      className="rounded-xl border border-white/[0.08] bg-obsidian-850 p-6 md:p-8"
+      className="p-6 md:p-8"
     >
       {/* Honeypot. Hidden from sight, from the tab order and from assistive
           tech — a human cannot reach it, so anything in it is a bot. */}
@@ -397,7 +395,7 @@ export default function AuditForm() {
         κινήσεις, εντός 24 ωρών. Τα στοιχεία σας χρησιμοποιούνται μόνο για
         αυτό.
       </p>
-    </form>
+    </Card>
   );
 }
 

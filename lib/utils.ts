@@ -1,5 +1,25 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+/**
+ * tailwind-merge knows Tailwind's own font-size scale by heart, but not ours.
+ * `text-mono-xs` — our 12px floor — is not in its table, so out of the box it
+ * guesses the class is a TEXT COLOUR and lets any later `text-<colour>` delete
+ * it: `cn("text-mono-xs", "text-zinc-400")` returned `"text-zinc-400"` alone,
+ * and the element silently inherited the 16px body size instead. Every badge
+ * on the page did exactly that.
+ *
+ * Registering the step in the `font-size` group fixes the classification: it
+ * now conflicts with `text-sm` and `text-base`, which is correct, and with no
+ * colour at all. Any future custom font-size step must be added here too.
+ */
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [{ text: ["mono-xs"] }],
+    },
+  },
+});
 
 /**
  * Merge conditional class names, letting later Tailwind utilities win over

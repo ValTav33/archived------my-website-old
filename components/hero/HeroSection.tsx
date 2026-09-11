@@ -2,6 +2,8 @@
 
 import { ArrowRight, Phone } from "lucide-react";
 import PipelineSimulator from "@/components/hero/PipelineSimulator";
+import Badge from "@/components/ui/Badge";
+import StatusDot from "@/components/ui/StatusDot";
 import { SITE } from "@/lib/site";
 import { scrollToId } from "@/lib/utils";
 
@@ -46,16 +48,13 @@ export default function HeroSection() {
           <div className="lg:col-span-7">
             {/* ---- Live availability pill ---- */}
             <div className={RISE} style={delay(0)}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-mono-xs text-zinc-400">
+              <Badge variant="status">
                 {/* The single chromatic element in the layout: a live dot. */}
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
-                </span>
+                <StatusDot />
                 Διαθέσιμοι για νέα projects
                 <span className="text-ink-ghost">•</span>
                 <span className="text-ink-faint">Θεσσαλονίκη &amp; Remote</span>
-              </span>
+              </Badge>
             </div>
 
             {/* ---- Headline: solid white, no gradient mask ---- */}
@@ -96,7 +95,7 @@ export default function HeroSection() {
               {/* Secondary: matte glass card with the direct line + hours. */}
               <a
                 href={`tel:${SITE.phoneTel}`}
-                className="btn-secondary group gap-3 px-5 py-2.5 hover:border-white/[0.15]"
+                className="btn-secondary group gap-3 px-5 py-2.5 hover:border-hairline-strong"
               >
                 <Phone
                   className="h-4 w-4 shrink-0 text-ink-faint transition-colors duration-200 group-hover:text-zinc-300"

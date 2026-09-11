@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import Eyebrow from "@/components/ui/Eyebrow";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { cn, scrollToId } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -100,26 +104,17 @@ export default function ShowcaseGrid() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         {/* ---------------------------- Header --------------------------- */}
-        <header className="max-w-3xl">
-          {/* Emerald is reserved for live status dots — playbook §2.4. Both
-              section eyebrows use the neutral label token. */}
-          <p className="font-mono text-mono-xs tracking-wider text-ink-ghost">
-            [ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]
-          </p>
+        {/* Emerald is reserved for live status dots — playbook §2.4. Both
+            section eyebrows use the neutral label token.
 
-          {/* Named "ενδεικτικές" on purpose. These describe systems we build,
-              not projects we have shipped and can name — content truth policy
-              §8.2. The heading has to say so before the cards do. */}
-          <h2 className="mt-4 text-3xl font-semibold leading-[1.15] tracking-[-0.025em] text-white sm:text-4xl lg:text-[2.75rem]">
-            Ενδεικτικές Αρχιτεκτονικές.
-          </h2>
-
-          <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
-            Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που
-            κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα πρώτα ονομαστικά
-            case studies προστίθενται σύντομα.
-          </p>
-        </header>
+            Named "ενδεικτικές" on purpose. These describe systems we build,
+            not projects we have shipped and can name — content truth policy
+            §8.2. The heading has to say so before the cards do. */}
+        <SectionHeader
+          eyebrow="[ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]"
+          title="Ενδεικτικές Αρχιτεκτονικές."
+          lede="Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα πρώτα ονομαστικά case studies προστίθενται σύντομα."
+        />
 
         {/* ----------------------------- Grid ---------------------------- */}
         {/* Cards stretch to a common row height, so every "View Architecture"
@@ -133,7 +128,10 @@ export default function ShowcaseGrid() {
         </div>
 
         {/* --------------------- Transition banner ----------------------- */}
-        <div className="mt-14 flex flex-col items-start justify-between gap-5 rounded-xl border border-white/[0.08] bg-white/[0.015] px-6 py-6 sm:flex-row sm:items-center">
+        <Card
+          tone="glass"
+          className="mt-14 flex flex-col items-start justify-between gap-5 px-6 py-6 sm:flex-row sm:items-center"
+        >
           <p className="text-sm text-zinc-400 sm:text-base">
             Χρειάζεστε ένα custom σύστημα προσαρμοσμένο στις δικές σας
             λειτουργίες;
@@ -146,7 +144,7 @@ export default function ShowcaseGrid() {
           >
             Σχεδιάστε τη λύση σας — Κλείστε ένα 15-λεπτο Audit
           </button>
-        </div>
+        </Card>
       </div>
     </section>
   );
@@ -163,12 +161,14 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
   const panelId = `${item.id}-architecture`;
 
   return (
-    <article className="flex flex-col justify-between rounded-xl border border-white/[0.08] bg-obsidian-850 p-6 transition-colors duration-300 hover:border-white/[0.18]">
+    <Card
+      as="article"
+      interactive
+      className="flex flex-col justify-between p-6"
+    >
       <div>
         {/* Category */}
-        <span className="inline-block rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-mono-xs text-zinc-300">
-          {item.category}
-        </span>
+        <Badge shape="tag">{item.category}</Badge>
 
         <h3 className="mt-5 text-lg font-semibold leading-snug text-zinc-100">
           {item.title}
@@ -183,12 +183,9 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
         {/* Stack */}
         <ul className="mt-5 flex flex-wrap gap-1.5">
           {item.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-md border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 font-mono text-mono-xs text-zinc-300"
-            >
+            <Badge as="li" key={tech} shape="tag">
               {tech}
-            </li>
+            </Badge>
           ))}
         </ul>
 
@@ -196,15 +193,18 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
             one line each instead of wrapping mid-phrase. */}
         <ul className="mt-5 flex flex-col items-start gap-1.5">
           {item.metrics.map((metric) => (
-            <li
+            <Badge
+              as="li"
               key={metric}
-              className="flex items-baseline gap-1.5 rounded-md border border-white/[0.06] bg-white/[0.02] px-2.5 py-1 font-mono text-mono-xs text-zinc-400"
+              variant="metric"
+              shape="tag"
+              className="items-baseline gap-1.5"
             >
               <span aria-hidden className="text-decor">
                 •
               </span>
               {metric}
-            </li>
+            </Badge>
           ))}
         </ul>
       </div>
@@ -216,7 +216,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           onClick={() => setOpen((previous) => !previous)}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3.5 py-2.5 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+          className="flex w-full items-center justify-between gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3.5 py-2.5 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white"
         >
           Τεχνική αρχιτεκτονική
           <ChevronDown
@@ -246,7 +246,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           )}
         </AnimatePresence>
       </div>
-    </article>
+    </Card>
   );
 }
 
@@ -257,9 +257,7 @@ function ShowcaseCard({ item }: { item: ShowcaseCase }) {
 function Field({ label, body }: { label: string; body: string }) {
   return (
     <div>
-      <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
-        {label}
-      </p>
+      <Eyebrow variant="label">{label}</Eyebrow>
       <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">{body}</p>
     </div>
   );
@@ -271,10 +269,8 @@ function Field({ label, body }: { label: string; body: string }) {
  */
 function ArchitectureTrace({ nodes }: { nodes: readonly string[] }) {
   return (
-    <div className="mt-3 rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5">
-      <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
-        $ trace --flow
-      </p>
+    <Card tone="sunken" className="mt-3 p-3.5">
+      <Eyebrow variant="label">$ trace --flow</Eyebrow>
 
       <ol className="mt-3">
         {nodes.map((node, index) => (
@@ -295,6 +291,6 @@ function ArchitectureTrace({ nodes }: { nodes: readonly string[] }) {
           </li>
         ))}
       </ol>
-    </div>
+    </Card>
   );
 }

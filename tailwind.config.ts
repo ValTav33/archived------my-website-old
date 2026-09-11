@@ -49,6 +49,15 @@ const config: Config = {
         decor: {
           DEFAULT: "#475569",
         },
+        /* The two hairline values, and the only two — playbook §10.3.
+           `globals.css` has always declared exactly this pair as `--hairline`
+           and `--hairline-strong`; these are the Tailwind side of the same
+           decision, so a component can no longer invent a 0.06 or an 0.18.
+           Consumed as `border-hairline` / `hover:border-hairline-strong`. */
+        hairline: {
+          DEFAULT: "rgba(255,255,255,0.07)",
+          strong: "rgba(255,255,255,0.15)",
+        },
         /* Decorative structure inside the pipeline and architecture widgets:
            window dots, dashed connectors, node rings. Cool greys on the same
            axis as the surfaces, unlike the neutral `zinc-*` these replaced.

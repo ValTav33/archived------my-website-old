@@ -1,3 +1,4 @@
+import Badge from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
 /* The infrastructure this studio actually builds on. Order is deliberate:
@@ -21,7 +22,7 @@ export default function TechStackStrip() {
   return (
     <section
       aria-label="Τεχνολογίες"
-      className="border-y border-white/[0.07] py-10 sm:py-12"
+      className="border-y border-hairline py-10 sm:py-12"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <p className="text-center font-mono text-mono-xs uppercase tracking-widest text-ink-faint">
@@ -42,12 +43,14 @@ export default function TechStackStrip() {
           )}
         >
           {STACK.map((tech) => (
-            <li
+            <Badge
+              as="li"
               key={tech}
-              className="shrink-0 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1 font-mono text-mono-xs text-zinc-400 transition-colors duration-200 hover:border-white/[0.15] hover:text-zinc-200"
+              interactive
+              className="shrink-0 text-zinc-400 hover:text-zinc-200"
             >
               {tech}
-            </li>
+            </Badge>
           ))}
         </ul>
       </div>

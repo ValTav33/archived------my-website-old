@@ -1,5 +1,8 @@
 import { Mail, MessageCircle, Phone, Send } from "lucide-react";
 import { SITE } from "@/lib/site";
+import Card from "@/components/ui/Card";
+import Eyebrow from "@/components/ui/Eyebrow";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 /* Operational facts, stated flatly. These answer what a Greek business
    actually asks before calling: what exactly do I get, how fast, from where,
@@ -13,6 +16,13 @@ const GUARANTEES = [
   "Χωρίς δεσμεύσεις: ο κώδικας κάθε έργου παραδίδεται δικός σας",
 ] as const;
 
+/* One string for the three alternative-channel links, which were three
+   identical copies of it. Not a `Badge`: these are rounded-lg action rows
+   with their own padding, and forcing them into the pill primitive would
+   have changed their geometry. */
+const CHANNEL_LINK =
+  "inline-flex items-center gap-2 rounded-lg border border-hairline bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-hairline-strong hover:bg-white/[0.05] hover:text-white";
+
 /**
  * The left rail of the conversion section: credibility and an immediate,
  * form-free way to make contact — for visitors who would rather call than
@@ -21,30 +31,23 @@ const GUARANTEES = [
 export default function DirectContactCard() {
   return (
     <div>
-      <p className="font-mono text-mono-xs tracking-wider text-ink-ghost">
-        [ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]
-      </p>
-
       {/* The conversion section's heading. An h2 rather than an h3 because
           nothing above it in the section carries one — it is the section's
-          own title, not a subheading of the form beside it. */}
-      <h2
+          own title, not a subheading of the form beside it. `compact` because
+          this header sits in a column the grid has already narrowed. */}
+      <SectionHeader
+        as="div"
         id="audit-heading"
-        className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.02em] text-white sm:text-3xl"
-      >
-        Ας συζητήσουμε την υποδομή της επιχείρησής σας.
-      </h2>
-
-      <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
-        Είτε χρειάζεστε ανακατασκευή της ιστοσελίδας σας σε Next.js είτε
-        αυτοματοποίηση των καθημερινών σας διαδικασιών, είμαστε διαθέσιμοι για
-        άμεση αξιολόγηση.
-      </p>
+        size="compact"
+        eyebrow="[ 02 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]"
+        title="Ας συζητήσουμε την υποδομή της επιχείρησής σας."
+        lede="Είτε χρειάζεστε ανακατασκευή της ιστοσελίδας σας σε Next.js είτε αυτοματοποίηση των καθημερινών σας διαδικασιών, είμαστε διαθέσιμοι για άμεση αξιολόγηση."
+      />
 
       {/* -------------------------- Direct line -------------------------- */}
-      <div className="mt-8 rounded-xl border border-white/[0.08] bg-obsidian-850 p-5">
+      <Card className="mt-8 p-5">
         <div className="flex items-start gap-3.5">
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-hairline bg-white/[0.03] text-zinc-400">
             <Phone className="h-4 w-4" strokeWidth={1.8} />
           </span>
 
@@ -60,7 +63,7 @@ export default function DirectContactCard() {
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* ------------------------- Operational facts ---------------------- */}
       <ul className="mt-6 space-y-2.5">
@@ -78,15 +81,13 @@ export default function DirectContactCard() {
       </ul>
 
       {/* ----------------------- Alternative channels --------------------- */}
-      <div className="mt-8 border-t border-white/[0.07] pt-6">
-        <p className="font-mono text-mono-xs uppercase tracking-[0.16em] text-ink-ghost">
-          Εναλλακτικά
-        </p>
+      <div className="mt-8 border-t border-hairline pt-6">
+        <Eyebrow variant="label">Εναλλακτικά</Eyebrow>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <a
             href={`mailto:${SITE.email}`}
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className={CHANNEL_LINK}
           >
             <Mail className="h-3.5 w-3.5 text-ink-faint" strokeWidth={1.8} />
             {SITE.email}
@@ -98,7 +99,7 @@ export default function DirectContactCard() {
             href={SITE.social.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className={CHANNEL_LINK}
           >
             <MessageCircle
               className="h-3.5 w-3.5 text-ink-faint"
@@ -111,7 +112,7 @@ export default function DirectContactCard() {
             href={SITE.social.telegram}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 font-mono text-mono-xs text-zinc-300 transition-colors duration-200 hover:border-white/[0.18] hover:bg-white/[0.05] hover:text-white"
+            className={CHANNEL_LINK}
           >
             <Send className="h-3.5 w-3.5 text-ink-faint" strokeWidth={1.8} />
             Telegram
