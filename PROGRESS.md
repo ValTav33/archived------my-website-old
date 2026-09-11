@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.4 · 2026-09-11 (client boundary — hero and showcase shells now render on the server)
+**Last slice:** S1.5 · 2026-09-11 (Greek pass on the pipeline simulator — the last English block is gone)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -32,7 +32,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.2** UI primitives — Badge, Card, SectionHeader, Eyebrow, StatusDot · 2026-09-11
 - [x] **S1.3** Tap targets raised to 44×44 · 2026-09-11
 - [x] **S1.4** Push the client boundary down · 2026-09-11
-- [ ] **S1.5** Greek pass on the pipeline simulator
+- [x] **S1.5** Greek pass on the pipeline simulator · 2026-09-11
 - [ ] **S1.6** Proof strip
 - [ ] **S1.7** Process section
 - [ ] **S1.8** About section
@@ -239,6 +239,55 @@ section CTAs are anchors now, but `Navbar` still renders its links as
 nothing without JavaScript. S1.4's file list deliberately excludes `Navbar`
 and S1.10 rebuilds the navigation wholesale, so converting it here would be
 work done twice. The row is retargeted to S1.10 rather than marked done.
+
+**S1.5.** The simulator was the last English block on a Greek page, and it sits
+above the fold. Stage titles, log lines, status labels, the idle prompt and the
+run button are Greek now. What stayed: `lead`, `AI agent`, `CRM` — nouns a
+Greek professional says out loud — and `exit 0`, a terminal convention rather
+than a word.
+
+`source=web_form` did **not** stay. A key=value pair with a Greek key reads as
+neither language, so line 1 just says where the lead came from. The button lost
+its `(Simulate Lead)` gloss, which was the last mixed-language string on the
+page (§11.3, one language per list).
+
+*Greek runs longer than English, and this widget truncates.* The first draft
+was measured rather than eyeballed and three of three step titles were being
+cut at 375px — the worst losing 58px, about eight characters. The titles were
+rewritten shorter twice until all three fit with zero truncation. That is the
+right shape anyway: the titles are labels, and the log lines underneath carry
+the detail and wrap freely.
+
+**Final measurement, at 375 / 768 / 1024 / 1440, in all three run states:**
+badge on one line every time, **zero** truncation on the filename and on all
+three titles, six log lines ending on `Η ροή ολοκληρώθηκε · exit 0`, no
+horizontal overflow in the log lane or the page. 1024px is the tightest case
+(the widget is 377px there, narrower than on a phone) and it passes.
+
+*Three deviations from the spec, all forced by width:*
+
+1. `QUEUED` → **`ΑΝΑΜΟΝΗ`**, not the spec's `ΣΕ ΑΝΑΜΟΝΗ`. The chip renders on
+   every pending row; the two extra characters cost ~22px of title width on
+   the narrowest layout, and `ΑΝΑΜΟΝΗ` is idiomatic on its own.
+2. The chrome filename is **`lead-engine.ts`**, shortened from
+   `pipeline-lead-engine.ts`. `ΟΛΟΚΛΗΡΩΘΗΚΕ` is twelve characters where `DONE`
+   was four, and `truncate` was eating eight characters off the end of the
+   name — a filename cut mid-word reads as broken rather than tidy. The
+   shorter name matches the showcase's `lead-engine` case id.
+3. The run button's `(Simulate Lead)` gloss is gone, which the spec's change
+   list did not cover but its own rationale demands.
+
+*A false alarm worth recording so nobody re-chases it.* In a screenshot the
+capital `Έ` in "Έναυσμα" appears to have lost its accent. It has not. Rendering
+the glyph to a canvas and counting ink: `Ε` is 444 pixels in a box starting at
+x=24, `Έ` is 497 pixels starting at **x=14** — 53 extra pixels, ten of them to
+the *left* of the letter, which is exactly where Greek typography puts the
+tonos on a capital. At 12px that is roughly one pixel of ink and it disappears
+in a scaled screenshot. The font subset is fine: `U+0388` sits inside the
+loaded `U+384-38A` range.
+
+No number was introduced. S0.10 removed an invented latency and an invented
+lead score from this component; §8.1 keeps them out.
 
 ---
 
@@ -477,7 +526,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 4/10 slices |
+| 1 | Homepage Restructure | **In progress** · 5/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -503,7 +552,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 
 | Item | Found in | Target phase |
 |---|---|---|
-| `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Inbound payload received`) on a Greek page. The invented numbers were removed in S0.10; the Greek rewrite is what remains | S0.8 | 1 |
 | Navbar still renders nav links as `<button onClick>`: announced as buttons, not links, and dead without JS. S1.4 gave the footer and both section CTAs a shared `ScrollLink`; the navbar is the remaining half, and S1.10 rebuilds that markup anyway | Audit · half-closed S1.4 | 1 · S1.10 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
@@ -534,6 +582,7 @@ this into the phase summary.
 | Contact card: phone 28px, email 34px, WhatsApp and Telegram 34px | S0.12 | S1.3 |
 | Brand button 168×20 | S0.12 | S1.3 |
 | Footer "Back to top" used a bare `href="#"` | S0.3 | S1.4 |
+| `PipelineSimulator` copy entirely English on a Greek page | S0.8 | S1.5 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |

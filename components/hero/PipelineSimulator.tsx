@@ -40,20 +40,41 @@ type StepStatus = "pending" | "active" | "done";
 type LinkStatus = "idle" | "tracing" | "done";
 type LogEntry = { time: string; text: string; emphasis?: boolean };
 
+/*
+ * Greek, except for the nouns a Greek professional actually says out loud:
+ * `lead`, `AI agent`, `CRM`. Everything that was decoration — Trigger,
+ * Validation, Scoring, Sync — is translated, per playbook §11.2.
+ *
+ * Titles are kept short on purpose. The row truncates them (`min-w-0
+ * flex-1 truncate`) and Greek runs longer than English, so a title that
+ * reads fine in a mockup arrives on a 375px phone as an ellipsis. These
+ * are labels; the detail belongs to the log lines below, which wrap.
+ */
 const STEPS = [
-  { title: "Trigger: Form & Inbound Lead", activeLabel: "CAPTURING" },
-  { title: "AI Agent: Validation & Scoring", activeLabel: "ANALYZING" },
-  { title: "Action: CRM Sync & Instant Calendar", activeLabel: "SYNCING" },
+  { title: "Έναυσμα: νέο lead", activeLabel: "ΛΗΨΗ" },
+  { title: "AI agent: αξιολόγηση", activeLabel: "ΑΝΑΛΥΣΗ" },
+  { title: "Ενέργεια: CRM & κράτηση", activeLabel: "ΕΓΓΡΑΦΗ" },
 ] as const;
 
-/** Log lines emitted on entering each cursor value. */
+/**
+ * Log lines emitted on entering each cursor value.
+ *
+ * `exit 0` survives translation: it is a terminal convention, not a word,
+ * and translating it would read as a mistake to the exact visitor the
+ * terminal motif is aimed at. `source=web_form` did not survive — a
+ * key=value pair with a Greek key reads as neither one language nor the
+ * other, so the line just says where the lead came from.
+ *
+ * No measurement appears here. S0.10 removed an invented latency and an
+ * invented lead score from this component; §8.1 means none comes back.
+ */
 const STAGE_LOGS: Record<number, Omit<LogEntry, "time">[]> = {
-  1: [{ text: "Inbound payload received · source=web_form" }],
-  2: [{ text: "Normalizing fields → queue:validation" }],
-  3: [{ text: "AI agent parsing intent + budget signals" }],
-  4: [{ text: "Lead verified via AI" }],
-  5: [{ text: "CRM record written · calendar slot reserved" }],
-  6: [{ text: "Pipeline complete · exit 0", emphasis: true }],
+  1: [{ text: "Νέο lead από τη φόρμα επικοινωνίας" }],
+  2: [{ text: "Τακτοποίηση πεδίων → ουρά ελέγχου" }],
+  3: [{ text: "Έλεγχος πρόθεσης και προϋπολογισμού" }],
+  4: [{ text: "Το lead επιβεβαιώθηκε με AI" }],
+  5: [{ text: "Εγγραφή στο CRM · κράτηση ραντεβού" }],
+  6: [{ text: "Η ροή ολοκληρώθηκε · exit 0", emphasis: true }],
 };
 
 /** Wall-clock stamp, e.g. "12:04:02". Only ever called client-side, from a
@@ -121,7 +142,11 @@ export default function PipelineSimulator() {
     return "idle";
   };
 
-  const badgeLabel = isRunning ? "RUNNING" : isComplete ? "DONE" : "READY";
+  const badgeLabel = isRunning
+    ? "ΣΕ ΕΞΕΛΙΞΗ"
+    : isComplete
+      ? "ΟΛΟΚΛΗΡΩΘΗΚΕ"
+      : "ΕΤΟΙΜΟ";
 
   return (
     <Card className="overflow-hidden shadow-panel">
@@ -133,8 +158,13 @@ export default function PipelineSimulator() {
           <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
         </div>
 
+        {/* Shortened from `pipeline-lead-engine.ts` in S1.5. The Greek status
+            badge beside it is up to 12 characters where `DONE` was four, and
+            `truncate` was eating eight characters off the end of the longer
+            name — a filename cut mid-word reads as broken rather than tidy.
+            The shorter name matches the showcase's `lead-engine` case id. */}
         <span className="truncate font-mono text-mono-xs text-ink-faint">
-          pipeline-lead-engine.ts
+          lead-engine.ts
         </span>
 
         <Badge
@@ -173,7 +203,7 @@ export default function PipelineSimulator() {
         >
           {logs.length === 0 ? (
             <p className="text-ink-ghost">
-              $ awaiting trigger
+              $ αναμονή για έναυσμα
               <span className="ml-0.5 animate-caret-blink">▋</span>
             </p>
           ) : (
@@ -215,7 +245,7 @@ export default function PipelineSimulator() {
           ) : isComplete ? (
             "Επανάληψη Προσομοίωσης"
           ) : (
-            "Εκτέλεση Προσομοίωσης (Simulate Lead)"
+            "Εκτέλεση Προσομοίωσης"
           )}
         </button>
       </div>
@@ -287,7 +317,7 @@ function PipelineStep({
               isActive ? "text-white" : "text-ink-ghost",
             )}
           >
-            {isActive ? step.activeLabel : "QUEUED"}
+            {isActive ? step.activeLabel : "ΑΝΑΜΟΝΗ"}
           </span>
         )}
       </span>
