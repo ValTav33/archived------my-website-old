@@ -7,7 +7,7 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.5 · 2026-09-11 (Greek pass on the pipeline simulator — the last English block is gone)
+**Last slice:** S1.6 · 2026-09-11 (proof strip — the first named client on the site)
 **Blocked on:** nothing.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -33,7 +33,7 @@ Front end only. Spec: `docs/phases/PHASE-1-HOMEPAGE.md`.
 - [x] **S1.3** Tap targets raised to 44×44 · 2026-09-11
 - [x] **S1.4** Push the client boundary down · 2026-09-11
 - [x] **S1.5** Greek pass on the pipeline simulator · 2026-09-11
-- [ ] **S1.6** Proof strip
+- [x] **S1.6** Proof strip · 2026-09-11
 - [ ] **S1.7** Process section
 - [ ] **S1.8** About section
 - [ ] **S1.9** FAQ section
@@ -289,6 +289,72 @@ loaded `U+384-38A` range.
 No number was introduced. S0.10 removed an invented latency and an invented
 lead score from this component; §8.1 keeps them out.
 
+**S1.6.** The page made a claim in the hero and then asked for a lead with
+nothing in between. `ProofStrip` sits directly under the hero and names two
+things that exist: **BTL Industries** and **roz-inn.com**. Both trace to
+decision-log rows from 2026-09-09 — BTL cleared for naming (freelance
+engagement, no NDA), roz-inn confirmed live and linkable. The link was
+re-checked before publishing it: `HTTP 200`, redirecting to `www.`.
+
+*Outcome before mechanism, §11.4.* Val's description of the BTL system names
+eight vendors. None of them is in the sentence a visitor reads, because a
+clinic owner who meets "FullEnrich, BetterContact, ZoomInfo" learns nothing and
+hears someone else's suppliers. The line says what the system does — finds and
+verifies contacts, researches each lead, writes a personalised opener, loads
+the campaign — and the eight tools sit underneath as a `Badge` row, where they
+read as evidence instead of name-dropping.
+
+*What is deliberately absent.* roz-inn.com's booking and payment build is in
+progress, so it does not appear at all — not even as "σε εξέλιξη", which reads
+as padding (§8.5). No logos: a logo needs permission separate from a name, and
+BTL's is not cleared. **No numbers anywhere** — a `\d` sweep over the rendered
+section returns zero digits.
+
+*The testimonial slot is built and renders nothing.* While `TESTIMONIALS` is
+empty there is no card, no skeleton and no "coming soon", and the grid closes
+from three columns to two as if the slot were never declared. Phase 0 spent
+eight slices removing placeholders; this is the shape one grows back in.
+
+*Data lives in `lib/site.ts`*, not in the component, so Phase 2's `/work` index
+reads this array instead of forking the copy.
+
+**Verified at 375 / 768 / 1024 / 1440:** zero tap targets under 44, zero text
+below 12px, no horizontal overflow. Page order is now
+hero → proof → tech → solutions → audit, heading order runs h1 → h2 → h3 with
+no skips, and the external link carries `target="_blank"` with
+`rel="noopener noreferrer"` plus a screen-reader note that it opens in a new
+tab.
+
+*A measurement trap worth recording.* The first contrast sweep reported the
+tool badges at **2.56:1**, a hard-gate failure. The badges were fine; the
+sampler was not. It walked up for the nearest non-transparent background and
+found `rgba(255,255,255,0.02)` — then parsed the first three numbers and
+treated it as opaque **white**. Re-run with real alpha compositing over the
+page ground, every text node in the section passes: worst case **5.37:1**, the
+badges **7.19:1**. Any future contrast check on this codebase must composite
+translucent layers, because this design system is built almost entirely out of
+them.
+
+### Open question for Val — raised by S1.6, deliberately not decided
+
+The showcase's third card, `lead-engine`, describes the BTL system and sits
+under **"Ενδεικτικές Αρχιτεκτονικές"** — *indicative* architectures, explicitly
+"συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών". That framing
+was correct when nothing could be named. BTL is now named twenty pixels further
+up the page, which makes the same system appear twice: once as proof and once
+as a hypothesis.
+
+Three options, none of them actioned:
+
+1. Leave it. The proof strip carries the name; the showcase stays a capability
+   catalogue. Cheapest, and the mismatch is subtle.
+2. Split the delivered project out of the indicative set, so the showcase holds
+   two hypotheses and BTL is only ever proof.
+3. Re-frame the whole section once `/work` exists in Phase 2.
+
+The phase spec says explicitly not to decide this inside a slice, because it
+changes a heading Phase 0 wrote on purpose.
+
 ---
 
 ## Phase 0 — Closeout ✅ MERGED 2026-09-11 (`9a23cbc`)
@@ -526,7 +592,7 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **In progress** · 5/10 slices |
+| 1 | Homepage Restructure | **In progress** · 6/10 slices |
 | 2 | Multipage & SEO | Not started |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
@@ -559,7 +625,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
 | Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
-| Landing pattern puts Proof (logos, stats, case studies) between hero and solution; the homepage has no proof section at all | S0.12 | 1 structure · 5 assets |
+| Proof strip ships with two named references and an empty testimonial slot. The **assets** half is still open: Fiverr quotes, screenshots and Val's photo | S0.12 · structure closed S1.6 | 5 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
@@ -583,6 +649,7 @@ this into the phase summary.
 | Brand button 168×20 | S0.12 | S1.3 |
 | Footer "Back to top" used a bare `href="#"` | S0.3 | S1.4 |
 | `PipelineSimulator` copy entirely English on a Greek page | S0.8 | S1.5 |
+| No proof section between the hero's claim and the form (structure half) | S0.12 | S1.6 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` | Audit | S1.1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |

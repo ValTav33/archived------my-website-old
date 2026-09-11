@@ -136,3 +136,89 @@ export const SERVICE_CATALOG = [
   "Lead Generation & Outreach Pipelines",
   "Client Portals & Admin Dashboards",
 ] as const;
+
+/* ------------------------------------------------------------------ */
+/*  Delivered work                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Work that has actually shipped, kept here rather than inside the component
+ * so Phase 2's `/work` index reads this array instead of forking the copy.
+ *
+ * Everything below traces to a decision-log row or to Val's own words:
+ * BTL Industries is cleared for naming (playbook §14, 2026-09-09, freelance
+ * engagement with no NDA in force) and `roz-inn.com` is confirmed live and
+ * linkable (§14, same date; re-checked 2026-09-11, HTTP 200).
+ *
+ * Two rules govern additions here:
+ *
+ *   §8.1  No numbers. Not leads processed, not emails sent, not match rates.
+ *   §8.5  If it is not built, it is not on the page. roz-inn.com's booking
+ *         and payment build is in progress, so it is absent — it goes in the
+ *         day it ships, not as "σε εξέλιξη", which reads as padding.
+ */
+export type ProofItem = {
+  id: string;
+  /** Typeset name only. A logo needs permission separate from a name. */
+  name: string;
+  /** What it is, in three or four words. */
+  kind: string;
+  /** What it does for the client — outcome before mechanism, §11.4. */
+  summary: string;
+  /** A URL a visitor can open right now, when one exists. */
+  href?: string;
+  /** Tooling, rendered as badges. Only what was genuinely used. */
+  stack?: readonly string[];
+};
+
+export const PROOF: readonly ProofItem[] = [
+  {
+    id: "btl",
+    name: "BTL Industries",
+    kind: "Κατασκευαστής ιατροτεχνολογικού εξοπλισμού",
+    /* The vendor names are deliberately NOT in this sentence. A clinic owner
+       reading "FullEnrich, BetterContact, ZoomInfo" learns nothing and hears
+       someone else's suppliers; what the system DOES is the claim. The tools
+       go in the badge row underneath, where they read as evidence. */
+    summary:
+      "Βρίσκει και επιβεβαιώνει στοιχεία επικοινωνίας, μελετά κάθε υποψήφιο πελάτη, γράφει προσωποποιημένο πρώτο email και φορτώνει την καμπάνια.",
+    stack: [
+      "FullEnrich",
+      "BetterContact",
+      "ZoomInfo",
+      "LinkedIn",
+      "Google Sheets",
+      "Perplexity",
+      "OpenAI",
+      "Instantly",
+    ],
+  },
+  {
+    id: "roz-inn",
+    name: "roz-inn.com",
+    kind: "Ζωντανός ιστότοπος πελάτη",
+    summary: "Ιστοσελίδα παρουσίασης με γκαλερί φωτογραφιών.",
+    /* Resolves to www. with a redirect; the bare form is linked because it is
+       also what the card displays, and a link that reads differently from
+       where it goes is its own small dishonesty. */
+    href: "https://roz-inn.com",
+  },
+] as const;
+
+/**
+ * Client quotes. **Deliberately empty.**
+ *
+ * `ProofStrip` renders nothing at all while this is empty — no skeleton, no
+ * "coming soon", no greyed-out card. Phase 0 spent eight slices removing
+ * placeholders and this is exactly the shape one grows back in.
+ *
+ * Fills in Phase 5, once Val picks the Fiverr quotes (open question Q4).
+ * §8.4: every quote is attributed — a name, or role + sector + city.
+ */
+export type Testimonial = {
+  quote: string;
+  /** Name, or role + sector + city. Anonymous praise reads as invented. */
+  attribution: string;
+};
+
+export const TESTIMONIALS: readonly Testimonial[] = [];
