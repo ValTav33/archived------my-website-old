@@ -4,10 +4,10 @@
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
 
-**Current phase:** between phases — 0 is merged and live, 1 not started
-**Branch:** `main`
-**Spec:** next phase spec not yet written
-**Last slice:** S0.6 · 2026-09-11 (origin allowlist — found by the exit gate)
+**Current phase:** 0 — Closeout
+**Branch:** `phase/0-closeout`
+**Spec:** `docs/phases/PHASE-0-CLOSEOUT.md`
+**Last slice:** S0.12 · 2026-09-11 (first skill review — 9 findings logged, 5 rejected)
 **Blocked on:** nothing.
 
 > **The site is live but NOT launched.** `deliverAuditRequest` is still a stub:
@@ -16,6 +16,123 @@
 > launch gate. Playbook §12 rates this Severe — consider bringing Phase 3
 > forward ahead of Phases 1 and 2, since the site is already public and
 > indexable, which is not what the phase order assumed.
+
+---
+
+## Phase 0 — Closeout 🔄 IN PROGRESS
+
+Close the gaps between Phase 0's objective and what actually shipped, then
+install UI UX Pro Max as an advisory reviewer. No new sections, no redesign,
+no backend. Spec: `docs/phases/PHASE-0-CLOSEOUT.md`.
+
+Opened because a post-merge review found six things Phase 0's own exit gate
+had not caught — a dead toggle, invented numbers above the fold, a false
+language claim in the structured data, one English label in a Greek form, a
+stale backlog row, and the two manual checks that were never run.
+
+- [x] **S0.9** Remove the dead language toggle · 2026-09-11
+- [x] **S0.10** Truth pass — numbers, structured data, labels · 2026-09-11
+- [x] **S0.11** Install UI UX Pro Max with a locked-design guardrail · 2026-09-11
+- [x] **S0.12** First skill review (read-only) · 2026-09-11
+- [ ] Closeout — Val's phone + keyboard passes, merge, production check, Lighthouse
+
+**S0.9.** The EL|EN pill rendered in two places, the desktop utility row and
+the mobile drawer, putting `aria-pressed` on four buttons that changed
+nothing. Removing it was decided on 2026-09-09 (playbook §14) but never
+assigned to a slice, so it survived all eight Phase 0 slices. The `Language`
+type and the `lang` state went with it, and the drawer's flex wrapper too,
+leaving "Δωρεάν Audit" full width on its own row (335px inside a 375px
+viewport). Verified at 375, 768, 1024 and 1440px: zero EL/EN controls, zero
+`aria-pressed` in the header, no horizontal overflow. The drawer's focus trap
+still wraps in both directions and Escape still returns focus to the
+hamburger. Lint, typecheck and build clean.
+
+**S0.10.** Three separate truth violations, all §8. The hero simulator printed
+`Latency: 380ms` and `score 0.91` — both invented constants, sitting above the
+fold in a terminal surface that reads as real telemetry. `RUN_LATENCY_MS`, its
+comment and the whole `Latency:` log line are gone, and stage 6 now emits one
+line instead of two; the verified-lead line reads "Lead verified via AI" with
+no number attached. The JSON-LD advertised `inLanguage: ["el", "en"]` for a
+site with no English content until Phase 6 — now `"el"`, confirmed in the
+rendered page source. And the audit form's email field was labelled "Business
+Email", the one English label in a Greek form (§11.3); it reads "Email".
+
+Nothing else in the simulator moved — no timing, animation or wording changes.
+The Greek rewrite of its copy stays in the Backlog for Phase 1. Verified by
+running the simulation start to finish: six log lines, ending on
+`Pipeline complete · exit 0`, no latency and no score anywhere. Both exit-gate
+greps return nothing. Lint, typecheck and build clean.
+
+`SITE.locationLabel` was the fifth finding — a Backlog row still targeting
+Phase 0. The value had already been corrected in S0.2 to
+"Θεσσαλονίκη, Ελλάδα — εξυπηρέτηση remote", so the row was stale and is
+removed rather than actioned.
+
+**S0.11.** `ui-ux-pro-max` **2.13.0** installed at
+`.claude/skills/ui-ux-pro-max/` — 73 files, 3.6 MB. Preconditions passed:
+Node 24.15.0 (needs 20+), Python 3.9.6 (needs 3.x).
+
+**Installed from a local folder, not npm.** The spec called for
+`npx ui-ux-pro-max-cli@latest init --ai claude`; Val supplied a downloaded
+clone at `~/Desktop/ui-ux-pro-max-skill-main/` and asked for that to be used
+instead. That clone is the full marketplace payload — it ships **seven**
+skills (`ui-ux-pro-max`, `design`, `banner-design`, `ui-styling`, `brand`,
+`slides`, `design-system`). Only `ui-ux-pro-max` was copied; the other six are
+exactly what the spec's "do not use the `/plugin marketplace` install" clause
+rules out. The repo's own root `CLAUDE.md` was **not** copied — ours is
+written from the spec.
+
+Dry run before writing anything confirmed all 73 paths resolve inside
+`.claude/skills/ui-ux-pro-max/`, nothing outside. Reviewed before install:
+the scripts import stdlib only plus their own three local modules, with no
+`urllib.request`, `requests`, `socket`, `subprocess`, `os.system`, `eval` or
+`exec` anywhere — the skill is a local CSV search, not a network client.
+
+Smoke test passes from the installed path:
+`python3 .claude/skills/ui-ux-pro-max/scripts/search.py "form submit feedback"
+--domain ux -n 1` returns the Forms / Submit Feedback guideline, exit 0.
+
+`CLAUDE.md` written at the repo root with the guardrail: design locked per
+§2.4 and §10, the skill is a reviewer and never a designer, `--design-system`
+and `--persist` banned, searches restricted to `ux` / `landing` / `icons` /
+`nextjs`, playbook wins every conflict. Playbook gained the §2.6 Skills row,
+the §6 1024px check and 44×44px tap-target rule, and two §14 decision-log
+entries.
+
+ESLint needed no `.claude/**` ignore after all — the skill contains no JS or
+TS, only Python, CSV, JSON and Markdown, so `eslint .` never looks at it.
+`eslint.config.mjs` is unchanged. The iCloud `* 2.ts` duplicate issue did
+resurface in `.next` during this slice; clearing the directory fixed it, as
+the Backlog says.
+
+Note: `scripts/design_system.py` — the banned generator — ships as part of the
+skill and was kept rather than deleted, so the install matches upstream and
+stays reversible. It is governed by `CLAUDE.md`, not removed from disk.
+
+**S0.12.** Four targeted searches, no `--design-system`, no `--persist`:
+`"touch target size" --domain ux`, `"small text readability" --domain ux`,
+`"trust proof section" --domain landing`, and
+`"form validation accessibility" --stack nextjs`. Findings were measured
+against the running homepage rather than assumed — every number below is a
+rendered `getBoundingClientRect()` reading at 375px, not a class name. Nine
+went to the Backlog; five recommendations were rejected (see Notes). No code
+changed.
+
+**Three things the review cleared**, recorded so they are not re-raised:
+the audit form already satisfies the skill's "Submit Feedback" guideline —
+`role="status"` + `aria-live="polite"`, `role="alert"` on errors,
+`aria-invalid` and `aria-describedby` wired on every field, and all fields
+disabled while submitting. The honeypot is out of the tab order
+(`tabindex="-1"`) and visually hidden. And the Next.js "validate request body"
+guideline was already met in S0.6.
+
+**One correction to the rule added in S0.11.** The skill's WCAG entry is
+explicit that web conformance for Target Size (Minimum) is **24×24 CSS px**,
+and warns against treating the native 44pt / 48dp figures as web
+conformance. The playbook's new 44×44px rule is therefore a self-imposed
+quality bar, not a conformance requirement — every "below 44px" row in the
+Backlog still passes WCAG 2.2 AA. Worth knowing before someone files them as
+audit failures.
 
 ---
 
@@ -129,18 +246,46 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | 11 hardcoded hex values in components (`#0D0F16`, `#12151E`, `#08090D`) should be tokens | Audit | 1 |
 | `ArchitectureTrace` dashed connector uses raw `zinc-700` — tokenise | Audit | 1 |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` — tokenise alongside the trace connector | S0.5 | 1 |
-| `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Latency: 380ms`, `score 0.91`) on a Greek page, and its invented numbers can read as real telemetry. Outside S0.8's file list | S0.8 | 1 |
-| `SITE.locationLabel` mixes languages — "Θεσσαλονίκη, Ελλάδα (Remote Worldwide)". Fix while editing `lib/site.ts` | S0.8 | 0 (in S0.2) |
+| `PipelineSimulator` copy is entirely English (`Trigger: Form & Inbound Lead`, `Inbound payload received`) on a Greek page. The invented numbers were removed in S0.10; the Greek rewrite is what remains | S0.8 | 1 |
 | Footer uses plain anchors, Navbar uses `scrollToId` — two nav mechanisms, unify | Audit | 2 |
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
+| Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
+| Mobile menu button renders 36×36px — under the 44×44px DoD rule (passes WCAG 2.2 AA's 24px web minimum) | S0.12 | 1 |
+| Nine footer links render 15px tall ("Επιστροφή στην αρχή" 17px) — under the 44×44px rule. They clear WCAG 2.2 AA only via the spacing exception: 19px gaps give 34px centre-to-centre, over the 24px circle | S0.12 | 1 |
+| Three "Τεχνική αρχιτεκτονική" buttons at 39px and the simulator run button at 38px — a few pixels under 44 | S0.12 | 1 |
+| Contact card: phone link 28px tall, email 34px, WhatsApp and Telegram 34px each — all under 44 | S0.12 | 1 |
+| Brand button in the header is 168×20px — 20px tall, under both 44 and 24 | S0.12 | 1 |
+| 28 usages of 10–11.5px text across 7 files (Footer 8, ShowcaseGrid 5, PipelineSimulator 4, AuditForm 4, DirectContactCard 3, Navbar 2, HeroSection 2). Contrast passes; size is the issue | S0.12 | 1 |
+| Nav flips at exactly 1024px and the phone pill only appears at 1280px (`xl`), so 1024–1279 is a third nav state the old 375/768/1440 check never exercised. The new DoD 1024px check now covers it | S0.12 | 1 |
+| Landing pattern puts Proof (logos, stats, case studies) between hero and solution; the homepage has no proof section at all | S0.12 | 1 structure · 5 assets |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
 | Footer "Back to top" still uses a bare `href="#"` while the nav list now resolves `#hero` — unify when the two nav mechanisms merge | S0.3 | 2 |
+
+---
+
+## Notes — recommendations rejected
+
+From the S0.12 review. Logged so the same suggestions are not re-applied later
+by a session that has the skill loaded but not the playbook.
+
+| Recommendation | Source | Why rejected |
+|---|---|---|
+| "Navy/Grey corporate. Trust blue. Accent for CTA only." | `landing` → trust-authority-conversion | Playbook §2.4 locks monochrome with emerald for live status dots only |
+| "Testimonials: Light bg #F5F5F5. Quotes: muted #666" | `landing` → hero-testimonials-cta | Light surfaces contradict the near-black system in §2.4 and §10 |
+| "Icon color #0080FF. Text: Dark #222" | `landing` → product-demo-features | Second accent colour, and raw hex violates §10.1 (tokens only) |
+| "Star ratings gold. Verified badge green." | `landing` → product-review-ratings-focused | Two more accent colours; §10.2 allows exactly one |
+| Auto-rotating testimonial / logo carousel with pause controls | `landing` → trust-authority-conversion, hero-testimonials-cta | §2.4 bans autoplay and caps motion at scroll reveals and hovers; the accessible-carousel advice is sound but the carousel itself is out |
+
+Deferred rather than rejected: the Next.js guideline to use Server Actions for
+form mutations. The form deliberately posts to `/api/audit`, which carries the
+origin allowlist and rate limiting from S0.6. Phase 3 owns delivery and can
+weigh it then.
 
 ---
 

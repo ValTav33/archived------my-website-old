@@ -19,7 +19,7 @@ export default function JsonLd() {
     telephone: SITE.phoneTel,
     email: SITE.email,
     priceRange: "$$",
-    inLanguage: ["el", "en"],
+    inLanguage: "el",
 
     address: {
       "@type": "PostalAddress",

@@ -7,8 +7,6 @@ import { NAV_LINKS } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import { cn, scrollToId, scrollToTop } from "@/lib/utils";
 
-type Language = "EL" | "EN";
-
 export default function Navbar() {
   /* `scrolled` drives the header hairline: the border is invisible while the
      page is at the top and resolves once content slides underneath. */
@@ -16,10 +14,6 @@ export default function Navbar() {
 
   /* `open` controls the mobile drawer. */
   const [open, setOpen] = useState(false);
-
-  /* `lang` is a presentational indicator only — no i18n routing is wired up
-     yet, so toggling it just moves the highlighted segment of the EL|EN pill. */
-  const [lang, setLang] = useState<Language>("EL");
 
   /* The hamburger. Focus returns here when the drawer is dismissed, so a
      keyboard user is put back where they were rather than at the top of the
@@ -177,29 +171,7 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* Language indicator. Purely visual until i18n routing lands. */}
-          <div
-            role="group"
-            aria-label="Γλώσσα"
-            className="hidden items-center rounded-full border border-white/[0.08] bg-white/[0.02] p-0.5 sm:flex"
-          >
-            {(["EL", "EN"] as const).map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => setLang(code)}
-                aria-pressed={lang === code}
-                className={cn(
-                  "rounded-full px-2 py-1 font-mono text-[10.5px] font-semibold tracking-wider transition-colors duration-200",
-                  lang === code
-                    ? "bg-white/[0.07] text-white"
-                    : "text-ink-ghost hover:text-zinc-400",
-                )}
-              >
-                {code}
-              </button>
-            ))}
-          </div>
+          {/* The EL|EN switch returns in Phase 6, with real /en locale routing. */}
 
           {/* Primary CTA — solid white, the highest-contrast element on screen. */}
           <button
@@ -296,34 +268,13 @@ export default function Navbar() {
                   </span>
                 </a>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center rounded-full border border-white/[0.08] bg-white/[0.02] p-0.5 sm:hidden">
-                    {(["EL", "EN"] as const).map((code) => (
-                      <button
-                        key={code}
-                        type="button"
-                        onClick={() => setLang(code)}
-                        aria-pressed={lang === code}
-                        className={cn(
-                          "rounded-full px-3 py-1.5 font-mono text-[10.5px] font-semibold tracking-wider transition-colors duration-200",
-                          lang === code
-                            ? "bg-white/[0.07] text-white"
-                            : "text-ink-ghost",
-                        )}
-                      >
-                        {code}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => goTo("audit")}
-                    className="btn-primary flex-1 px-4 py-2.5 text-sm"
-                  >
-                    Δωρεάν Audit
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => goTo("audit")}
+                  className="btn-primary flex w-full px-4 py-2.5 text-sm"
+                >
+                  Δωρεάν Audit
+                </button>
               </div>
             </motion.div>
           </>

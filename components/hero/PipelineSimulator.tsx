@@ -33,9 +33,6 @@ const STAGE_DURATIONS: Record<number, number> = {
   5: 760, // CRM write + calendar hold
 };
 
-/** Reported end-to-end latency once the run completes. */
-const RUN_LATENCY_MS = 380;
-
 type StepStatus = "pending" | "active" | "done";
 type LinkStatus = "idle" | "tracing" | "done";
 type LogEntry = { time: string; text: string; emphasis?: boolean };
@@ -51,12 +48,9 @@ const STAGE_LOGS: Record<number, Omit<LogEntry, "time">[]> = {
   1: [{ text: "Inbound payload received · source=web_form" }],
   2: [{ text: "Normalizing fields → queue:validation" }],
   3: [{ text: "AI agent parsing intent + budget signals" }],
-  4: [{ text: "Lead verified via AI · score 0.91" }],
+  4: [{ text: "Lead verified via AI" }],
   5: [{ text: "CRM record written · calendar slot reserved" }],
-  6: [
-    { text: "Pipeline complete · exit 0", emphasis: true },
-    { text: `Latency: ${RUN_LATENCY_MS}ms`, emphasis: true },
-  ],
+  6: [{ text: "Pipeline complete · exit 0", emphasis: true }],
 };
 
 /** Wall-clock stamp, e.g. "12:04:02". Only ever called client-side, from a

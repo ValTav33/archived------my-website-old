@@ -148,6 +148,7 @@ banner required).
 | Tracker | `PROGRESS.md`, committed, updated after every slice |
 | Doc language | English. Site copy stays Greek. |
 | Priority | **Get a credible site live fast.** Completeness is subordinate to credibility. |
+| Skills | ui-ux-pro-max, advisory only — see CLAUDE.md |
 
 ---
 
@@ -281,7 +282,8 @@ A slice is not done until **every** line passes.
 - [ ] `npx tsc --noEmit` — clean
 - [ ] `npm run lint` — clean
 - [ ] `npm run build` — clean, zero warnings
-- [ ] Manual check at 375px, 768px and 1440px
+- [ ] Manual check at 375px, 768px, 1024px and 1440px
+- [ ] New or changed interactive elements have a tap target of at least 44×44px
 - [ ] Keyboard-only pass: every new interactive element reachable, visible focus ring, logical order
 - [ ] No new hardcoded hex values in components — tokens only
 - [ ] No new text colour below 4.5:1
@@ -496,6 +498,8 @@ Append here whenever a locked decision in §2 changes. Never edit §2 silently.
 | 2026-09-09 | BTL Industries cleared for naming | Unverified | Freelance engagement, no NDA in force |
 | 2026-09-09 | roz-inn.com cleared as a live reference | Unverified | Confirmed live and permitted |
 | 2026-09-10 | **Brand set to Tavlikos Systems; domain `tavlikossystems.com`; email `info@tavlikossystems.com`** | Bare "Tavlikos" on `tavlikos.com` with `hello@` | Val registered the domain and mailbox. This reverses the 2026-09-09 brand entry above — "Systems" is back. The name follows the domain, not the other way round. Q1 and Q6 closed; S0.2 unblocked. |
+| 2026-09-11 | **ui-ux-pro-max installed as an advisory reviewer.** Its design-system generator is banned: the generator's output for this site (light slate background, navy/blue palette, Plus Jakarta Sans) contradicts §2.4. The skill is restricted to `ux`, `landing`, `icons` and `nextjs` searches, and the playbook outranks it on any conflict. Guardrail lives in `CLAUDE.md`, which loads in every session. | No skills installed | The skill activates on any UI task and its own workflow wants to generate a design system for new pages — exactly what Phases 1 and 2 build. Useful as a reviewer, dangerous as a designer. |
+| 2026-09-11 | **Definition of Done gains a 1024px manual check and a 44×44px tap-target rule** (§6) | 375 / 768 / 1440 only, no tap-target line | The hero and nav both change layout at 1024px, which the three-width check stepped over; the mobile menu button is 36×36px, below the AA target size. |
 
 ---
 

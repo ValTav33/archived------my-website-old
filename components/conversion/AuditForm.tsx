@@ -233,7 +233,7 @@ export default function AuditForm() {
 
         <Field
           id="audit-email"
-          label="Business Email"
+          label="Email"
           required
           error={errors.email}
         >
