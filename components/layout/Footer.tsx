@@ -10,7 +10,7 @@ const CORE_TRACKS = [
   "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
   "AI εξυπηρέτηση πελατών & φωνητικοί agents",
   "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
-  "Custom dashboards για πελάτες",
+  "Dashboards διαχείρισης για πελάτες",
 ] as const;
 
 const SOCIAL_LINKS = [

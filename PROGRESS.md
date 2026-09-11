@@ -8,7 +8,7 @@
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
 **Last slice:** S1.10 · 2026-09-11 (navigation and final assembly — all ten slices done)
-**Blocked on:** nothing. **Next:** phase closeout — one open exit-gate item (see below), then the manual passes, Lighthouse and the PR.
+**Blocked on:** nothing. **Next:** phase closeout — every automated gate item now passes; what remains is Val's manual passes, Lighthouse on the preview, and the PR.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
@@ -554,7 +554,7 @@ Row closed.
 | Hero and showcase shells render on the server | ✅ 6 `"use client"` files, all genuine leaves |
 | `NAV_LINKS` resolves; every anchor lands somewhere | ✅ 14 in-page anchors, **0 broken** |
 | `npx tsc --noEmit`, `npm run lint`, `npm run build` | ✅ all clean |
-| Zero English in visitor copy except product nouns | ⚠️ **NOT MET — see below** |
+| Zero English in visitor copy except product nouns | ✅ **met at closeout** — see below |
 | Manual pass at four widths + a real phone | ⏳ Val |
 | Lighthouse mobile on the preview | ⏳ closeout |
 
@@ -562,25 +562,39 @@ Also verified, beyond the gate: tab order follows document order across 39
 focusable elements with **zero inversions and zero positive `tabindex`**, and
 no `FAQPage` schema is present in the rendered page.
 
-### The one open gate item
+### Closeout task 1 — the last English copy · ✅ done 2026-09-11
 
-**`ShowcaseGrid`'s case copy is still substantially English**, and no slice
-owned it. S1.5 translated the pipeline simulator because the S0.8 backlog row
-named that component; the showcase was never assigned. What remains:
+`ShowcaseGrid` was the one place the gate still failed, and no slice had owned
+it: S1.5 translated the pipeline simulator because the S0.8 backlog row named
+that component, and the showcase was never assigned to anyone. Done as a
+closeout step rather than inside S1.10, which is navigation and assembly.
 
-- three card titles that mix languages — e.g. «Αυτόνομο AI Concierge Portal &
-  24/7 Εξυπηρέτηση», «Custom Web Application & Ενοποιημένο Client Portal»
-- thirteen architecture-trace nodes that are English prose rather than product
-  nouns — `Instant Dynamic Response`, `Role Gate (Admin/Client)`,
-  `Real-time Status Sync`, `Waterfall Verification`, `AI Relevancy Filter`,
-  `Inbound/List Trigger`, `CRM / Outreach Tool` and similar
-- one footer track, «Custom dashboards για πελάτες»
+Translated: three mixed-language card titles, one problem statement, two
+solution statements, two stack rows and **thirteen architecture-trace nodes**
+that were English prose rather than product nouns — `Instant Dynamic
+Response`, `Role Gate (Admin/Client)`, `Real-time Status Sync`,
+`Waterfall Verification`, `AI Relevancy Filter`, `Inbound/List Trigger`,
+`CRM / Outreach Tool` and the rest. Plus the footer's «Custom dashboards».
 
-This was deliberately **not** fixed inside S1.10, which is navigation and
-assembly. It is a closeout decision, and it interacts with Val's 2026-09-11
-call to re-frame this section in Phase 2: the architecture nodes and card
-titles would survive that re-frame, so translating them is not wasted, but the
-section heading and the indicative framing around them will change.
+Kept, because a Greek professional says them: `Next.js`, `n8n`, `Supabase`,
+`PostgreSQL`, `Tailwind CSS`, `Vapi`, `LLM`, `DB`, `webhook`, `S3`, `CRM`,
+`AI`, `API`, `portal`, `dashboard`, `onboarding`, `custom`, `email`, `lead`,
+`check-in`, `spam`.
+
+*Verified two ways.* Every removed phrase was grepped for in the rendered page
+and all 21 are gone. Then every Latin-script word in `<main>` was extracted and
+checked against an explicit product-noun allow-list: **one** word remains
+outside it, `preview`, in «preview URL που μπορείτε να ανοίξετε» — kept under
+§11.2, which says to keep the English terms Greek professionals genuinely use.
+
+*And it still fits.* All thirteen new Greek nodes render on **one line each**
+at 375px, the longest being 230px in a 257px lane. Card titles stay at two
+lines, exactly as before. Zero targets under 44, zero text below 12px, no
+overflow.
+
+This does not pre-empt Val's Phase 2 decision: the re-frame changes the
+section's heading and its "indicative" framing, not the language of the nodes
+and titles, so none of this work is spent twice.
 
 ---
 
@@ -854,7 +868,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
-| **`ShowcaseGrid` case copy is still English** — three mixed-language card titles, thirteen architecture-trace nodes that are English prose rather than product nouns, and one footer track. The only unmet Phase 1 exit-gate item; bundles naturally with Val's decision to re-frame this section in Phase 2 | S1.10 exit gate | 2 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
@@ -882,6 +895,7 @@ this into the phase summary.
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
 | Footer and Navbar used two different nav mechanisms | Audit | S1.4 + S1.10 |
 | 1024–1279px was a third, unexercised nav state | S0.12 | S1.10 |
+| `ShowcaseGrid` case copy still English — titles, trace nodes, stack rows | S1.10 exit gate | closeout |
 | `PipelineSimulator` node ring uses raw `border-zinc-600` / `border-zinc-800` | S0.5 | S1.1 |
 | 28 usages of 10–11.5px text across 7 files | S0.12 | S1.1 |
 

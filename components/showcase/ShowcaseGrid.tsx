@@ -13,11 +13,11 @@ const CASES: readonly ShowcaseCase[] = [
   {
     id: "ai-concierge",
     category: "Αυτοματισμοί AI • Φιλοξενία & Ιατρεία",
-    title: "Αυτόνομο AI Concierge Portal & 24/7 Εξυπηρέτηση",
+    title: "Αυτόνομο portal εξυπηρέτησης με AI, 24/7",
     problem:
       "Χιλιάδες επαναλαμβανόμενες ερωτήσεις επισκεπτών (κρατήσεις, οδηγίες, check-in) δεσμεύουν ώρες καθημερινής ανθρώπινης επικοινωνίας και προκαλούν καθυστερήσεις.",
     solution:
-      "Ανάπτυξη custom web portal με ενσωματωμένο πολύγλωσσο Voice & Text AI agent, συνδεδεμένο σε πραγματικό χρόνο με τη βάση γνώσεων και το σύστημα κρατήσεων της επιχείρησης.",
+      "Ανάπτυξη custom web portal με ενσωματωμένο πολύγλωσσο AI agent, φωνητικό και γραπτό, συνδεδεμένο σε πραγματικό χρόνο με τη βάση γνώσεων και το σύστημα κρατήσεων της επιχείρησης.",
     stack: ["Next.js", "Voice AI / Vapi", "n8n", "Supabase"],
     metrics: [
       "Άμεση απόκριση, χωρίς αναμονή",
@@ -25,53 +25,53 @@ const CASES: readonly ShowcaseCase[] = [
       "Check-in χωρίς ανθρώπινη παρέμβαση",
     ],
     architecture: [
-      "Client Audio/Text",
+      "Φωνή ή κείμενο πελάτη",
       "Vapi LLM",
-      "n8n Webhook",
+      "n8n webhook",
       "Supabase DB",
-      "Instant Dynamic Response",
+      "Άμεση απάντηση",
     ],
   },
   {
     id: "client-portal",
     category: "Κατασκευή web εφαρμογών • Ιατρικά & Συμβουλευτική",
-    title: "Custom Web Application & Ενοποιημένο Client Portal",
+    title: "Web εφαρμογή και ενιαίο portal πελατών",
     problem:
       "Κατακερματισμένα δεδομένα σε emails και WhatsApp. Χάσιμο χρόνου σε χειροκίνητη αποστολή φορμών, ερασιτεχνική εικόνα προς τους πελάτες και έλλειψη κεντρικού ελέγχου.",
     solution:
-      "Κατασκευή bespoke web εφαρμογής με ασφαλές περιβάλλον διαχείρισης (Admin Dashboard), ρόλους χρηστών, αυτόματο onboarding και κεντρική αποθήκευση εγγράφων.",
-    stack: ["Next.js", "Tailwind CSS", "Secure Auth", "PostgreSQL"],
+      "Κατασκευή custom web εφαρμογής με ασφαλές dashboard διαχείρισης, ρόλους χρηστών, αυτόματο onboarding και κεντρική αποθήκευση εγγράφων.",
+    stack: ["Next.js", "Tailwind CSS", "Ασφαλής σύνδεση", "PostgreSQL"],
     metrics: [
       "Όλα τα δεδομένα σε ένα σημείο",
       "Τα αρχεία βρίσκονται χωρίς αναζήτηση",
       "Επαγγελματικό περιβάλλον χρήσης",
     ],
     architecture: [
-      "Secure Auth",
-      "Role Gate (Admin/Client)",
-      "S3/Cloud Storage",
-      "Real-time Status Sync",
+      "Ασφαλής σύνδεση",
+      "Έλεγχος ρόλων χρήστη",
+      "Αποθήκευση αρχείων S3",
+      "Συγχρονισμός σε πραγματικό χρόνο",
     ],
   },
   {
     id: "lead-engine",
     category: "Υποδομή δεδομένων • B2B agencies",
-    title: "Αυτοματοποιημένο Pipeline Συλλογής & Εμπλουτισμού Leads",
+    title: "Αυτοματοποιημένη συλλογή και εμπλουτισμός leads",
     problem:
-      "Χειροκίνητο copy-paste από spreadsheets, ανεπιβεβαίωτα emails που καταλήγουν στα spam και αργή δρομολόγηση νέων ευκαιριών.",
+      "Χειροκίνητη αντιγραφή από υπολογιστικά φύλλα, ανεπιβεβαίωτα emails που καταλήγουν στα spam και αργή δρομολόγηση νέων ευκαιριών.",
     solution:
-      "End-to-end αυτοματοποιημένο pipeline που αναζητά, επικυρώνει (waterfall verification), βαθμολογεί με AI και τροφοδοτεί άμεσα τα κατάλληλα leads στο CRM.",
-    stack: ["n8n / Make", "Enrichment APIs", "AI Scoring", "CRM Sync"],
+      "Πλήρως αυτοματοποιημένη ροή που αναζητά, επαληθεύει κλιμακωτά, αξιολογεί με AI και τροφοδοτεί άμεσα τα κατάλληλα leads στο CRM.",
+    stack: ["n8n / Make", "APIs εμπλουτισμού", "Αξιολόγηση AI", "Συγχρονισμός CRM"],
     metrics: [
       "Χωρίς χειροκίνητη καταχώριση δεδομένων",
       "Αυτόματη αξιολόγηση και καθαρισμός leads",
       "Άμεση κλιμάκωση του όγκου επικοινωνίας",
     ],
     architecture: [
-      "Inbound/List Trigger",
-      "Waterfall Verification",
-      "AI Relevancy Filter",
-      "CRM / Outreach Tool",
+      "Είσοδος από λίστα ή φόρμα",
+      "Κλιμακωτή επαλήθευση",
+      "Φίλτρο καταλληλότητας AI",
+      "CRM ή καμπάνια email",
     ],
   },
 ] as const;
