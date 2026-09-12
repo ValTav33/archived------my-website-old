@@ -7,8 +7,8 @@
 **Current phase:** 1 — Homepage Restructure
 **Branch:** `phase/1-homepage`
 **Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.10 · 2026-09-11 (navigation and final assembly — all ten slices done)
-**Blocked on:** nothing. **Next:** phase closeout — every automated gate item now passes; what remains is Val's manual passes, Lighthouse on the preview, and the PR.
+**Last slice:** S1.10 · 2026-09-11 · closeout measured 2026-09-12
+**Blocked on:** nothing automatable. Branch pushed, Lighthouse run, every measurable gate met. **Val owns what is left:** the phone pass, the keyboard pass, and opening + merging the PR.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
@@ -556,7 +556,8 @@ Row closed.
 | `npx tsc --noEmit`, `npm run lint`, `npm run build` | ✅ all clean |
 | Zero English in visitor copy except product nouns | ✅ **met at closeout** — see below |
 | Manual pass at four widths + a real phone | ⏳ Val |
-| Lighthouse mobile on the preview | ⏳ closeout |
+| Keyboard pass with eyes on the screen | ⏳ Val |
+| Lighthouse mobile | ✅ **95 / 100 / 96 / 100** — see below |
 
 Also verified, beyond the gate: tab order follows document order across 39
 focusable elements with **zero inversions and zero positive `tabindex`**, and
@@ -595,6 +596,54 @@ overflow.
 This does not pre-empt Val's Phase 2 decision: the re-frame changes the
 section's heading and its "indicative" framing, not the language of the nodes
 and titles, so none of this work is spent twice.
+
+### Closeout task 2 — Lighthouse · 2026-09-12
+
+Branch pushed as `phase/1-homepage`. Vercel built preview
+`dpl_B1Dop46j3LKZqoHHfkKyWXz4XrfN` from `dc7dbfe`, READY, SHA matching HEAD.
+
+**The preview could not be audited, for the same reason as Phase 0.** Both the
+deployment URL and the branch alias answer anonymous requests with
+`<title>Login – Vercel</title>` — Deployment Protection is still on. Lighthouse
+was therefore run against a **local production build** (`next start`), exactly
+as Phase 0 recorded doing.
+
+| Metric (mobile) | Budget | Phase 0 live | Phase 1 |
+|---|---|---|---|
+| Performance | ≥ 90 | 97 | **95** |
+| Accessibility | **100** | 100 | **100** |
+| Best Practices | ≥ 95 | 96 | **96** |
+| SEO | ≥ 95 | 100 | **100** |
+
+FCP 0.9s · LCP 2.9s · **CLS 0** · TBT 20ms · Speed Index 0.9s.
+
+**Zero failing accessibility audits. Zero failing SEO audits.** Best Practices
+is 96 for precisely one reason, confirmed rather than assumed: a single console
+error, `404 /favicon.ico`. The favicon is a Phase 2 deliverable
+(`app/icon.tsx`, §2.3), so this is the same deduction Phase 0 carried and not
+something Phase 1 introduced.
+
+Performance reads 95 against Phase 0's live 97, but the two are not comparable:
+Phase 0's 97 was measured on the real domain behind Vercel's CDN, and this is
+a local `next start` with four new sections on the page. Re-measure on
+production after the merge before drawing any conclusion.
+
+*Lighthouse was run through `npx` and is **not** a project dependency —
+`package.json` is untouched.*
+
+### What remains, and only Val can do it
+
+1. **The phone pass** — 375 / 768 / 1024 / 1440 on a real device, portrait and
+   landscape.
+2. **The keyboard pass with eyes on the screen.** The Browser pane reports
+   `visibilityState: "hidden"` and never fires `requestAnimationFrame`, so
+   `:focus` never matches and no focus ring has ever been *observed* rendering
+   in this or any previous phase. Tab order, focus trap and focus-ring CSS are
+   all verified programmatically; seeing them is the gap.
+3. **Open and squash-merge the PR** — body prepared, `gh` is not installed and
+   the GitHub connector is unauthorised in this session.
+4. **After merge:** confirm the production deployment's commit SHA matches the
+   merge commit before measuring anything. Phase 0 sat eight commits stale.
 
 ---
 
