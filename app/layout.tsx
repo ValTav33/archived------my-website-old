@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import JsonLd from "@/components/seo/JsonLd";
+import { IS_INDEXABLE } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 import { OBSIDIAN_950 } from "@/lib/tokens";
 import "./globals.css";
@@ -18,22 +21,32 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const DESCRIPTION =
-  "Σχεδιασμός high-performance web εφαρμογών (Next.js) και αυτόνομα AI pipelines για επιχειρήσεις. Μειώστε τα χειροκίνητα tasks και αυτοματοποιήστε τις λειτουργίες σας.";
-
-const DEFAULT_TITLE =
-  "Web Development & AI Automations Θεσσαλονίκη | Custom Web Apps & Workflows";
-
+/**
+ * Site-wide metadata only.
+ *
+ * Everything that identifies a *page* — title, description, canonical,
+ * `og:url` — now comes from `lib/seo.ts`, because Next merges this object
+ * into every route below it. The homepage's own title and description moved
+ * into the route manifest; `alternates` and `openGraph.url` are gone entirely
+ * rather than moved, since an inherited canonical is worse than a missing one.
+ * The reasoning, and the measurement behind it, is in `lib/seo.ts`.
+ */
 export const metadata: Metadata = {
   /* Resolves every relative OG/canonical URL below against the real origin.
      Without it Next emits a build warning and relative OG images break. */
   metadataBase: new URL(SITE.url),
 
   title: {
-    default: DEFAULT_TITLE,
+    /* Deliberately generic, and deliberately **not** the homepage's title.
+       Next's types require a `default` alongside a `template`, so this value
+       is what a route that forgets its own metadata would render. Making it
+       the homepage's keyword title would mean a forgotten page quietly
+       impersonates the homepage; making it the brand line means it is merely
+       generic, visibly identical across any offenders, and caught by the
+       phase's title-uniqueness check. */
+    default: `${SITE.brand} — Κατασκευή ιστοσελίδων & αυτοματισμοί AI`,
     template: "%s | Web Development & AI Automations",
   },
-  description: DESCRIPTION,
 
   keywords: [
     "Κατασκευή ιστοσελίδων Θεσσαλονίκη",
@@ -49,33 +62,31 @@ export const metadata: Metadata = {
   creator: SITE.siteName,
   publisher: SITE.siteName,
 
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
+  /* Preview deployments must not be indexed. Vercel Authentication has kept
+     them private so far, but the moment it is lifted so that Lighthouse can
+     reach a preview, an unconditional `index, follow` turns every preview
+     into a crawlable duplicate of the production site — and PROGRESS.md
+     already records one stale deployment serving placeholder copy while
+     marked indexable. `IS_INDEXABLE` stays true locally on purpose; see
+     `lib/seo.ts`. */
+  robots: IS_INDEXABLE
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      }
+    : { index: false, follow: false },
 
-  alternates: { canonical: SITE.url },
-
-  openGraph: {
-    type: "website",
-    locale: "el_GR",
-    siteName: SITE.siteName,
-    url: SITE.url,
-    title: DEFAULT_TITLE,
-    description: DESCRIPTION,
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DESCRIPTION,
-  },
+  /* No `openGraph` and no `twitter` block here on purpose. Next replaces
+     these keys rather than deep-merging them, so a layout-level `og:type` and
+     `og:site_name` are silently erased by any page that sets `og:url` — which
+     every page in this phase does. `lib/seo.ts` returns both blocks whole and
+     is the only writer. */
 
   category: "technology",
 };
@@ -103,7 +114,21 @@ export default function RootLayout({
           Μετάβαση στο περιεχόμενο
         </a>
 
-        {children}
+        {/* The chrome lives here rather than in `app/page.tsx`, which owned it
+            while the site was a single URL. Ten routes arrive in this phase
+            and every one of them needs a header, a footer and a landmark for
+            the skip link to target — repeated eleven times, or declared once.
+            `#main-content` moving up here is what makes the skip link work on
+            every route instead of only the homepage.
+
+            `tabIndex={-1}` so the skip link's target actually receives focus
+            rather than only scrolling into view. */}
+        <Navbar />
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
+        <Footer />
+
         <JsonLd />
       </body>
     </html>

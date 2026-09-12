@@ -4,11 +4,20 @@
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
 
-**Current phase:** 1 — Homepage Restructure
-**Branch:** `phase/1-homepage`
-**Spec:** `docs/phases/PHASE-1-HOMEPAGE.md`
-**Last slice:** S1.10 · 2026-09-11 · closeout measured 2026-09-12
-**Blocked on:** nothing automatable. Branch pushed, Lighthouse run, every measurable gate met. **Val owns what is left:** the phone pass, the keyboard pass, and opening + merging the PR.
+**Current phase:** 2 — Multipage & SEO
+**Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
+**Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
+**Last slice:** S2.1 · 2026-09-12
+**Blocked on:** nothing for S2.2–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+
+> **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
+> the branch is pushed; what remains is the phone pass, the keyboard pass and
+> opening + squash-merging the PR — all Val's. Phase 2 started on a branch
+> stacked on Phase 1 rather than waiting. After Phase 1 merges, rebase:
+> `git rebase --onto main phase/1-homepage phase/2-multipage`. `main` is a
+> direct ancestor of `phase/1-homepage`, so the squash merge leaves `main`
+> with an identical tree and the replay conflicts with nothing, at any point
+> in the phase.
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
@@ -22,7 +31,112 @@
 
 ---
 
-## Phase 1 — Homepage Restructure 🚧 IN PROGRESS
+## Phase 2 — Multipage & SEO 🚧 IN PROGRESS
+
+Build the route tree in Playbook §2.3: two service pillars, the work index and
+case studies, the deeper pages behind the homepage's sections, the legal pages,
+and the SEO plumbing — sitemap, robots, favicon, OG cards, schema graph. Front
+end only. Spec: `docs/phases/PHASE-2-MULTIPAGE-SEO.md`.
+
+**D1, D2 and D3 approved by Val, 2026-09-12**, before any slice ran — see the
+spec, and *Decisions changed* at the bottom of this file.
+
+- [x] **S2.1** Route shell — layout chrome, route manifest, metadata builder · 2026-09-12
+- [ ] **S2.2** `/contact`
+- [ ] **S2.3** `/websites` — service pillar 1
+- [ ] **S2.4** `/automations` — service pillar 2
+- [ ] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit
+- [ ] **S2.6** `/process`, homepage section condensed
+- [ ] **S2.7** `/about` and the `Person` node
+- [ ] **S2.8** `/faq`, the `FAQPage` node, homepage subset
+- [ ] **S2.9** `/privacy` and `/terms`
+- [ ] **S2.10** Favicon, OG cards, 404
+- [ ] **S2.11** Sitemap, robots, schema graph
+- [ ] **S2.12** Navigation and final assembly
+
+**S2.1.** `Navbar`, `main#main-content` and `Footer` moved from
+`app/page.tsx` into `app/layout.tsx`; `lib/routes.ts` is the route manifest and
+`lib/seo.ts` the metadata builder.
+
+*The defect this slice existed to prevent was measured, not predicted.* A
+throwaway route with no `metadata` export of its own was added, built, and its
+rendered HTML read `rel="canonical" href="…"` and `og:url` pointing at the
+**homepage**, with the homepage's `<title>` — all three inherited from the root
+layout, which declared them for a site that had exactly one page. Ten routes
+land in this phase; every one of them would have told search engines it was
+`/`, with nothing on screen to give it away. After the fix the same canary
+renders **zero** canonical tags, **zero** `og:url`, **zero** descriptions and
+the generic brand title. Absent is loud — Lighthouse fails a missing
+description and a missing canonical self-resolves; inherited-and-wrong is
+silent.
+
+*A regression this slice shipped into a build and then caught.* **Next merges
+metadata per top-level key and replaces the value; it does not deep-merge
+`openGraph` or `twitter`.** The first version of `pageMetadata` returned
+`openGraph: { url, title, description }`, which erased the layout's `og:type`,
+`og:locale` and `og:site_name` from the document and downgraded
+`twitter:card` from `summary_large_image` to bare `summary` — a share card
+quietly demoted to a thumbnail. Caught by the head byte-diff, not by eye. Both
+blocks now come back whole from `lib/seo.ts`, the layout declares neither, and
+the spec carries this as a rule every remaining slice follows.
+
+*Verified: the homepage did not move.* The built `index.html` was captured
+before and after and compared as structure rather than bytes — **433 body tags
+in each, zero differences.** The only head difference is the CSS chunk's
+content-hash filename, which changes because the module graph moved. All
+twelve head tags that carry meaning — title, description, canonical, four `og:`,
+three `twitter:`, robots, googlebot — are byte-identical to the pre-slice
+build. A `getBoundingClientRect` fingerprint of eleven elements agreed to the
+pixel, document height 6221 → 6221, one `main`, one `h1`, seven `h2`s.
+
+*Two deliberate deviations from the spec.*
+
+1. **The `noindex`-on-preview guard was pulled forward from S2.11.** It stopped
+   being a robots-slice concern and became a precondition the moment Vercel
+   Authentication was queued for removal: `robots` was unconditionally
+   `index, follow`, so an unprotected preview would be a crawlable duplicate
+   of production, and this file already records one stale deployment that
+   served placeholder copy while marked indexable. `IS_INDEXABLE` is a
+   deny-list of `VERCEL_ENV` `"preview"` and `"development"` rather than a
+   production allow-list, because `VERCEL_ENV` is undefined locally and a
+   `noindex` firing on a local `next start` would fail this phase's own
+   Lighthouse SEO gate — which is where every Lighthouse run so far has had
+   to happen.
+2. **`title.default` stays in the layout**, because Next's types require it
+   alongside `template`. It is now a generic brand line rather than the
+   homepage's keyword title, so a route that forgets its metadata renders
+   something merely generic instead of impersonating the homepage. The
+   homepage sets its title through `absolute`, which is why its rendered
+   title is unchanged.
+
+*The manifest holds one route.* Entries are added by the slice that adds the
+`page.tsx`, never ahead of it — `app/sitemap.ts` reads this file in S2.11, and
+an entry without a page is a 404 in the sitemap spending crawl budget on
+nothing. Same discipline for fields: `nav`, `footer` and the sitemap weights
+arrive with the slices that consume them, because a `priority` invented now
+for a file written in S2.11 is a guess wearing the costume of a decision.
+
+### Vercel Deployment Protection — Val owns this, S2.12 needs it
+
+Phases 0 and 1 both failed to audit their preview URL: `ssoProtection` is
+`enabled: true` with `deploymentType: "all_except_custom_domains"` on project
+`my-website`, so anonymous requests — Lighthouse included — get
+`<title>Login – Vercel</title>`. Both phases fell back to a local
+`next start`. At twelve routes that stops being a workaround, because "every
+route returns 200 with a unique title" is a claim about a deployment.
+
+Attempting the change from the session was **blocked by the permission
+classifier**, so it was not made. Val, in Vercel → `my-website` → Settings →
+Deployment Protection, either:
+
+1. **Protection Bypass for Automation** — generate a secret, previews stay
+   private to humans, Lighthouse passes `?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=<secret>`. Preferred: it is the narrower change.
+2. **Vercel Authentication → Disabled** — simpler, and previews become
+   readable by anyone holding the URL. Safe now that previews are `noindex`.
+
+---
+
+## Phase 1 — Homepage Restructure ✅ CODE-COMPLETE · awaiting Val's manual passes and merge
 
 Correct the funnel order, add the sections that carry credibility, and pay
 down the design-system debt the Phase 0 audit logged against this phase.
@@ -882,8 +996,8 @@ miss and the score still clears the Phase 0 budget.
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Homepage Restructure | **10/10 slices done** · closeout pending |
-| 2 | Multipage & SEO | Not started |
+| 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
+| 2 | Multipage & SEO | **1/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
@@ -993,6 +1107,28 @@ weigh it then.
 ---
 
 ## Decisions changed since the playbook was written
+
+- **2026-09-12 — D1: a deeper page expands its homepage section, it never
+  copies it.** §2.3 says the homepage carries highlights; Phase 1 built the
+  sections at full length because there was nowhere else to put them. So
+  `/process` and `/faq` take the full content and the homepage keeps three
+  one-line steps and four of six objections. The homepage gets **shorter** in
+  Phase 2, in two places, on purpose. Val approved before any slice ran.
+- **2026-09-12 — D2: the showcase keeps «Ενδεικτικές Αρχιτεκτονικές» and gains
+  an exit.** This settles the question deferred on 2026-09-11. The framing is
+  honest and §8.2 requires that label for architectures describing capability;
+  what the section lacked was a way to reach delivered work. S2.5 adds one
+  link to `/work` and links the `lead-engine` card to the BTL case study.
+  Heading, eyebrow and the thirteen translated trace nodes are untouched, so
+  S1.10's closeout copy is not spent twice. Val approved.
+- **2026-09-12 — D3: `/privacy` and `/terms` are built in Phase 2; the privacy
+  page is revised in Phase 3.** §2.3 lists `/privacy` in the route tree Phase 2
+  builds and §3 lists it inside Phase 3's objective — the playbook contradicts
+  itself. Resolution: the routes ship now describing what the site actually
+  does today (a form validated and discarded, no database, no processor, no
+  tracking), and Phase 3 revises the privacy page in the same slice that wires
+  delivery. Playbook §14 and Phase 3's scope both need this written down.
+  Val approved, and reads both pages before the Phase 2 PR merges.
 
 - **2026-09-11 — The about section names Valsamis Ταυλίκος.** Val delegated
   the call. Its heading asks «Με ποιον θα δουλέψετε» and left it unanswered,

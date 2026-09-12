@@ -14,9 +14,13 @@
 > git rebase --onto main phase/1-homepage phase/2-multipage
 > ```
 >
-> At that point this file is the only commit on the branch, so the rebase is a
-> single replay with nothing to resolve. Do it **before** S2.1, not after — a
-> rebase across twelve slices is a different animal.
+> **Correcting an overcaution in the first draft of this file:** the rebase is
+> safe at *any* point in the phase, not only before S2.1. `main` is a direct
+> ancestor of `phase/1-homepage` (`git merge-base` returns `main`'s own HEAD),
+> so a squash merge gives `main` a tree **identical** to `phase/1-homepage`'s.
+> Replaying Phase 2's commits onto an identical tree conflicts with nothing,
+> however many there are. The only thing that changes this is a commit landing
+> on `main` from somewhere other than Phase 1's PR.
 
 > **`PROGRESS.md` is deliberately untouched by this spec's commit**, matching
 > the Phase 1 precedent (`a77f932`). It is also the file most likely to
@@ -197,6 +201,28 @@ a Phase 4 Backlog row. Twelve new routes is not the change to bundle it with.
 
 ---
 
+## One rule every remaining slice has to follow
+
+Found by S2.1's verification, at the cost of a regression that shipped into a
+build and was caught by a byte-diff rather than by eye.
+
+**Next merges metadata per top-level key and *replaces* the value. It does not
+deep-merge `openGraph` or `twitter`.** A page returning
+`openGraph: { url, title, description }` over a layout declaring
+`openGraph: { type, locale, siteName }` produces three fields, not six:
+`og:type`, `og:locale` and `og:site_name` disappear from the document. The
+`twitter` block behaves identically, and losing `card` does not inherit
+`summary_large_image` — it falls back to `summary`, which silently turns every
+share card into a thumbnail.
+
+So: **no slice adds an `openGraph` or `twitter` key to a page or a layout.**
+Both blocks are returned whole by `pageMetadata` in `lib/seo.ts`, which is the
+only writer. A page that needs a different OG image passes it through that
+function. Anything else reintroduces the bug on one route and leaves eleven
+others correct, which is the hardest version of it to notice.
+
+---
+
 ## S2.1 — Route shell: layout, route manifest, metadata builder
 
 **Why:** three things make every later slice in this phase either trivial or
@@ -242,12 +268,31 @@ reproduce it in thirty seconds if you want to see it again.
    title, description, **absolute canonical**, and OG/Twitter blocks. Canonical
    is not optional and has no default: every call passes a route, or it does
    not compile.
-4. Strip `alternates`, `openGraph.url`, `openGraph.title` and the page-level
-   `title.default`/`description` duties from the root layout down to
-   `app/page.tsx` via `pageMetadata`. The layout keeps only what is genuinely
-   site-wide: `metadataBase`, `title.template`, `robots`, `authors`, `creator`,
-   `publisher`, `keywords`, `category`, `openGraph.siteName`,
-   `openGraph.locale`, `openGraph.type`, `twitter.card`.
+4. Strip `alternates`, `openGraph`, `twitter` and the page-level
+   `description` from the root layout; `title.default` stays because Next's
+   types require it alongside `template`, but it becomes a **generic brand
+   line rather than the homepage's title**, so a route that forgets its
+   metadata renders something merely generic instead of impersonating the
+   homepage. The layout keeps only what is genuinely site-wide:
+   `metadataBase`, `title.template`, `robots`, `authors`, `creator`,
+   `publisher`, `keywords`, `category`.
+5. **Pulled forward from S2.11: `noindex` on preview deployments.** This was
+   specced as part of the robots slice and moved here because it became a
+   precondition. `robots` is unconditionally `index, follow` today, and the
+   moment Vercel Authentication comes off so Lighthouse can reach a preview,
+   every preview becomes a crawlable duplicate of production — with
+   `PROGRESS.md` already recording one stale deployment that served
+   placeholder copy while marked indexable. `IS_INDEXABLE` in `lib/seo.ts`
+   is a deny-list of `VERCEL_ENV` `"preview"` and `"development"`, **not** a
+   production allow-list, because `VERCEL_ENV` is undefined locally and a
+   `noindex` that fired on a local `next start` would fail the phase's own
+   Lighthouse SEO gate — which is where every Lighthouse run so far has
+   happened.
+
+   Status of the prerequisite: **still on.** `ssoProtection` is
+   `enabled: true`, `deploymentType: "all_except_custom_domains"` on project
+   `my-website`. Val owns turning it off or issuing an automation bypass
+   secret; S2.12 is the slice that needs it.
 
 **Verify:** `/` renders identically — capture a `getBoundingClientRect`
 fingerprint of ten elements before and after, as S1.2 did, because moving the
