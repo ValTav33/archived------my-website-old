@@ -1,3 +1,5 @@
+import { AUDIT_DELIVERABLE } from "@/lib/site";
+
 /**
  * The route manifest — one list of every page the site serves.
  *
@@ -12,7 +14,7 @@
  * the same slice that adds its `page.tsx`, never before. That is §8.5 applied
  * to configuration: `app/sitemap.ts` reads this file in S2.11, so an entry
  * added ahead of its page would put a 404 in the sitemap and spend crawl
- * budget on nothing. Right now that means one entry.
+ * budget on nothing.
  *
  * Fields are added when a slice actually consumes them, for the same reason —
  * a `priority` invented in S2.1 for a sitemap written in S2.11 is a guess
@@ -57,6 +59,16 @@ export const ROUTES = [
     description:
       "Σχεδιασμός high-performance web εφαρμογών (Next.js) και αυτόνομα AI pipelines για επιχειρήσεις. Μειώστε τα χειροκίνητα tasks και αυτοματοποιήστε τις λειτουργίες σας.",
     absoluteTitle: true,
+  },
+  {
+    path: "/contact",
+    label: "Επικοινωνία",
+    title: "Επικοινωνία & δωρεάν audit",
+    /* Interpolated rather than retyped. The deliverable is the site's only
+       concrete promise and it exists once, in `lib/site.ts`; a meta
+       description is exactly the kind of surface where a hand-written second
+       copy goes unnoticed for months. */
+    description: `Ζητήστε δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Τηλέφωνο, email, WhatsApp ή Telegram, Θεσσαλονίκη και remote.`,
   },
 ] as const satisfies readonly Route[];
 

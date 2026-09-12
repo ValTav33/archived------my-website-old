@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.1 · 2026-09-12
-**Blocked on:** nothing for S2.2–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.2 · 2026-09-12
+**Blocked on:** nothing for S2.3–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -42,7 +42,7 @@ end only. Spec: `docs/phases/PHASE-2-MULTIPAGE-SEO.md`.
 spec, and *Decisions changed* at the bottom of this file.
 
 - [x] **S2.1** Route shell — layout chrome, route manifest, metadata builder · 2026-09-12
-- [ ] **S2.2** `/contact`
+- [x] **S2.2** `/contact` · 2026-09-12
 - [ ] **S2.3** `/websites` — service pillar 1
 - [ ] **S2.4** `/automations` — service pillar 2
 - [ ] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit
@@ -115,6 +115,74 @@ an entry without a page is a 404 in the sitemap spending crawl budget on
 nothing. Same discipline for fields: `nav`, `footer` and the sitemap weights
 arrive with the slices that consume them, because a `priority` invented now
 for a file written in S2.11 is a guess wearing the costume of a decision.
+
+**S2.2.** `/contact` builds as a static route with the audit form and the
+direct channels, reusing both components and changing neither's copy.
+
+*S2.1's fix proving out on a real second route.* `/contact` renders
+`canonical` and `og:url` as `…/contact` — not the homepage — with `og:type`,
+`og:site_name` and `twitter:card` all intact, which is the og-replacement
+regression staying fixed on a page that was not the one it was found on. Title
+`Επικοινωνία & δωρεάν audit | Web Development & AI Automations` through the
+layout's template; description interpolated from `AUDIT_DELIVERABLE` rather
+than retyped, so the meta description cannot promise something the form does
+not.
+
+*The emphasis is reversed, the copy is not.* On the homepage the channels are
+a narrow rail beside the form. Here they come first and full width — phone,
+what you get, alternative channels in three columns — and the form follows at
+a `max-w-3xl` measure. Someone who navigates to a contact page has already
+decided to make contact and wants the fastest route; someone who reaches the
+bottom of the homepage has just finished an argument. Same components, same
+strings, `layout="rail" | "wide"`.
+
+*Two refactors this needed, both recorded as deviations.*
+
+1. **`SectionHeader` gains `titleAs`.** Every route in this phase needs an
+   `h1`, and a page title is the same eyebrow-title-lede pattern at a
+   different heading level — not a different pattern. A second near-identical
+   `PageHeader` component would have broken §10.5 for one tag name. Note `as`
+   controls the wrapper and `titleAs` the heading; they are independent.
+2. **The conversion section's heading moved out of `DirectContactCard` into
+   `ConversionSection`.** It was never the card's to own: it titles the whole
+   section, its eyebrow carries the homepage's `05` numbering, and `/contact`
+   needs its own `h1` above a differently-shaped block. The rail now returns a
+   **fragment** and only the wide grid gets a wrapper — wrapping both would
+   have left an unstyled `div` between the heading and the first card, which
+   is where a `mt-8` quietly becomes a collapsed margin on a different
+   element. No wrapper, no question to answer.
+
+*Verified the homepage still does not move.* Body-tag diff against the
+pre-S2.1 baseline: **432 tags against 433**, and the whole difference is the
+one unstyled `div` that refactor removed, plus two class-order changes from
+`cn` (`mt-8 p-5` → `p-5 mt-8`, `mt-6 space-y-2.5` → `space-y-2.5 mt-6`) —
+same classes, same elements. The geometry fingerprint is unchanged from the
+pre-S2.1 capture: all eleven elements to the pixel, document height 6221,
+seven `h2`s, no skipped levels.
+
+*`/contact` measured.* One `h1`; heading order h1 → h2 → h2 → h3 (footer) with
+no skips. 27 interactive elements at 375px, **zero** under 44×44 once the two
+deliberately-hidden elements are excluded (the `sr-only` skip link at 1×1
+until focused, and the honeypot at `tabindex="-1"`) — the same two exclusions
+S1.3 measured around. Zero horizontal overflow, zero text below 12px. Nav,
+footer and skip-link landmark all present, which is S2.1's layout move working
+on a route that is not the homepage.
+
+*The form behaves.* Submitting empty on `/contact` marks four fields
+`aria-invalid` and renders four Greek errors, with no navigation — identical to
+the homepage. Delivery is still Phase 3's stub and the 24-hour promise stays
+as written.
+
+### Known mid-phase state on this branch, closed by S2.12
+
+The header's three nav links and the brand link are still `ScrollLink`s to
+homepage anchors (`#solutions`, `#process`, `#faq`, `#hero`), so **on
+`/contact` they are dead clicks.** This is the ordering the spec chose
+deliberately — Phase 1's S1.10 precedent puts navigation last, because wiring
+it before the pages exist ships links that 404 through the middle of the phase.
+Nothing reaches production until the phase PR merges. S2.12 converts them to
+`next/link` routes and audits the whole link graph; the `Navbar` comment
+already anticipates the brand becoming `/`.
 
 ### Vercel Deployment Protection — Val owns this, S2.12 needs it
 
@@ -997,7 +1065,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **1/12 slices done** · in progress |
+| 2 | Multipage & SEO | **2/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
@@ -1026,7 +1094,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
 | Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
 | Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
-| Honeypot `company` is wrapped in `sr-only` **without** `aria-hidden="true"`, so a screen-reader user can reach and fill it and have their enquiry silently discarded. Add `aria-hidden` (it is already `tabindex="-1"`) | S0.12 | 3 |
 | Proof strip ships with two named references and an empty testimonial slot. The **assets** half is still open: Fiverr quotes, screenshots and Val's photo | S0.12 · structure closed S1.6 | 5 |
 | Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
@@ -1035,6 +1102,12 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
+
+### Closed during Phase 2
+
+| Item | Found in | Closed by |
+|---|---|---|
+| ~~Honeypot `company` lacks `aria-hidden`, so a screen-reader user can reach and fill it~~ — **the row was stale.** Checked against the rendered build while measuring `/contact`: the wrapper emits `aria-hidden="true"` and the input carries `tabindex="-1"`, so the subtree is out of the accessibility tree and out of the tab order. Fixed at some point after S0.12 logged it and never struck off. Left in place, it would have sent a Phase 3 session to fix something already fixed | S0.12 | verified S2.2 |
 
 ### Closed during Phase 1
 

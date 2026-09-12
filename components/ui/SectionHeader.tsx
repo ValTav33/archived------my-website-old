@@ -10,8 +10,15 @@ import { cn } from "@/lib/utils";
  * and the page stops reading as one argument. That is the whole reason this
  * exists.
  *
- * `id` lands on the `h2` so a section can point `aria-labelledby` at its own
- * visible title rather than repeating it in an `aria-label`.
+ * `id` lands on the heading so a section can point `aria-labelledby` at its
+ * own visible title rather than repeating it in an `aria-label`.
+ *
+ * `titleAs` exists because Phase 2 gives every route an `h1`, and a page
+ * title is the same eyebrow-title-lede pattern at a different heading level —
+ * not a different pattern. A second near-identical `PageHeader` component
+ * would violate §10.5 for the sake of one tag name. Note that `as` controls
+ * the **wrapper** element and `titleAs` the heading inside it; they are
+ * independent.
  *
  * The measure on `section` is §11's line-length guidance: `max-w-3xl` keeps
  * the lede near 65–75 characters. `compact` is for a header inside a column
@@ -25,6 +32,7 @@ const TITLE = {
 
 export default function SectionHeader({
   as,
+  titleAs,
   id,
   eyebrow,
   title,
@@ -33,7 +41,9 @@ export default function SectionHeader({
   className,
 }: {
   as?: ElementType;
-  /** Applied to the `h2`, for the section's `aria-labelledby`. */
+  /** The heading tag. `h2` for a section, `h1` for a page's own title. */
+  titleAs?: "h1" | "h2" | "h3";
+  /** Applied to the heading, for the section's `aria-labelledby`. */
   id?: string;
   eyebrow: string;
   title: string;
@@ -42,14 +52,18 @@ export default function SectionHeader({
   className?: string;
 }) {
   const Tag = (as ?? "header") as ElementType;
+  const Heading = titleAs ?? "h2";
 
   return (
     <Tag className={cn(size === "section" && "max-w-3xl", className)}>
       <Eyebrow>{eyebrow}</Eyebrow>
 
-      <h2 id={id} className={cn("mt-4 font-semibold text-white", TITLE[size])}>
+      <Heading
+        id={id}
+        className={cn("mt-4 font-semibold text-white", TITLE[size])}
+      >
         {title}
-      </h2>
+      </Heading>
 
       {lede && (
         <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
