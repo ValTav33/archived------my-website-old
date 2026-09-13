@@ -1,6 +1,7 @@
 import AuditForm from "@/components/conversion/AuditForm";
 import DirectContactCard from "@/components/conversion/DirectContactCard";
 import Eyebrow from "@/components/ui/Eyebrow";
+import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { routeMetadata } from "@/lib/seo";
 import { AUDIT_DELIVERABLE } from "@/lib/site";
@@ -30,7 +31,7 @@ export const metadata = routeMetadata("/contact");
  */
 export default function ContactPage() {
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-24 pt-28 sm:px-6 sm:pt-32 lg:px-8">
+    <PageShell as="section">
       {/* The page's `h1`. §11.7 asks for a sentence a client would say, and
           what they get for saying it is the very next line rather than a
           claim buried below the form. */}
@@ -66,6 +67,6 @@ export default function ContactPage() {
           <AuditForm />
         </div>
       </div>
-    </section>
+    </PageShell>
   );
 }

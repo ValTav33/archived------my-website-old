@@ -174,6 +174,18 @@ export const SERVICE_CATALOG = [
  */
 export type ProofItem = {
   id: string;
+  /**
+   * URL segment for `/work/[slug]`.
+   *
+   * Added in S2.4 rather than S2.5, because `/automations` links to the BTL
+   * case study and the alternative was a hardcoded `/work/btl-industries`
+   * in a page that has no idea whether that path is real. The slug belongs
+   * beside the entry it names; S2.5 generates the routes from it.
+   *
+   * Spelled out rather than derived from `id` — `btl` is a fine object key
+   * and a poor URL.
+   */
+  slug: string;
   /** Typeset name only. A logo needs permission separate from a name. */
   name: string;
   /** What it is, in three or four words. */
@@ -189,6 +201,7 @@ export type ProofItem = {
 export const PROOF: readonly ProofItem[] = [
   {
     id: "btl",
+    slug: "btl-industries",
     name: "BTL Industries",
     kind: "Κατασκευαστής ιατροτεχνολογικού εξοπλισμού",
     /* The vendor names are deliberately NOT in this sentence. A clinic owner
@@ -210,6 +223,7 @@ export const PROOF: readonly ProofItem[] = [
   },
   {
     id: "roz-inn",
+    slug: "roz-inn",
     name: "roz-inn.com",
     kind: "Ζωντανός ιστότοπος πελάτη",
     summary: "Ιστοσελίδα παρουσίασης με γκαλερί φωτογραφιών.",
@@ -237,6 +251,17 @@ export type Testimonial = {
 };
 
 export const TESTIMONIALS: readonly Testimonial[] = [];
+
+/** Looks up a delivered-work entry by id. Throws rather than returning undefined. */
+export function getProof(id: string): ProofItem {
+  const item = PROOF.find((candidate) => candidate.id === id);
+
+  if (!item) {
+    throw new Error(`PROOF has no entry with id ${JSON.stringify(id)}.`);
+  }
+
+  return item;
+}
 
 /* ------------------------------------------------------------------ */
 /*  The two promises                                                   */

@@ -1,8 +1,12 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import FeatureGrid, { type Feature } from "@/components/services/FeatureGrid";
+import ServiceCta from "@/components/services/ServiceCta";
+import ServiceSection from "@/components/services/ServiceSection";
 import ServiceJsonLd from "@/components/seo/ServiceJsonLd";
+import ArrowLink from "@/components/ui/ArrowLink";
+import BulletList from "@/components/ui/BulletList";
 import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
+import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getRoute } from "@/lib/routes";
 import { routeMetadata } from "@/lib/seo";
@@ -24,7 +28,7 @@ const ROUTE = getRoute("/websites");
  * unverifiable — it is true on the day it is written and false after one
  * dependency bump, on a page nobody thinks to re-measure.
  */
-const DELIVERABLES = [
+const DELIVERABLES: readonly Feature[] = [
   {
     title: "Site ή web εφαρμογή σε Next.js",
     body: "TypeScript, server rendering και ένα build που δεν στηρίζεται σε plugins τρίτων για να λειτουργήσει.",
@@ -49,7 +53,7 @@ const DELIVERABLES = [
     title: "Ο κώδικας δικός σας",
     body: "Το repository στο όνομά σας από την πρώτη μέρα και η εγκατάσταση τεκμηριωμένη, ώστε να μπορεί να συνεχίσει οποιοσδήποτε.",
   },
-] as const;
+];
 
 /** Who this is for, said the way the prospect would describe themselves. */
 const AUDIENCE = [
@@ -68,8 +72,8 @@ export default function WebsitesPage() {
         description={ROUTE.description}
       />
 
-      <div className="mx-auto max-w-7xl px-4 pb-24 pt-28 sm:px-6 sm:pt-32 lg:px-8">
-        {/* ------------------------------ Intent ------------------------------ */}
+      <PageShell>
+        {/* ------------------------------ Intent ----------------------------- */}
         {/* The keyword is in the h1 because that is the phrase someone typed to
             arrive here, and §11.7 wants a heading that is a sentence rather
             than a label — so it carries the clause that matters most to them
@@ -81,95 +85,46 @@ export default function WebsitesPage() {
           lede="Σχεδιάζουμε και κατασκευάζουμε ιστοσελίδες και web εφαρμογές σε Next.js, για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα. Το site δεν σπάει επειδή ενημερώθηκε κάποιο plugin, γιατί δεν στηρίζεται σε plugins."
         />
 
-        {/* --------------------------- What you get --------------------------- */}
-        <section aria-labelledby="deliverables-heading" className="mt-20">
-          <SectionHeader
-            as="div"
-            id="deliverables-heading"
-            size="compact"
-            eyebrow="[ 01 // ΤΙ ΠΑΙΡΝΕΤΕ ]"
-            title="Τι παραδίδεται, συγκεκριμένα."
-          />
+        <ServiceSection
+          id="deliverables"
+          eyebrow="[ 01 // ΤΙ ΠΑΙΡΝΕΤΕ ]"
+          title="Τι παραδίδεται, συγκεκριμένα."
+        >
+          <FeatureGrid items={DELIVERABLES} />
+        </ServiceSection>
 
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {DELIVERABLES.map((item) => (
-              <Card as="li" key={item.title} className="p-5">
-                <h3 className="text-sm font-semibold text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-2.5 text-xs leading-relaxed text-zinc-400">
-                  {item.body}
-                </p>
-              </Card>
-            ))}
-          </ul>
-        </section>
+        <ServiceSection
+          id="audience"
+          eyebrow="[ 02 // ΓΙΑ ΠΟΙΟΥΣ ]"
+          title="Πότε αξίζει να μιλήσουμε."
+        >
+          <BulletList items={AUDIENCE} className="mt-8 max-w-3xl" />
+        </ServiceSection>
 
-        {/* ----------------------------- Who for ------------------------------ */}
-        <section aria-labelledby="audience-heading" className="mt-20">
-          <SectionHeader
-            as="div"
-            id="audience-heading"
-            size="compact"
-            eyebrow="[ 02 // ΓΙΑ ΠΟΙΟΥΣ ]"
-            title="Πότε αξίζει να μιλήσουμε."
-          />
-
-          <ul className="mt-8 max-w-3xl space-y-3">
-            {AUDIENCE.map((line) => (
-              <li
-                key={line}
-                className="flex items-baseline gap-3 text-sm leading-relaxed text-zinc-400"
-              >
-                <span aria-hidden className="shrink-0 text-decor">
-                  •
-                </span>
-                {line}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* ---------------------------- How it runs --------------------------- */}
+        {/* ---------------------------- How it runs -------------------------- */}
         {/* One sentence and a link, not a restatement of the three steps. The
             steps live in `ProcessSection` today and move to `lib/process.ts`
             in S2.6; writing them out here would have made a fourth
             hand-typed copy of a promise that is supposed to exist once. The
             two constants below are interpolated for the same reason. */}
-        <section aria-labelledby="how-heading" className="mt-20">
-          <SectionHeader
-            as="div"
-            id="how-heading"
-            size="compact"
-            eyebrow="[ 03 // ΠΩΣ ΤΡΕΧΕΙ ]"
-            title="Πώς φτάνουμε από τη συζήτηση στο site."
-            lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε το εύρος πριν γραφτεί γραμμή κώδικα, και η κατασκευή παραδίδεται σε στάδια, με preview URL σε κάθε ένα. Ο χρόνος είναι ${TIMELINE_RANGE} — εύρος, όχι υπόσχεση.`}
-          />
-
-          <Link
-            href="/process"
-            className="group mt-6 inline-flex min-h-tap items-center gap-1.5 text-sm text-zinc-300 transition-colors duration-200 hover:text-white"
-          >
+        <ServiceSection
+          id="how"
+          eyebrow="[ 03 // ΠΩΣ ΤΡΕΧΕΙ ]"
+          title="Πώς φτάνουμε από τη συζήτηση στο site."
+          lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε το εύρος πριν γραφτεί γραμμή κώδικα, και η κατασκευή παραδίδεται σε στάδια, με preview URL σε κάθε ένα. Ο χρόνος είναι ${TIMELINE_RANGE} — εύρος, όχι υπόσχεση.`}
+        >
+          <ArrowLink href="/process" className="mt-6">
             Η διαδικασία, αναλυτικά
-            <ArrowRight
-              aria-hidden
-              className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
-              strokeWidth={1.8}
-            />
-          </Link>
-        </section>
+          </ArrowLink>
+        </ServiceSection>
 
-        {/* -------------------------- What you keep --------------------------- */}
-        <section aria-labelledby="ownership-heading" className="mt-20">
-          <SectionHeader
-            as="div"
-            id="ownership-heading"
-            size="compact"
-            eyebrow="[ 04 // ΤΙ ΣΑΣ ΜΕΝΕΙ ]"
-            title="Τι έχετε στο χέρι σας στο τέλος."
-            lede="Το repository, τον κώδικα και τεκμηριωμένη εγκατάσταση. Δεν υπάρχει κλείδωμα σε πλατφόρμα, σε λογαριασμό ή σε πρόσωπο — αν αύριο θέλετε άλλον developer, ανοίγει το έργο και συνεχίζει. Η μηνιαία υποστήριξη είναι προαιρετική, όχι προϋπόθεση για να μείνει το site όρθιο."
-          />
-
+        {/* -------------------------- What you keep -------------------------- */}
+        <ServiceSection
+          id="ownership"
+          eyebrow="[ 04 // ΤΙ ΣΑΣ ΜΕΝΕΙ ]"
+          title="Τι έχετε στο χέρι σας στο τέλος."
+          lede="Το repository, τον κώδικα και τεκμηριωμένη εγκατάσταση. Δεν υπάρχει κλείδωμα σε πλατφόρμα, σε λογαριασμό ή σε πρόσωπο — αν αύριο θέλετε άλλον developer, ανοίγει το έργο και συνεχίζει. Η μηνιαία υποστήριξη είναι προαιρετική, όχι προϋπόθεση για να μείνει το site όρθιο."
+        >
           {/* §11.6: the objection gets answered here in structure, and the
               full answer lives in the FAQ rather than in two places. */}
           <Card tone="glass" className="mt-8 max-w-3xl p-5">
@@ -181,43 +136,14 @@ export default function WebsitesPage() {
               σύνδεση με τα εργαλεία που ήδη χρησιμοποιείτε, δικά σας δεδομένα.
             </p>
 
-            <Link
-              href="/faq"
-              className="group mt-4 inline-flex min-h-tap items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
-            >
+            <ArrowLink href="/faq" size="quiet" className="mt-4">
               Οι υπόλοιπες ερωτήσεις
-              <ArrowRight
-                aria-hidden
-                className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5"
-                strokeWidth={2}
-              />
-            </Link>
+            </ArrowLink>
           </Card>
-        </section>
+        </ServiceSection>
 
-        {/* ------------------------------- CTA -------------------------------- */}
-        <section aria-labelledby="cta-heading" className="mt-20">
-          <Card className="p-6 sm:p-8">
-            <h2
-              id="cta-heading"
-              className="max-w-2xl text-2xl font-semibold leading-snug text-white sm:text-3xl"
-            >
-              Πείτε μας τι θέλετε να φτιάξετε.
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400">
-              {`Δωρεάν audit: ${AUDIT_DELIVERABLE}.`}
-            </p>
-
-            <Link
-              href="/contact"
-              className="btn-primary mt-7 inline-flex min-h-tap items-center gap-1.5 px-5 py-2.5 text-sm"
-            >
-              Ζητήστε δωρεάν audit
-              <ArrowRight aria-hidden className="h-4 w-4" strokeWidth={2} />
-            </Link>
-          </Card>
-        </section>
-      </div>
+        <ServiceCta id="cta" title="Πείτε μας τι θέλετε να φτιάξετε." />
+      </PageShell>
     </>
   );
 }

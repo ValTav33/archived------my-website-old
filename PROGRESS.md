@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.3 · 2026-09-13
-**Blocked on:** nothing for S2.4–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.4 · 2026-09-13
+**Blocked on:** nothing for S2.5–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -44,7 +44,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.1** Route shell — layout chrome, route manifest, metadata builder · 2026-09-12
 - [x] **S2.2** `/contact` · 2026-09-12
 - [x] **S2.3** `/websites` — service pillar 1 · 2026-09-13
-- [ ] **S2.4** `/automations` — service pillar 2
+- [x] **S2.4** `/automations` — service pillar 2, and the shared service shell · 2026-09-13
 - [ ] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit
 - [ ] **S2.6** `/process`, homepage section condensed
 - [ ] **S2.7** `/about` and the `Person` node
@@ -235,7 +235,67 @@ to page shells). This page was built from primitives directly rather than
 from a `ServicePage` shell, because generalising a layout from a single
 example is how the wrong abstraction gets locked in. **S2.4 extracts the
 shell once there are two real pages to generalise from** — it is that slice's
-job, not a nice-to-have.
+job, not a nice-to-have. *Done in S2.4; see below.*
+
+**S2.4.** `/automations`, pillar 2, plus the shell extraction S2.3 deferred.
+
+*The shell exists now, extracted from two real pages rather than invented
+from one.* Six components, each with at least two live call sites:
+`ArrowLink` (5 uses across the two pillars, two sizes), `PageShell` (3 —
+both pillars and `/contact`, and it owns the top padding that keeps a page
+out from under the fixed header), `ServiceSection` (9 — it derives
+`aria-labelledby` and the heading `id` from one argument, which is the whole
+reason it is a component rather than a snippet), `FeatureGrid` (2),
+`BulletList` (2) and `ServiceCta` (2 — it interpolates `AUDIT_DELIVERABLE`
+itself rather than taking it as a prop, because a prop there is an invitation
+to pass a slightly different promise on the second page).
+
+*The refactor is provably render-equivalent, which is the only reason a
+refactor this size is safe in the same slice as a new page.* `/contact` and
+the homepage came out **byte-identical** (166 and 432 body tags, zero
+differences). `/websites` came out at 154 tags against 154, with differences
+only in the order of class tokens inside `class` attributes — `cn` reorders
+them. Eyeballing that is not proof, so the tag streams were re-diffed with
+every `class` attribute's tokens sorted: **identical class sets on all 154
+elements.** Attribute order does not affect the cascade, so the page renders
+exactly as it did.
+
+*§8.5 was the hard call on this page, and something is deliberately missing.*
+There is **no voice or telephone automation** on `/automations`.
+`SERVICE_CATALOG` lists "AI Concierge & Voice/Chat Agents" and the homepage
+showcase carries an AI concierge architecture — but that one is explicitly
+*indicative*, and no voice work has been delivered. A service page may
+describe a service; it may not describe a capability that has never been
+exercised. The six categories that shipped are the ones the BTL pipeline and
+this site's own build actually cover. **The tension in `SERVICE_CATALOG` is
+now a Backlog row rather than something fixed in passing** — it feeds
+`knowsAbout` and the schema offer catalog, so changing it is a structured-data
+decision, not a copy tweak.
+
+*BTL is linked, not restated.* The evidence block renders the entry's name and
+kind from `PROOF` and links to the case study; the summary sentence stays on
+`/work/[slug]`, because D1's rule is that the deeper page expands and the
+shallower one points. `lib/site.ts` gains a `slug` field and a `getProof`
+lookup — pulled forward from S2.5 so this page could link type-safely instead
+of hardcoding `/work/btl-industries` with no idea whether that path is real.
+S2.5 generates the routes from the same field.
+
+*Numbers, again traced rather than asserted.* Every number in the page body:
+`01`–`05` section numbering, `15`/`24` from `AUDIT_DELIVERABLE`, `3`/`2` from
+`TIMELINE_RANGE`, and one `8` inside the product name `n8n`. Zero invented
+metrics — no volumes processed, no hours saved, no accuracy rate.
+
+*Measured.* One `h1` carrying the keyword as a sentence; heading order
+h1 → h2 → h3×6 → h2×5 → h3×3 with no skips. Unique title, description,
+canonical and `og:url`. `Service` node with `serviceType`
+`Business process automation` and `provider` referencing the business `@id`.
+At 375px: 19 interactive elements, **zero** under 44×44 but the `sr-only`
+skip link, zero horizontal overflow, zero text below 12px. No raw hex, no raw
+`zinc-600/700/800`, no team language.
+
+*Three links on this page 404 right now:* `/work/btl-industries` (S2.5),
+`/process` (S2.6) and `/faq` (S2.8), all confirmed rather than assumed.
+`/contact`, `/websites` and `/automations` return 200.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1129,7 +1189,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **3/12 slices done** · in progress |
+| 2 | Multipage & SEO | **4/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
@@ -1162,6 +1222,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
+| `SERVICE_CATALOG` claims "AI Concierge & Voice/Chat Agents", which feeds `knowsAbout` and the schema offer catalog, but **no voice work has been delivered** — the showcase's concierge architecture is labelled indicative. S2.4 left voice off `/automations` under §8.5 and did not touch the catalog, because it is a structured-data decision rather than a copy tweak: either the claim comes out, or Phase 5 supplies something that backs it | S2.4 | 5 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
