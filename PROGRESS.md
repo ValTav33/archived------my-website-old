@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.2 · 2026-09-12
-**Blocked on:** nothing for S2.3–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.3 · 2026-09-13
+**Blocked on:** nothing for S2.4–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -43,7 +43,7 @@ spec, and *Decisions changed* at the bottom of this file.
 
 - [x] **S2.1** Route shell — layout chrome, route manifest, metadata builder · 2026-09-12
 - [x] **S2.2** `/contact` · 2026-09-12
-- [ ] **S2.3** `/websites` — service pillar 1
+- [x] **S2.3** `/websites` — service pillar 1 · 2026-09-13
 - [ ] **S2.4** `/automations` — service pillar 2
 - [ ] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit
 - [ ] **S2.6** `/process`, homepage section condensed
@@ -172,6 +172,70 @@ on a route that is not the homepage.
 `aria-invalid` and renders four Greek errors, with no navigation — identical to
 the homepage. Delivery is still Phase 3's stub and the 24-hour promise stays
 as written.
+
+**S2.3.** `/websites`, the first service pillar, targeting §2.3's
+«Κατασκευή ιστοσελίδων Θεσσαλονίκη». Six deliverable cards, who it is for,
+how the engagement runs, what the client keeps, the WordPress objection, and a
+CTA to `/contact`.
+
+*§8.1 held, and it was measured rather than asserted.* Every number in the
+rendered page text was extracted with its surrounding sentence and checked
+against a source. **Twenty-one numbers, zero invented:** the phone, hours,
+geo stamp and year come from `SITE` via the nav and footer chrome; `01`–`04`
+are section eyebrow numbering, not claims; `15 λεπτών` and `24 ωρών` are
+`AUDIT_DELIVERABLE`; `3 ημέρες έως 2 μήνες` is `TIMELINE_RANGE`, which is §2.2's
+range and says so on the page («εύρος, όχι υπόσχεση»). No load time, no
+Lighthouse score, no percentage, nothing about "χ% faster" — a performance
+figure is worse than unverifiable, because it is true the day it is written
+and false after one dependency bump, on a page nobody re-measures.
+
+*Deviation from the spec, deliberate.* The spec asks for "how it runs (three
+lines, linking `/process`)". It is **one sentence and a link** instead. Three
+lines here would have been a fourth hand-typed copy of the three steps —
+`ProcessSection` has them today and S2.6 moves them into `lib/process.ts` —
+and D1's whole rule is that content lives in one place. The sentence
+interpolates `AUDIT_DELIVERABLE` and `TIMELINE_RANGE` so neither promise is
+retyped, and S2.6 has nothing to reconcile.
+
+*The JSON-LD serializer was extracted, because a second emitter appeared.*
+`lib/jsonld.ts` now owns the two escaping rules — `dangerouslySetInnerHTML`
+rather than a JSX child, and `<` → `\u003c` so a closing script tag inside a
+string cannot terminate the element — plus `SCHEMA_ID.business`, the `@id`
+`JsonLd.tsx` has exposed since Phase 0 with a comment saying future nodes
+would reference it. S2.3 is the first one that does. **Verified the business
+payload did not change:** the node on `/` still parses with 19 keys, `@type`
+`ProfessionalService`, `@id` `…/#business` and both trading windows intact.
+
+*The `Service` node asserts nothing the page does not show.* `provider` is a
+reference to the business `@id`, not a second copy of the name, address and
+hours — search engines cross-check NAP and that is why `lib/site.ts` exists.
+No `offers` and no `priceRange`: §2.2 puts the pricing *model* on the page and
+never a figure. No `aggregateRating`: there are no reviews on the site until
+Phase 5, and a rating in markup that a visitor cannot see is the exact
+mismatch that earns a manual action. `/websites` renders two nodes — its
+`Service` and the site-wide `ProfessionalService` from the layout.
+
+*Measured.* One `h1` containing the keyword as a sentence rather than an
+insertion; heading order h1 → h2 → h3×6 → h2×4 → h3×3 with no skips. Unique
+title, description, canonical and `og:url`, all pointing at `/websites`. At
+375px: 18 interactive elements, **zero** under 44×44 except the `sr-only`
+skip link at 1×1 until focused, zero horizontal overflow, zero text below
+12px. No raw hex, no raw `zinc-600/700/800`. Team-language sweep
+(«ομάδα», «developers μας», «ειδικοί», «γραφείο μας», «founded») returns
+nothing.
+
+*Two links on this page 404 right now, on purpose.* `/process` and `/faq` are
+written as the spec asks and confirmed returning 404 — they land in S2.6 and
+S2.8. `/contact` and `/websites` return 200. Same reasoning as the navigation:
+nothing reaches production until the phase PR merges, and S2.12's link audit
+is the backstop.
+
+*What S2.4 owes.* The spec says both pillars share one skeleton (§10.5 applies
+to page shells). This page was built from primitives directly rather than
+from a `ServicePage` shell, because generalising a layout from a single
+example is how the wrong abstraction gets locked in. **S2.4 extracts the
+shell once there are two real pages to generalise from** — it is that slice's
+job, not a nice-to-have.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1065,7 +1129,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **2/12 slices done** · in progress |
+| 2 | Multipage & SEO | **3/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |

@@ -61,6 +61,16 @@ export const ROUTES = [
     absoluteTitle: true,
   },
   {
+    path: "/websites",
+    label: "Websites",
+    /* The §2.3 keyword, verbatim, and it has to read as a sentence in the
+       title, the h1, the description and the opening paragraph rather than
+       as four insertions of the same phrase. */
+    title: "Κατασκευή ιστοσελίδων Θεσσαλονίκη",
+    description:
+      "Κατασκευή ιστοσελίδων και web εφαρμογών σε Next.js, από τη Θεσσαλονίκη. Ο κώδικας και το repository είναι δικά σας, η εγκατάσταση παραδίδεται τεκμηριωμένη.",
+  },
+  {
     path: "/contact",
     label: "Επικοινωνία",
     title: "Επικοινωνία & δωρεάν audit",

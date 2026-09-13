@@ -1,3 +1,4 @@
+import { SCHEMA_ID, serializeJsonLd } from "@/lib/jsonld";
 import { SAME_AS, SERVICE_CATALOG, SITE } from "@/lib/site";
 
 /**
@@ -11,8 +12,9 @@ export default function JsonLd() {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     /* Stable node id so future graph entries (WebSite, Person, Article) can
-       reference this business instead of redeclaring it. */
-    "@id": `${SITE.url}/#business`,
+       reference this business instead of redeclaring it. S2.3 is the first
+       one to do it: `ServiceJsonLd` points its `provider` here. */
+    "@id": SCHEMA_ID.business,
     name: SITE.legalName,
     alternateName: SITE.siteName,
     url: SITE.url,
@@ -68,22 +70,12 @@ export default function JsonLd() {
     },
   };
 
-  /*
-   * Two escaping rules matter here:
-   *
-   * 1. The JSON must go in via `dangerouslySetInnerHTML`. Rendering it as a
-   *    JSX child would HTML-escape the quotes into `&quot;`, which every
-   *    JSON-LD parser rejects.
-   * 2. Every `<` becomes the JSON escape sequence backslash-u003c, so a
-   *    literal closing script tag inside any string can never terminate the
-   *    element early. Still valid JSON, inert as markup.
-   */
-  const payload = JSON.stringify(schema).replace(/</g, "\\u003c");
-
+  /* Escaping rules moved to `lib/jsonld.ts` in S2.3, when a second emitter
+     appeared and §10.5 stopped allowing the copy. */
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: payload }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
     />
   );
 }
