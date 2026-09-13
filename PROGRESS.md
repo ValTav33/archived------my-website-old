@@ -8,7 +8,7 @@
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
 **Last slice:** S2.12 · 2026-09-13 · **all 12 slices done**
-**Blocked on:** nothing for S2.10–S2.12. **Val must read `/privacy` and `/terms`** before the PR merges (D3). **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Blocked on:** nothing automatable. All 12 slices done, every measurable gate met. **Val owns what is left:** read `/privacy` and `/terms` (D3), the phone pass, the keyboard pass, Vercel Deployment Protection, and both PRs — Phase 1's and then this one. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -31,7 +31,7 @@
 
 ---
 
-## Phase 2 — Multipage & SEO 🚧 IN PROGRESS
+## Phase 2 — Multipage & SEO ✅ CODE-COMPLETE · awaiting Val
 
 Build the route tree in Playbook §2.3: two service pillars, the work index and
 case studies, the deeper pages behind the homepage's sections, the legal pages,
@@ -802,6 +802,38 @@ Deployment Protection, either:
    private to humans, Lighthouse passes `?x-vercel-set-bypass-cookie=true&x-vercel-protection-bypass=<secret>`. Preferred: it is the narrower change.
 2. **Vercel Authentication → Disabled** — simpler, and previews become
    readable by anyone holding the URL. Safe now that previews are `noindex`.
+
+
+### What remains, and only Val can do it
+
+1. **Read `/privacy` and `/terms`** on the branch. This is D3's condition and
+   the one place in the phase where a drafting error has consequences off the
+   website. Both describe what the site does today; if you want the privacy
+   page to state outright that the form currently delivers nowhere, that is
+   one paragraph and I will add it.
+2. **The phone pass** — 375 / 768 / 1024 / 1440 on a real device, portrait and
+   landscape, now across eleven routes rather than one.
+3. **The keyboard pass with eyes on the screen.** Still the same gap Phase 1
+   recorded: the Browser pane reports `visibilityState: "hidden"` and never
+   fires `requestAnimationFrame`, so `:focus` never matches and no focus ring
+   has ever been *observed* rendering. Tab order, the drawer's focus trap and
+   the focus-ring CSS are all verified programmatically; seeing them is what
+   is missing.
+4. **Vercel Deployment Protection.** `ssoProtection` is still
+   `enabled: true` / `all_except_custom_domains` on project `my-website`. This
+   session was blocked from changing it by the permission classifier, so for
+   the **third** phase running, the numbers above are from a local
+   `next start` and the deployment itself is unverified. Either generate a
+   Protection Bypass for Automation secret (previews stay private to humans)
+   or set Vercel Authentication to Disabled — the latter is now safe, because
+   previews carry `noindex` **and** a blanket `robots.txt` disallow.
+5. **Two PRs, in order.** Phase 1 is still open and unmerged; Phase 2 is
+   stacked on it. Merge Phase 1 first, then rebase and open Phase 2:
+   `git rebase --onto main phase/1-homepage phase/2-multipage`. `main` is a
+   direct ancestor of `phase/1-homepage`, so the squash merge leaves an
+   identical tree and the replay conflicts with nothing.
+6. **After merge:** confirm the production deployment's commit SHA matches the
+   merge commit before measuring anything. Phase 0 sat eight commits stale.
 
 ---
 
@@ -1666,8 +1698,8 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **12/12 slices done** · closeout |
-| 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
+| 2 | Multipage & SEO | **12/12 slices done** · code-complete, awaiting Val |
+| 3 | Backend & Go-Live | Not started · **← LAUNCH** · **next up**. Scope now explicitly includes revising `/privacy` in the same slice that wires delivery (playbook §3, D3) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
 | 6 | English | Not started |
@@ -1700,6 +1732,8 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
 | 36 raw `zinc-100/200/300/400` **text** colours across the components, plus `hover:bg-zinc-200` in `globals.css` — a second text ramp competing with the documented `ink` ramp. All clear AA, so this is token discipline, not contrast. S1.1 was scoped to the five decorative `zinc-600/700/800` greys only | S1.1 | 1 |
 | `SERVICE_CATALOG` claims "AI Concierge & Voice/Chat Agents", which feeds `knowsAbout` and the schema offer catalog, but **no voice work has been delivered** — the showcase's concierge architecture is labelled indicative. S2.4 left voice off `/automations` under §8.5 and did not touch the catalog, because it is a structured-data decision rather than a copy tweak: either the claim comes out, or Phase 5 supplies something that backs it | S2.4 | 5 |
+| Lighthouse mobile Performance reads **93** on `/` and 94 on `/websites` against Phase 1's 95, both on a local `next start`, with LCP 2.9s → 3.2s. Phase 4 owns performance (its gate is Perf ≥ 95 with budgets in CI); chasing LCP in a phase that does not own it is how a slice stops being reviewable | S2.12 | 4 |
+| `text-decor` / bullet marks, the `dl` pairs on `/process` and `/about`, and the legal pages' prose were all built with the existing primitives, but the two service pillars, `/work` and `/process` now share a shell (`PageShell`, `ServiceSection`, `FeatureGrid`, `BulletList`, `ServiceCta`, `ArrowLink`) that no one has design-reviewed as a system — worth one pass in Phase 4 alongside the bento hierarchy row | S2.4 | 4 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
@@ -1709,6 +1743,10 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 
 | Item | Found in | Closed by |
 |---|---|---|
+| `NAV_LINKS` entries were in-page anchor ids with an `href` escape hatch marked "set once routes exist in Phase 2" | S1.4 · nav.ts | S2.12 |
+| Footer's «Επιστροφή στην αρχή» pointed at `#hero`, which exists on one route of eleven | S2.12 | S2.12 |
+| `FaqSection` was a Client Component wrapping the whole section | S1.4 lineage | S2.8 — `FaqList` is the leaf now |
+| Two `null` portrait slots would have existed in two files | S2.7 | S2.7 — `PORTRAIT` lives in `lib/site.ts` |
 | ~~Honeypot `company` lacks `aria-hidden`, so a screen-reader user can reach and fill it~~ — **the row was stale.** Checked against the rendered build while measuring `/contact`: the wrapper emits `aria-hidden="true"` and the input carries `tabindex="-1"`, so the subtree is out of the accessibility tree and out of the tab order. Fixed at some point after S0.12 logged it and never struck off. Left in place, it would have sent a Phase 3 session to fix something already fixed | S0.12 | verified S2.2 |
 
 ### Closed during Phase 1
