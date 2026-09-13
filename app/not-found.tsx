@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ArrowLink from "@/components/ui/ArrowLink";
+import Eyebrow from "@/components/ui/Eyebrow";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 
@@ -30,7 +31,15 @@ export default function NotFound() {
         lede="Ο σύνδεσμος μπορεί να είναι λάθος, ή η σελίδα να μετακινήθηκε. Δεν χάθηκε κάτι δικό σας."
       />
 
-      <div className="mt-10 flex flex-col items-start gap-3">
+      {/* An `h2`, and not decoration. Measured across every route, this page
+          was the only one with a skipped heading level: its `h1` sat directly
+          above the footer's `h3` column headings, because unlike every other
+          route it had no `h2` of its own. The list needed a label anyway. */}
+      <Eyebrow as="h2" variant="label" className="mt-12">
+        Πού μπορείτε να πάτε
+      </Eyebrow>
+
+      <div className="mt-5 flex flex-col items-start gap-3">
         <ArrowLink href="/">Αρχική</ArrowLink>
         <ArrowLink href="/work">Έργα που έχουν παραδοθεί</ArrowLink>
         <ArrowLink href="/contact">Επικοινωνία</ArrowLink>

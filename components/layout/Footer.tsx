@@ -1,16 +1,26 @@
+import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import { CTA_LINK, FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
+import { CTA_LINK, FOOTER_LINKS, NAV_LINKS, isExternal } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import Badge from "@/components/ui/Badge";
 import Eyebrow from "@/components/ui/Eyebrow";
 import StatusDot from "@/components/ui/StatusDot";
 
-/* Capability tracks, phrased for humans rather than for the schema. */
+/**
+ * Capability tracks, phrased for humans rather than for the schema.
+ *
+ * The first two now have pages behind them, so they link. The last two do
+ * not, and stay plain text — S2.12's rule is the same one the Phase 1
+ * comment here stated: a link to nowhere is worse than no link.
+ */
 const CORE_TRACKS = [
-  "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
-  "AI εξυπηρέτηση πελατών & φωνητικοί agents",
-  "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
-  "Dashboards διαχείρισης για πελάτες",
+  {
+    label: "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
+    href: "/websites",
+  },
+  { label: "AI εξυπηρέτηση πελατών & φωνητικοί agents", href: "/automations" },
+  { label: "Αυτοματισμοί leads & εμπλουτισμός δεδομένων", href: "/automations" },
+  { label: "Dashboards διαχείρισης για πελάτες", href: undefined },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -65,12 +75,21 @@ export default function Footer() {
             <Eyebrow as="h3" variant="label">
               Υπηρεσίες
             </Eyebrow>
-            {/* Plain text, not links: there are no dedicated service pages
-                yet, and a link to nowhere is worse than no link. */}
             <ul className="mt-4 space-y-2.5">
               {CORE_TRACKS.map((track) => (
-                <li key={track} className="text-xs leading-relaxed text-zinc-400">
-                  {track}
+                <li key={track.label}>
+                  {track.href ? (
+                    <Link
+                      href={track.href}
+                      className="flex min-h-tap items-center text-xs leading-relaxed text-zinc-400 transition-colors duration-200 hover:text-white"
+                    >
+                      {track.label}
+                    </Link>
+                  ) : (
+                    <span className="flex min-h-tap items-center text-xs leading-relaxed text-zinc-400">
+                      {track.label}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -86,16 +105,27 @@ export default function Footer() {
                   from NAV_LINKS removed the footer's only path to the form,
                   and a footer that cannot reach the conversion block is a
                   dead end at the exact moment someone has finished reading. */}
-              {[...NAV_LINKS, CTA_LINK, ...FOOTER_LINKS].map((link) => (
-                <li key={link.id}>
-                  <a
-                    href={navHref(link)}
-                    className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
+              {[{ href: "/", label: "Αρχική" }, ...NAV_LINKS, CTA_LINK, ...FOOTER_LINKS].map(
+                (item) => (
+                  <li key={item.href}>
+                    {isExternal(item.href) ? (
+                      <a
+                        href={item.href}
+                        className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </li>
+                ),
+              )}
             </ul>
           </div>
 
@@ -119,8 +149,12 @@ export default function Footer() {
               ))}
             </ul>
 
+            {/* `#main-content` rather than `#hero`: the footer renders on
+                every route and `#hero` exists on exactly one of them, so this
+                was a dead click on ten pages. The layout's `main` landmark is
+                the one anchor guaranteed to be on the current page. */}
             <a
-              href="#hero"
+              href="#main-content"
               className="group mt-5 inline-flex min-h-tap items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
             >
               Επιστροφή στην αρχή

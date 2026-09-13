@@ -7,7 +7,7 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.11 · 2026-09-13
+**Last slice:** S2.12 · 2026-09-13 · **all 12 slices done**
 **Blocked on:** nothing for S2.10–S2.12. **Val must read `/privacy` and `/terms`** before the PR merges (D3). **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -52,7 +52,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.9** `/privacy` and `/terms` · 2026-09-13 · **Val must read both before merge (D3)**
 - [x] **S2.10** Favicon, OG cards, 404 · 2026-09-13
 - [x] **S2.11** Sitemap, robots, schema graph · 2026-09-13
-- [ ] **S2.12** Navigation and final assembly
+- [x] **S2.12** Navigation and final assembly · 2026-09-13
 
 **S2.1.** `Navbar`, `main#main-content` and `Footer` moved from
 `app/page.tsx` into `app/layout.tsx`; `lib/routes.ts` is the route manifest and
@@ -680,7 +680,101 @@ placeholder that happens to be invisible to everyone except a crawler.
 **zero dangling references** — every `@id` pointed at by any node is defined
 somewhere.
 
-### Known mid-phase state on this branch, closed by S2.12
+**S2.12.** The navigation became routes, and the phase's exit gate was
+measured end to end.
+
+*Every header and footer link is a `next/link` now.* §2.3's five items
+exactly: **Websites · Automations · Έργα · Διαδικασία · [Δωρεάν Audit]** —
+the single «Λύσεις» anchor split into the two pillars and «Ερωτήσεις» moved to
+the footer, which is where §2.3 puts FAQ. Labels come from the route manifest
+rather than being retyped, so the header cannot disagree with the page about
+what a page is called. The footer became the site's index: Αρχική, the four
+nav items, the CTA, About, FAQ, Privacy, Terms and the phone.
+
+*The in-page anchors that stayed, stayed for a reason.* The hero CTA and the
+showcase banner still use `ScrollLink` to `#audit` — both live in components
+that only ever render on the homepage, so they are genuinely same-page. The
+footer's «Επιστροφή στην αρχή» pointed at `#hero`, which exists on exactly
+one of eleven routes; it now targets `#main-content`, the layout's landmark,
+which is the only anchor guaranteed to be on the current page.
+
+*Three defects this slice introduced and then caught by measuring.*
+
+1. **The drawer stayed open across navigation.** The header lives in the root
+   layout, so an App Router navigation does not remount it. The fix is not an
+   effect: the state is now **which route the drawer was opened on**, so `open`
+   is derived and a route change closes it during render. The first attempt
+   *was* an effect calling `setState`, which the React Compiler lint correctly
+   rejected — the lint was right and the derived version is the better answer.
+   Verified: opened at 375px, followed a drawer link, drawer closed and
+   `body.overflow` restored; browser **back** also leaves it closed.
+2. **«Έργα» was 36×44 at 1024px and above.** §2.3's labels are shorter than
+   the ones they replaced, and `min-h-tap` only ever fixed height — one
+   offender per route, twelve in total, on the two widest breakpoints.
+   `min-w-tap` with centred text.
+3. **The 404 page skipped a heading level.** It was the only route with no
+   `h2` of its own, so its `h1` sat directly above the footer's `h3` column
+   headings. The link list now carries an `h2`, which it wanted anyway.
+
+### Exit gate — measured
+
+| Gate | Result |
+|---|---|
+| Every route in §2.3 returns 200 | ✅ 11 routes, all 200 |
+| Unknown `/work` slug 404s | ✅ `/work/does-not-exist` **and** `/work/roz-inn` (real entry, no study) |
+| Unique title / description / canonical / OG image | ✅ **11 routes, 11 unique on all four, zero missing** |
+| No route inherits the homepage canonical | ✅ `alternates` gone from the layout; a metadata-less canary renders **no** canonical |
+| Nav is five items including the CTA | ✅ plus brand and phone pill |
+| Zero broken internal links site-wide | ✅ **11 distinct internal links crawled, zero non-200** |
+| Sitemap lists every public route, nothing that 404s | ✅ 11 `<loc>`, **every one fetched: 11 × 200** |
+| Robots allows crawling, points at the sitemap | ✅ and returns a blanket disallow on previews |
+| No favicon 404 on any route | ✅ fresh-tab check: **zero console errors, no `/favicon.ico` request at all** |
+| 404 renders in Greek, `noindex`, links back | ✅ `noindex`, 404 status, three exits |
+| Schema: graph validates, every string visible | ✅ 5 `@id`s, **zero dangling refs**; `FAQPage` on `/faq` only (6/6 Q&A present), `Person` on `/about` only, `Service` on both pillars, `BreadcrumbList` matching the visible trail |
+| Homepage FAQ shows four and carries no `FAQPage` | ✅ four disclosures, schema absent |
+| No TODO / Placeholder / yourdomain | ✅ grep returns nothing |
+| No hardcoded hex, no raw `zinc-600/700/800`, no sub-12px | ✅ all three greps empty |
+| Every interactive element ≥ 44×44 | ✅ **12 routes × 4 widths, 316–376 elements per width, zero under 44; smallest side exactly 44** |
+| One `h1` per route, no skipped levels | ✅ 12 routes, 12 `h1`s, **zero skips** |
+| No horizontal overflow, no text below 12px | ✅ zero at 375 / 768 / 1024 / 1440 |
+| No positive `tabindex` | ✅ none in the tree |
+| `tsc`, `lint`, `build` | ✅ all clean |
+| Lighthouse mobile on `/`, `/websites`, `/work` | ✅ see below |
+| Manual pass on a real phone | ⏳ Val |
+| Keyboard pass with eyes on the screen | ⏳ Val |
+| Val has read `/privacy` and `/terms` | ⏳ Val (D3) |
+
+### Lighthouse — mobile, local production build
+
+| Route | Perf | A11y | BP | SEO |
+|---|---|---|---|---|
+| `/` | 93 | **100** | **100** | **100** |
+| `/websites` | 94 | **100** | **100** | **100** |
+| `/work` | 98 | **100** | **100** | **100** |
+
+Budget for Phase 0–2 is Perf ≥ 90 · A11y 100 · BP ≥ 95 · SEO ≥ 95 — **met on
+all three routes.** Desktop is 100/100/100/100 on all three.
+
+**Best Practices reached 100 for the first time in the project's history.** It
+read 96 in Phase 0 and 96 in Phase 1, both times for one reason — the
+`404 /favicon.ico` console error — and S2.10 removed it. Predicted in the
+spec, and it landed. Zero failing audits in accessibility, SEO **and** best
+practices on `/`.
+
+*Performance reads 93 against Phase 1's 95, and the honest answer is that it
+needs Phase 4 rather than a fix here.* Both numbers are local `next start`,
+so they are comparable; LCP moved 2.9s → 3.2s. Phase 4 owns performance —
+its gate is Perf ≥ 95 with Lighthouse budgets in CI — and chasing LCP in a
+phase that does not own it is how a slice stops being reviewable. Logged in
+the Backlog.
+
+**Measured on a local production build, not the preview.** Vercel
+Deployment Protection is still on: the classifier blocked this session from
+changing it and Val has not yet cleared it, so for the **third** consecutive
+phase the deployment itself is unverified. Phases 0 and 1 both recorded the
+same fallback.
+
+### Known mid-phase state on this branch — ✅ CLOSED by S2.12
 
 The header's three nav links and the brand link are still `ScrollLink`s to
 homepage anchors (`#solutions`, `#process`, `#faq`, `#hero`), so **on
@@ -1572,7 +1666,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **11/12 slices done** · in progress |
+| 2 | Multipage & SEO | **12/12 slices done** · closeout |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |

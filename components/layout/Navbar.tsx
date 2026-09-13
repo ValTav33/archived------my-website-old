@@ -1,21 +1,52 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
 import { CTA_LINK, NAV_LINKS } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 import Badge from "@/components/ui/Badge";
-import ScrollLink from "@/components/ui/ScrollLink";
 import { cn } from "@/lib/utils";
 
+/**
+ * The header, on every route since S2.1 moved the chrome into the layout.
+ *
+ * **Every link here is a `next/link` route, not a `ScrollLink`.** Through
+ * Phase 1 the nav scrolled to sections of the single page; once the sections
+ * became routes, a scroll link in a header that renders on eleven pages is a
+ * silent dead click on ten of them. The in-page anchors that remain on the
+ * site — the hero CTA and the showcase banner — both live in components that
+ * only ever render on the homepage, so they are still genuinely same-page and
+ * stay as they are.
+ */
+
 export default function Navbar() {
+  /* The current route, for `aria-current` and the active style. */
+  const pathname = usePathname();
+
   /* `scrolled` drives the header hairline: the border is invisible while the
      page is at the top and resolves once content slides underneath. */
   const [scrolled, setScrolled] = useState(false);
 
-  /* `open` controls the mobile drawer. */
-  const [open, setOpen] = useState(false);
+  /**
+   * The mobile drawer.
+   *
+   * State is **the route the drawer was opened on**, not a boolean, so `open`
+   * is derived and a route change closes it during render. The header lives
+   * in the root layout, so an App Router navigation does not remount it and a
+   * boolean would leave the drawer hanging open over the new page — the
+   * classic App Router nav bug, and invisible at desktop width where the
+   * drawer never opens at all.
+   *
+   * The per-link `onClick` already covers a tap. This covers everything else:
+   * browser back and forward, and any programmatic navigation. Deriving it
+   * rather than resetting it in an effect is also what stops the render from
+   * committing an open drawer for one frame.
+   */
+  const [openedOn, setOpenedOn] = useState<string | null>(null);
+  const open = openedOn === pathname;
 
   /* The hamburger. Focus returns here when the drawer is dismissed, so a
      keyboard user is put back where they were rather than at the top of the
@@ -31,7 +62,7 @@ export default function Navbar() {
   /** Closes the drawer, optionally handing focus back to the hamburger. */
   const closeDrawer = useCallback((restoreFocus: boolean) => {
     returnFocusRef.current = restoreFocus;
-    setOpen(false);
+    setOpenedOn(null);
   }, []);
 
   useEffect(() => {
@@ -106,7 +137,7 @@ export default function Navbar() {
     };
   }, [open, closeDrawer]);
 
-  /* Handed to every `ScrollLink` in the header. The link itself performs the
+  /* Handed to every link in the header. The link itself performs the
      navigation — this only dismisses the drawer first, and deliberately does
      NOT return focus to the hamburger: focusing a fixed element can scroll
      the page and undo the jump the visitor just asked for. */
@@ -126,30 +157,47 @@ export default function Navbar() {
         {/* ---------------------------- Brand ---------------------------- */}
         {/* A link, not a button: it navigates, so assistive tech should
             announce it as a link and a middle-click should open a new tab.
-            Becomes `/` in Phase 2 with no markup change. */}
-        <ScrollLink
-          to="hero"
+            Became `/` in S2.12, as the Phase 1 comment here predicted. */}
+        <Link
+          href="/"
           onClick={dismissDrawer}
+          aria-current={pathname === "/" ? "page" : undefined}
           className="group flex min-h-tap shrink-0 items-center gap-2"
         >
           <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
             {SITE.brand}
           </span>
-        </ScrollLink>
+        </Link>
 
         {/* ------------------------ Desktop links ------------------------ */}
         <ul className="hidden items-center gap-7 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <li key={link.id}>
-              <ScrollLink
-                to={link.id}
-                onClick={dismissDrawer}
-                className="inline-flex min-h-tap items-center text-sm text-zinc-400 transition-colors duration-200 hover:text-white"
-              >
-                {link.label}
-              </ScrollLink>
-            </li>
-          ))}
+          {NAV_LINKS.map((item) => {
+            const active = pathname === item.href;
+
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={dismissDrawer}
+                  aria-current={active ? "page" : undefined}
+                  /* The active state is the hover colour, not a new one —
+                     §10.2 allows exactly one accent and it belongs to the
+                     status dots.
+
+                     `min-w-tap` because §2.3's labels are shorter than the
+                     ones they replaced: «Έργα» measured **36×44** at 1024px,
+                     under the 44 bar S1.3 drove to zero site-wide. Height
+                     alone was never the whole rule. */
+                  className={cn(
+                    "inline-flex min-h-tap min-w-tap items-center justify-center text-sm transition-colors duration-200 hover:text-white",
+                    active ? "text-white" : "text-zinc-400",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         {/* --------------------- Right-side utilities -------------------- */}
@@ -177,19 +225,20 @@ export default function Navbar() {
           {/* The EL|EN switch returns in Phase 6, with real /en locale routing. */}
 
           {/* Primary CTA — solid white, the highest-contrast element on screen. */}
-          <ScrollLink
-            to={CTA_LINK.id}
+          <Link
+            href={CTA_LINK.href}
             onClick={dismissDrawer}
+            aria-current={pathname === CTA_LINK.href ? "page" : undefined}
             className="btn-primary hidden min-h-tap px-4 py-2 text-xs sm:inline-flex"
           >
             {CTA_LINK.label}
-          </ScrollLink>
+          </Link>
 
           {/* Hamburger — hidden once the full desktop nav is visible. */}
           <button
             ref={triggerRef}
             type="button"
-            onClick={() => (open ? closeDrawer(true) : setOpen(true))}
+            onClick={() => (open ? closeDrawer(true) : setOpenedOn(pathname))}
             aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
             aria-expanded={open}
             className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
@@ -230,27 +279,31 @@ export default function Navbar() {
             >
               <div className="space-y-5 px-5 pb-7 pt-4 sm:px-8">
                 <ul>
-                  {NAV_LINKS.map((link, index) => (
+                  {NAV_LINKS.map((item, index) => (
                     <motion.li
-                      key={link.id}
+                      key={item.href}
                       /* Links cascade 40ms apart so the drawer reads as
                          assembled rather than dumped on screen. */
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 + index * 0.04, duration: 0.22 }}
                     >
-                      <ScrollLink
-                        to={link.id}
+                      <Link
+                        href={item.href}
                         onClick={dismissDrawer}
-                        className="flex w-full items-center justify-between border-b border-hairline py-3.5 text-base text-zinc-400 transition-colors duration-200 hover:text-white"
+                        aria-current={pathname === item.href ? "page" : undefined}
+                        className={cn(
+                          "flex min-h-tap w-full items-center justify-between border-b border-hairline py-3.5 text-base transition-colors duration-200 hover:text-white",
+                          pathname === item.href ? "text-white" : "text-zinc-400",
+                        )}
                       >
-                        {link.label}
+                        {item.label}
                         <ArrowRight
                           aria-hidden
                           className="h-4 w-4 text-ink-ghost"
                           strokeWidth={1.8}
                         />
-                      </ScrollLink>
+                      </Link>
                     </motion.li>
                   ))}
                 </ul>
@@ -272,13 +325,13 @@ export default function Navbar() {
                   </span>
                 </a>
 
-                <ScrollLink
-                  to={CTA_LINK.id}
+                <Link
+                  href={CTA_LINK.href}
                   onClick={dismissDrawer}
                   className="btn-primary flex min-h-tap w-full justify-center px-4 py-2.5 text-sm"
                 >
                   {CTA_LINK.label}
-                </ScrollLink>
+                </Link>
               </div>
             </motion.div>
           </>
