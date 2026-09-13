@@ -3,6 +3,11 @@
 > Single source of truth for **where the project is right now**.
 > Rules for updating this file: `docs/PROJECT-PLAYBOOK.md` §7.
 > Updated in the same commit as the slice it describes — never separately.
+>
+> **Anything that needs Val personally lives in `docs/VAL-ACTIONS.md`**, with
+> the exact steps, not here. This file records state; that one is the work
+> queue. A slice that creates or clears a Val-owned item updates it in the
+> same commit.
 
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
@@ -806,34 +811,22 @@ Deployment Protection, either:
 
 ### What remains, and only Val can do it
 
-1. **Read `/privacy` and `/terms`** on the branch. This is D3's condition and
-   the one place in the phase where a drafting error has consequences off the
-   website. Both describe what the site does today; if you want the privacy
-   page to state outright that the form currently delivers nowhere, that is
-   one paragraph and I will add it.
-2. **The phone pass** — 375 / 768 / 1024 / 1440 on a real device, portrait and
-   landscape, now across eleven routes rather than one.
-3. **The keyboard pass with eyes on the screen.** Still the same gap Phase 1
-   recorded: the Browser pane reports `visibilityState: "hidden"` and never
-   fires `requestAnimationFrame`, so `:focus` never matches and no focus ring
-   has ever been *observed* rendering. Tab order, the drawer's focus trap and
-   the focus-ring CSS are all verified programmatically; seeing them is what
-   is missing.
-4. **Vercel Deployment Protection.** `ssoProtection` is still
-   `enabled: true` / `all_except_custom_domains` on project `my-website`. This
-   session was blocked from changing it by the permission classifier, so for
-   the **third** phase running, the numbers above are from a local
-   `next start` and the deployment itself is unverified. Either generate a
-   Protection Bypass for Automation secret (previews stay private to humans)
-   or set Vercel Authentication to Disabled — the latter is now safe, because
-   previews carry `noindex` **and** a blanket `robots.txt` disallow.
-5. **Two PRs, in order.** Phase 1 is still open and unmerged; Phase 2 is
-   stacked on it. Merge Phase 1 first, then rebase and open Phase 2:
-   `git rebase --onto main phase/1-homepage phase/2-multipage`. `main` is a
-   direct ancestor of `phase/1-homepage`, so the squash merge leaves an
-   identical tree and the replay conflicts with nothing.
-6. **After merge:** confirm the production deployment's commit SHA matches the
-   merge commit before measuring anything. Phase 0 sat eight commits stale.
+Five items, all of them in **`docs/VAL-ACTIONS.md`** with the exact steps,
+click paths and acceptance criteria. Summarised here only so this file's
+Phase 2 entry is not silent about them:
+
+| | Item | Why it is Val's |
+|---|---|---|
+| **V1** | Read `/privacy` and `/terms` | D3's condition; the one place a drafting error has consequences off the website |
+| **V2** | The phone pass and the keyboard pass | A 375px viewport is not a phone, and the Browser pane never fires `requestAnimationFrame`, so no focus ring has ever been *observed* in any phase |
+| **V3** | Vercel Deployment Protection | The session's permission classifier blocked the API call; three phases running have measured a local build instead of the deployment |
+| **V4** | Merge both PRs, Phase 1 first, then rebase Phase 2 | `gh` is not installed and the GitHub connector is unauthorised here |
+| **V5** | Check the deployed SHA after each merge | Needs the Vercel dashboard — and Phase 0 once sat eight commits stale |
+
+**Deliberately not duplicated here.** The full detail lived in three places by
+the end of this phase — phase write-ups, the playbook's open questions, and
+this file — which is why `docs/VAL-ACTIONS.md` now exists and why this is a
+pointer.
 
 ---
 

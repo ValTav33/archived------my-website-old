@@ -385,12 +385,20 @@ and it applies to every phase.
 
 Paste this into every new Claude Code session, verbatim.
 
+*Gained a fourth file on 2026-09-13: `docs/VAL-ACTIONS.md`. By the end of
+Phase 2, work that needed Val personally was scattered across phase
+write-ups, §15's open questions and PROGRESS.md — fourteen items in three
+places. A session that has not read it will either block on something that is
+not its to do, re-raise a settled question, or helpfully do something that
+was deliberately left to Val.*
+
 ```
-Read these three files before doing anything:
+Read these four files before doing anything:
 
 1. docs/PROJECT-PLAYBOOK.md — the rules and the phase map
 2. PROGRESS.md — where we are right now
 3. docs/phases/PHASE-<N>-<NAME>.md — the current phase spec
+4. docs/VAL-ACTIONS.md — what is waiting on me, so you don't re-raise it
 
 Then:
 - Tell me the current phase and the next unchecked slice.
