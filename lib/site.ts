@@ -196,6 +196,36 @@ export type ProofItem = {
   href?: string;
   /** Tooling, rendered as badges. Only what was genuinely used. */
   stack?: readonly string[];
+  /**
+   * The case-study body. **Optional, and the absence is meaningful.**
+   *
+   * `/work/[slug]` generates a page only for entries that have one. An entry
+   * without a study is a row on the index that links to its live site if it
+   * has one, and nowhere if it does not. That is §8.5 as a routing rule: a
+   * case study with nothing to say is a thin page that harms the ones with
+   * something to say, and «σε εξέλιξη» is padding.
+   *
+   * `roz-inn` deliberately has none. It is a presentation site with a
+   * gallery and a live URL — the URL *is* the evidence, and it beats an
+   * internal page that says the same thing in more words. Its booking and
+   * payment build is in progress, so it is absent rather than promised; the
+   * study goes in the day that ships.
+   */
+  study?: {
+    /**
+     * The problem, in the client's terms.
+     *
+     * Describes the *nature of the work* rather than asserting what the
+     * client used to do. We have no documented before-state for BTL, and
+     * "they used to copy rows by hand" would be an invented premise — which
+     * §8.1 forbids just as much as an invented percentage.
+     */
+    problem: string;
+    /** What was built, as the ordered steps the system actually performs. */
+    built: readonly string[];
+    /** What the client can see or do now. No metrics (§8.1). */
+    now: string;
+  };
 };
 
 export const PROOF: readonly ProofItem[] = [
@@ -220,6 +250,23 @@ export const PROOF: readonly ProofItem[] = [
       "OpenAI",
       "Instantly",
     ],
+    study: {
+      problem:
+        "Ένας κατασκευαστής ιατροτεχνολογικού εξοπλισμού απευθύνεται σε κλινικές και διανομείς σε πολλές αγορές. Κάθε υποψήφιος πελάτης χρειάζεται στοιχεία επικοινωνίας που ισχύουν, λίγη έρευνα για το τι κάνει, και ένα πρώτο email που δεν διαβάζεται ως μαζικό. Αυτά τα τρία, πολλαπλασιασμένα, είναι η δουλειά.",
+      /* The same vocabulary the homepage's architecture trace uses, in the
+         order the pipeline runs. S1.10's closeout translated those nodes;
+         reusing the terms means a visitor who read the homepage recognises
+         the system rather than meeting a second description of it. */
+      built: [
+        "Είσοδος από λίστα ή φόρμα",
+        "Κλιμακωτή επαλήθευση στοιχείων επικοινωνίας",
+        "Έρευνα για κάθε υποψήφιο πελάτη",
+        "Φίλτρο καταλληλότητας",
+        "Προσωποποιημένο πρώτο email",
+        "Φόρτωση στην καμπάνια",
+      ],
+      now: "Η λίστα φτάνει έτοιμη για αποστολή: στοιχεία επιβεβαιωμένα, κείμενο γραμμένο, καμπάνια φορτωμένη. Ό,τι δεν περάσει την επαλήθευση δεν φεύγει.",
+    },
   },
   {
     id: "roz-inn",
@@ -251,6 +298,14 @@ export type Testimonial = {
 };
 
 export const TESTIMONIALS: readonly Testimonial[] = [];
+
+/** The entries that earn a `/work/[slug]` page. */
+export const STUDIED_PROOF = PROOF.filter((item) => item.study);
+
+/** Looks up a delivered-work entry by slug, or `undefined` if there is none. */
+export function getProofBySlug(slug: string): ProofItem | undefined {
+  return PROOF.find((item) => item.slug === slug);
+}
 
 /** Looks up a delivered-work entry by id. Throws rather than returning undefined. */
 export function getProof(id: string): ProofItem {

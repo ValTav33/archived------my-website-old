@@ -78,6 +78,15 @@ export const ROUTES = [
       "Αυτοματισμοί AI για επιχειρήσεις: παραλαβή αιτημάτων, follow-up, εμπλουτισμός στοιχείων και αναφορές — χωρίς χειροκίνητη δουλειά, σε λογαριασμούς δικούς σας.",
   },
   {
+    path: "/work",
+    label: "Έργα",
+    title: "Έργα",
+    /* No count in here. "Δύο έργα" would be true today, wrong the day a
+       third lands, and nobody re-reads a meta description. */
+    description:
+      "Ονομαστικά έργα που έχουν παραδοθεί: ένα αυτοματοποιημένο pipeline εμπλουτισμού και επικοινωνίας, και ένας ζωντανός ιστότοπος πελάτη.",
+  },
+  {
     path: "/contact",
     label: "Επικοινωνία",
     title: "Επικοινωνία & δωρεάν audit",

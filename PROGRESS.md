@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.4 · 2026-09-13
-**Blocked on:** nothing for S2.5–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.5 · 2026-09-13
+**Blocked on:** nothing for S2.6–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -45,7 +45,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.2** `/contact` · 2026-09-12
 - [x] **S2.3** `/websites` — service pillar 1 · 2026-09-13
 - [x] **S2.4** `/automations` — service pillar 2, and the shared service shell · 2026-09-13
-- [ ] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit
+- [x] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit · 2026-09-13
 - [ ] **S2.6** `/process`, homepage section condensed
 - [ ] **S2.7** `/about` and the `Person` node
 - [ ] **S2.8** `/faq`, the `FAQPage` node, homepage subset
@@ -296,6 +296,77 @@ skip link, zero horizontal overflow, zero text below 12px. No raw hex, no raw
 *Three links on this page 404 right now:* `/work/btl-industries` (S2.5),
 `/process` (S2.6) and `/faq` (S2.8), all confirmed rather than assumed.
 `/contact`, `/websites` and `/automations` return 200.
+
+**S2.5.** `/work` lists the delivered work from `PROOF`; `/work/btl-industries`
+is the first named case study; the showcase gained D2's exit.
+
+*The §8.5 routing rule worked, and it cost a page.* `/work/[slug]` generates
+only for entries with a `study` body, so **`/work/roz-inn` is a genuine 404** —
+verified, along with `/work/does-not-exist`. roz-inn is a presentation site
+with a gallery and a live URL, and the URL is better evidence than an internal
+page repeating that sentence in more words; its booking build is in progress
+and therefore absent rather than promised. On the index it is a row linking
+out to `roz-inn.com`. BTL, which has something to say, gets the page. One
+case study prerendered (`● /work/btl-industries`), which is the honest number.
+
+*The BTL study says only what is known.* `problem` describes the **nature of
+the work** rather than asserting a before-state: there is no documented record
+of how BTL operated previously, and "they used to copy rows by hand" is an
+invented premise, which §8.1 forbids exactly as much as an invented
+percentage. `built` is the summary expanded into the six ordered steps the
+pipeline runs, reusing the vocabulary from the homepage's architecture trace
+that S1.10's closeout translated — a visitor who read the homepage recognises
+the system instead of meeting a second description of it. Numbers on the page:
+section eyebrows, the step markers `01`–`06`, and the two §2.2 constants.
+**Zero outcome metrics and zero client quotes**, which is what the spec asks
+of a case study.
+
+*`Breadcrumbs` renders the visible trail and the `BreadcrumbList` payload from
+one array*, deliberately in one component. A `BreadcrumbList` is meant to
+describe a trail the page shows, and the exit gate requires every schema
+string to be visible on its page — two components reading two arrays is how a
+schema ends up describing a trail that was redesigned months ago.
+**Verified they agree:** visible crumbs `Αρχική / Έργα / BTL Industries`,
+schema `1:Αρχική 2:Έργα 3:BTL Industries`, `aria-current="page"` on the last.
+
+*A real tap-target regression, found by measuring and fixed here.* The bare
+monospace crumb links came out **43×16 and 29×16** at 375px — under the
+playbook's 44×44 bar, which Phase 1 drove to zero exceptions site-wide. WCAG
+2.2 does exempt links inside a sentence and a breadcrumb trail is arguably
+that, but §6 makes 44 this project's own bar, and quietly spending Phase 1's
+result on a nav strip is not a slice's call to make. `min-h-tap min-w-tap`
+with centred text: now **55×44, 44×44 and 113×44**, and zero elements under
+44 on the page but the `sr-only` skip link.
+
+### D2 needed one amendment, and it is worth knowing about
+
+D2 said the showcase's heading, eyebrow and framing stay untouched and the
+section only gains an exit. One sentence had to change anyway: the lede ended
+«Τα πρώτα ονομαστικά case studies προστίθενται σύντομα» — *the first named
+case studies are being added soon.* The moment `/work` existed with a named
+BTL study, that sentence was **false**, and it sat directly above a link to
+the case studies it claimed were still coming.
+
+It now reads «Τα ονομαστικά έργα που έχουν παραδοθεί είναι στα Έργα». The
+§8.2 sentence that matters — «περιγράφουν συστήματα που κατασκευάζουμε — όχι
+δημοσιευμένα έργα πελατών» — is untouched, as are the heading, the eyebrow
+and the thirteen trace nodes. This is inside D2's intent rather than a
+re-frame, but it is a change to copy D2 said would not change, so it is
+recorded rather than absorbed.
+
+*The homepage changed by exactly two links.* 432 → **440** body tags, and the
+whole delta is the section-level `/work` link and the `lead-engine` card's
+`/work/btl-industries` link — four tags each (anchor, svg, two paths).
+Nothing else moved. The card link reads «Τρέχει σε πελάτη — δείτε το έργο»,
+which is the only thing on that section telling a visitor one of the three
+architectures is not hypothetical.
+
+*Measured.* `/work`: one `h1`, h1 → h2×3 → h3×3, no skips. Case study: one
+`h1`, h1 → h2×4 → h3×3, no skips, unique title
+(`BTL Industries — Κατασκευαστής ιατροτεχνολογικού εξοπλισμού | …`), canonical
+and `og:url` on `/work/btl-industries`. Both: zero horizontal overflow, zero
+text below 12px, no raw hex, no raw `zinc-600/700/800`, no team language.
+`/process` and `/faq` still 404, closed by S2.6 and S2.8.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1189,7 +1260,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **4/12 slices done** · in progress |
+| 2 | Multipage & SEO | **5/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
@@ -1312,6 +1383,12 @@ weigh it then.
   `/process` and `/faq` take the full content and the homepage keeps three
   one-line steps and four of six objections. The homepage gets **shorter** in
   Phase 2, in two places, on purpose. Val approved before any slice ran.
+- **2026-09-13 — D2 amended: one stale sentence in the showcase lede also
+  changed.** The lede promised «Τα πρώτα ονομαστικά case studies προστίθενται
+  σύντομα», which `/work` made false while it sat above a link to those very
+  case studies. Replaced with a pointer to `/work`. The §8.2 framing sentence,
+  the heading, the eyebrow and the thirteen trace nodes are untouched — inside
+  D2's intent, but recorded because D2 said this copy would not change.
 - **2026-09-12 — D2: the showcase keeps «Ενδεικτικές Αρχιτεκτονικές» and gains
   an exit.** This settles the question deferred on 2026-09-11. The framing is
   honest and §8.2 requires that label for architectures describing capability;

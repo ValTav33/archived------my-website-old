@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import ArrowLink from "@/components/ui/ArrowLink";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
@@ -26,6 +27,16 @@ export type ShowcaseCase = {
   metrics: readonly string[];
   /* Ordered hops of the system's data flow, rendered as a terminal trace. */
   architecture: readonly string[];
+  /**
+   * Path to a delivered case study, when this architecture describes a system
+   * that actually runs somewhere.
+   *
+   * D2's resolution: the section keeps its «ενδεικτικές» framing, because
+   * §8.2 requires that label for architectures describing capability, and
+   * gains the exit it was missing. Only `lead-engine` has one — it is the
+   * BTL system, which is named and cleared.
+   */
+  caseStudy?: string;
 };
 
 /* ------------------------------------------------------------------ */
@@ -57,6 +68,15 @@ export default function ShowcaseCard({ item }: { item: ShowcaseCase }) {
           <Field label="Πρόβλημα" body={item.problem} />
           <Field label="Λύση" body={item.solution} />
         </div>
+
+        {/* When this describes a system that is actually running, say so and
+            link to it. Without this the visitor reads "indicative" and has
+            no way to learn that one of the three is not. */}
+        {item.caseStudy && (
+          <ArrowLink href={item.caseStudy} size="quiet" className="mt-4">
+            Τρέχει σε πελάτη — δείτε το έργο
+          </ArrowLink>
+        )}
 
         {/* Stack */}
         <ul className="mt-5 flex flex-wrap gap-1.5">

@@ -1,9 +1,11 @@
 import ShowcaseCard, {
   type ShowcaseCase,
 } from "@/components/showcase/ShowcaseCard";
+import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
 import ScrollLink from "@/components/ui/ScrollLink";
 import SectionHeader from "@/components/ui/SectionHeader";
+import { getProof } from "@/lib/site";
 
 /* ------------------------------------------------------------------ */
 /*  Case data                                                          */
@@ -73,6 +75,7 @@ const CASES: readonly ShowcaseCase[] = [
       "Φίλτρο καταλληλότητας AI",
       "CRM ή καμπάνια email",
     ],
+    caseStudy: `/work/${getProof("btl").slug}`,
   },
 ] as const;
 
@@ -99,8 +102,17 @@ export default function ShowcaseGrid() {
           id="solutions-heading"
           eyebrow="[ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]"
           title="Ενδεικτικές Αρχιτεκτονικές."
-          lede="Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα πρώτα ονομαστικά case studies προστίθενται σύντομα."
+          lede="Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα ονομαστικά έργα που έχουν παραδοθεί είναι στα Έργα."
         />
+
+        {/* D2's exit. The framing above stays exactly as Phase 0 wrote it —
+            §8.2 requires it — but a visitor who wants delivered work now has
+            somewhere to go. Before `/work` existed there was nowhere, which
+            is why the lede promised case studies "σύντομα"; that sentence
+            became false the moment this link had a destination. */}
+        <ArrowLink href="/work" className="mt-6">
+          Δείτε τα ονομαστικά έργα
+        </ArrowLink>
 
         {/* ----------------------------- Grid ---------------------------- */}
         {/* Cards stretch to a common row height, so every "View Architecture"
