@@ -9,6 +9,7 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { pageMetadata } from "@/lib/seo";
 import { STUDIED_PROOF, getProofBySlug } from "@/lib/site";
+import { greekUpper } from "@/lib/utils";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -61,7 +62,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
       <SectionHeader
         titleAs="h1"
-        eyebrow={`[ // ${item.kind.toUpperCase()} ]`}
+        eyebrow={`[ // ${greekUpper(item.kind)} ]`}
         title={item.name}
         lede={item.summary}
         className="mt-8"

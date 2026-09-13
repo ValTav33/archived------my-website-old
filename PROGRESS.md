@@ -7,7 +7,7 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.9 · 2026-09-13
+**Last slice:** S2.10 · 2026-09-13
 **Blocked on:** nothing for S2.10–S2.12. **Val must read `/privacy` and `/terms`** before the PR merges (D3). **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -50,7 +50,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.7** `/about` and the `Person` node · 2026-09-13
 - [x] **S2.8** `/faq`, the `FAQPage` node, homepage subset · 2026-09-13
 - [x] **S2.9** `/privacy` and `/terms` · 2026-09-13 · **Val must read both before merge (D3)**
-- [ ] **S2.10** Favicon, OG cards, 404
+- [x] **S2.10** Favicon, OG cards, 404 · 2026-09-13
 - [ ] **S2.11** Sitemap, robots, schema graph
 - [ ] **S2.12** Navigation and final assembly
 
@@ -587,6 +587,53 @@ deploy and claim a review that had not happened.
 `/terms`: one `h1`, outline `1222222333`, no skips. Both: unique title,
 description and canonical; zero targets under 44×44 at 375px but the
 `sr-only` skip link; zero horizontal overflow; zero text below 12px.
+
+**S2.10.** `app/icon.tsx`, eleven generated OG cards from one design, and a
+Greek 404.
+
+*The font risk resolved by looking, which is what the spec asked for.* A card
+was generated and **read as an image** before the other ten were written:
+Greek renders correctly — «Θεσσαλονίκη» with real glyphs, no tofu — so
+`ImageResponse`'s default font covers the alphabet and **no font file had to
+be committed**. That was the contingency and it is not needed.
+
+*Looking at it also found a bug that was already shipped.* The card read
+«ΑΡΧΙΚΉ». Monotonic Greek **drops the tonos in all-caps** — ΑΡΧΙΚΗ — and
+keeps only the dialytika; JavaScript's `toUpperCase` knows none of that. The
+same call had gone out in **S2.5**, where `/work/btl-industries` rendered
+«ΚΑΤΑΣΚΕΥΑΣΤΉΣ ΙΑΤΡΟΤΕΧΝΟΛΟΓΙΚΟΎ ΕΞΟΠΛΙΣΜΟΎ» in its eyebrow. `greekUpper`
+in `lib/utils.ts` now handles both call sites, and the regenerated card reads
+«ΚΑΤΑΣΚΕΥΑΣΤΗΣ ΙΑΤΡΟΤΕΧΝΟΛΟΓΙΚΟΥ ΕΞΟΠΛΙΣΜΟΥ».
+
+*The CSS half of that question was checked too, and is fine.* `Eyebrow`'s
+`label` variant uppercases through `text-transform`, and the document is
+`lang="el"`, which is what tells a browser to apply Greek casing rules.
+Confirmed by zooming in on `/about`: «Έξω από αυτές» renders as
+«ΕΞΩ ΑΠΟ ΑΥΤΕΣ», «Πού βρισκόμαστε» as «ΠΟΥ ΒΡΙΣΚΟΜΑΣΤΕ», «Γλώσσα» as
+«ΓΛΩΣΣΑ» — the browser strips the accents correctly. **Only the JavaScript
+path was wrong**, so no Phase 1 component needed touching.
+
+*One design, eleven unique cards.* `lib/og.tsx` holds the only layout and each
+route passes its own strings, with titles read from the route manifest rather
+than retyped beside the image — a card cannot advertise a heading the page no
+longer has. The case-study card is dynamic and shares
+`generateStaticParams` with its page, so a card cannot exist without one.
+**Measured: 11 routes, 11 `og:image` URLs, all unique, none missing.**
+
+*The favicon closes a deduction carried since Phase 0.* Best Practices read
+**96** in both previous phases for exactly one reason — a `404 /favicon.ico`
+console error. Verified in a **fresh tab** (the first read was polluted by
+this session's own earlier `fetch` probes, which is why it showed fifteen
+404s): **zero console errors, zero console warnings, and no `/favicon.ico`
+request at all** — the browser uses the `<link rel="icon">` instead. Every
+request on the page returns 200. `/favicon.ico` itself still 404s and that is
+correct: nothing asks for it.
+
+*The 404 page is Greek, `noindex`, and carries no terminal joke.*
+«404 SYSTEM ERROR» in monospace is exactly the jargon register §2.4 stripped
+from the whole site, and a visitor who has just hit a dead end is the last
+person to entertain with one. It says what happened and offers the three
+places they were probably going.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1480,7 +1527,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **9/12 slices done** · in progress |
+| 2 | Multipage & SEO | **10/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
