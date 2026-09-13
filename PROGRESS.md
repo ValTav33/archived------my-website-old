@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.5 · 2026-09-13
-**Blocked on:** nothing for S2.6–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.6 · 2026-09-13
+**Blocked on:** nothing for S2.7–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -46,7 +46,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.3** `/websites` — service pillar 1 · 2026-09-13
 - [x] **S2.4** `/automations` — service pillar 2, and the shared service shell · 2026-09-13
 - [x] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit · 2026-09-13
-- [ ] **S2.6** `/process`, homepage section condensed
+- [x] **S2.6** `/process`, homepage section condensed · 2026-09-13
 - [ ] **S2.7** `/about` and the `Person` node
 - [ ] **S2.8** `/faq`, the `FAQPage` node, homepage subset
 - [ ] **S2.9** `/privacy` and `/terms`
@@ -367,6 +367,52 @@ architectures is not hypothetical.
 and `og:url` on `/work/btl-industries`. Both: zero horizontal overflow, zero
 text below 12px, no raw hex, no raw `zinc-600/700/800`, no team language.
 `/process` and `/faq` still 404, closed by S2.6 and S2.8.
+
+**S2.6.** The three steps moved into `lib/process.ts`; `/process` renders the
+expansion; the homepage section became the highlight D1 says it should be.
+
+*D1 was verified, not assumed.* Every sentence on `/process` longer than 45
+characters was extracted from the rendered `<main>` and searched for in the
+homepage's rendered `<main>`: **20 sentences checked, 0 verbatim overlap.**
+The two surfaces render disjoint halves of the same data — the homepage takes
+`summary`, one sentence per step, and `/process` takes `detail`. A visitor who
+reads both never reads the same sentence twice, which is the difference
+between a deeper page and a second copy of a URL.
+
+*The homepage actually got shorter, measured on the build output rather than
+claimed.* The `#process` section: **716 characters of copy down to 624**, and
+19 tags up to 23 — the four extra are the `ArrowLink` out (anchor, svg, two
+paths). First time in the phase that the homepage lost content, which is the
+intent: Phase 1 built that section at full length because there was nowhere
+else to put it.
+
+*The field this page exists for is `costsYou`.* Every process section on every
+agency site says what the agency does; almost none say what the client has to
+spend, which is the thing a prospect is actually trying to work out. It is
+also the field most likely to grow an invented number — "about two hours a
+week" is precisely what §8.1 exists to keep off a page — so it is qualitative
+everywhere except the audit call, and that one is quantified only because §2.2
+defines it. Numbers on `/process`: `3`/`2` from `TIMELINE_RANGE`, `01`–`03`
+step eyebrows, `15`/`24` from `AUDIT_DELIVERABLE`. Nothing else.
+
+*The Phase 1 property survived the extraction.* S1.7's exit condition was that
+the audit description match the form's promise character for character. The
+deliverable string was grepped across all seven built pages and is
+**byte-identical on every one** — the summary interpolates the constant rather
+than paraphrasing it, which was the temptation when the brief said "one line
+per step".
+
+*Measured.* `/process`: one `h1`; heading order h1 → h2×4 → h3×3, no skips;
+12 `dt` / 12 `dd` (three steps × four fields) in a real definition list, which
+is what four labelled facts about one thing are; unique title, description and
+canonical. At 375px: 16 interactive elements, **zero** under 44×44 but the
+`sr-only` skip link, zero horizontal overflow, zero text below 12px. Homepage
+still one `h1` and seven `h2`s with no skips. No raw hex, no raw
+`zinc-600/700/800`, no team language.
+
+*`/process` now resolves*, which closes the forward links `/websites` and
+`/automations` have been carrying since S2.3. `/faq` is the last one still
+404, closed by S2.8.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1260,7 +1306,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **5/12 slices done** · in progress |
+| 2 | Multipage & SEO | **6/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |

@@ -1,50 +1,34 @@
+import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { AUDIT_DELIVERABLE, TIMELINE_RANGE } from "@/lib/site";
+import { PROCESS } from "@/lib/process";
 
 /**
- * How the engagement runs.
+ * How the engagement runs — the **highlight**, one sentence per step.
  *
- * A prospect who does not know what happens after they click cannot judge the
- * risk of clicking, so this section exists to remove that unknown before the
- * FAQ and the form ask for anything.
+ * S2.6 moved the steps into `lib/process.ts` and the long bodies to
+ * `/process`. This section now renders each step's `summary` and links out,
+ * because §2.3 says the homepage carries highlights and every section has a
+ * deeper page. Phase 1 built it at full length only because there was nowhere
+ * else to put it.
  *
- * Two of the three steps quote shared constants rather than their own copy:
- * step 01 interpolates the same `AUDIT_DELIVERABLE` the form prints under its
- * submit button, and step 02 the same `TIMELINE_RANGE` the FAQ will answer
- * «Πόσο θα πάρει;» with. A promise that is retyped is a promise that drifts.
+ * The two halves are disjoint by design: `summary` here, `detail` there, and
+ * no sentence appears on both. A prospect who does not know what happens
+ * after they click still cannot judge the risk of clicking, so the three
+ * titles and one line each stay above the fold of the argument — what is
+ * gone is the paragraph, not the answer.
  *
- * No icons. Playbook §2.4 asks for simple over dense, and the step number plus
- * the title already carry the sequence — a Lucide glyph beside each would be
- * decoration, which §2.5's own guidance says not to add.
+ * Step 01's summary interpolates `AUDIT_DELIVERABLE` and step 02's
+ * `TIMELINE_RANGE`, so the audit description still matches the form's promise
+ * character for character, which was S1.7's exit condition.
+ *
+ * No icons. Playbook §2.4 asks for simple over dense, and the step number
+ * plus the title already carry the sequence.
  *
  * Cards in an ordered list, not a connector diagram: §2.4 caps terminal
  * surfaces at two per viewport and the showcase's architecture traces sit
  * directly above this section.
  */
-const STEPS = [
-  {
-    n: "01",
-    title: "Δωρεάν audit",
-    body: `Παίρνετε ${AUDIT_DELIVERABLE}. Χωρίς κόστος και χωρίς δέσμευση να συνεχίσετε.`,
-  },
-  {
-    n: "02",
-    title: "Σχεδιασμός & κατασκευή",
-    body: `Συμφωνούμε το εύρος και χτίζουμε σε στάδια. Σε κάθε στάδιο έχετε ένα preview URL που μπορείτε να ανοίξετε και να δείτε πού βρισκόμαστε. Ο χρόνος: ${TIMELINE_RANGE}.`,
-  },
-  {
-    n: "03",
-    title: "Παράδοση & υποστήριξη",
-    /* The solo-operator objection (§11.6, §12) answered in structure, before
-       the FAQ answers it in words. Note "άλλος developer" — another one, an
-       outsider. §2.1's guardrail is plural voice, singular facts, so the copy
-       never implies staff; the repo-wide sweep for staff language has to stay
-       clean in comments too, or it stops being a useful sweep. */
-    body: "Ο κώδικας και το repository είναι δικά σας. Η εγκατάσταση είναι τεκμηριωμένη, ώστε να μπορεί να τη συνεχίσει άλλος developer χωρίς εμάς. Μηνιαία υποστήριξη μόνο αν τη θέλετε.",
-  },
-] as const;
-
 export default function ProcessSection() {
   return (
     <section
@@ -61,7 +45,7 @@ export default function ProcessSection() {
         />
 
         <ol className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {STEPS.map((step) => (
+          {PROCESS.map((step) => (
             <Card as="li" key={step.n} className="flex flex-col p-6">
               {/* The number is decorative sequencing — the `<ol>` already
                   tells assistive tech this is step N of three. */}
@@ -79,11 +63,17 @@ export default function ProcessSection() {
               {/* max-w-prose keeps the line near 65–75 characters at the
                   single-column width, where the card is widest. */}
               <p className="mt-3 max-w-prose text-sm leading-relaxed text-zinc-400">
-                {step.body}
+                {step.summary}
               </p>
             </Card>
           ))}
         </ol>
+
+        {/* What each step needs from the visitor, and what it costs them in
+            their own hours, is the half that lives on `/process`. */}
+        <ArrowLink href="/process" className="mt-8">
+          Πώς δουλεύουμε, αναλυτικά
+        </ArrowLink>
       </div>
     </section>
   );
