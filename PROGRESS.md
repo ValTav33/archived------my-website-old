@@ -7,7 +7,7 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.10 · 2026-09-13
+**Last slice:** S2.11 · 2026-09-13
 **Blocked on:** nothing for S2.10–S2.12. **Val must read `/privacy` and `/terms`** before the PR merges (D3). **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -51,7 +51,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.8** `/faq`, the `FAQPage` node, homepage subset · 2026-09-13
 - [x] **S2.9** `/privacy` and `/terms` · 2026-09-13 · **Val must read both before merge (D3)**
 - [x] **S2.10** Favicon, OG cards, 404 · 2026-09-13
-- [ ] **S2.11** Sitemap, robots, schema graph
+- [x] **S2.11** Sitemap, robots, schema graph · 2026-09-13
 - [ ] **S2.12** Navigation and final assembly
 
 **S2.1.** `Navbar`, `main#main-content` and `Footer` moved from
@@ -634,6 +634,51 @@ correct: nothing asks for it.
 from the whole site, and a visitor who has just hit a dead end is the last
 person to entertain with one. It says what happened and offers the three
 places they were probably going.
+
+**S2.11.** `app/sitemap.ts` and `app/robots.ts` generated from the route
+manifest, and the site-wide schema promoted to an `@graph`.
+
+*Nothing in the sitemap is hand-listed.* It reads `ROUTES` plus
+`STUDIED_PROOF` — the same array `generateStaticParams` filters on — so a
+case study cannot appear in the crawl budget without having a page, and
+S2.5's thin-content rule carries through for free. **11 entries, and every
+single `<loc>` was fetched: 11 × 200, zero 404s.** A 404 in a sitemap is a
+self-inflicted wound.
+
+*The manifest was diffed against what the build actually produced.* **Every
+manifest route is built; no page route is missing from the manifest.** The
+only built routes absent from it are asset routes — the eleven
+`opengraph-image` endpoints, `/icon`, `/robots.txt`, `/sitemap.xml` — which
+are not pages and correctly do not belong in a sitemap.
+
+*Sitemap fields were added in this slice rather than in S2.1*, which is the
+discipline the manifest's own comment set: a `priority` invented for a file
+written ten slices later is a guess wearing the costume of a decision. They
+are also honest about their worth — relative hints within one site, which
+Google has said for years it largely ignores.
+
+*`robots.txt` disallows `/api/` and mentions neither `/en` nor `/blog`.*
+Those arrive in Phases 6 and 7, and a `Disallow` for a path that does not
+exist is a note to a future maintainer disguised as a directive — the kind
+left in place long after it should have gone, quietly blocking the thing it
+once guarded. **On a preview deployment it returns a blanket disallow**, so
+the two signals agree: the pages carry `noindex` and the robots file says the
+same thing.
+
+*The graph closes a loop open since Phase 0.* `JsonLd` now emits
+`@graph: [ProfessionalService, WebSite]`, with the `WebSite` node's
+`publisher` referencing the business `@id` rather than restating the name,
+address, phone and hours. Four nodes now reference that id — `Service` on
+both pillars, `Person` on `/about`, and this `WebSite` — so the NAP data is
+asserted **exactly once for the whole site**, which is what `lib/site.ts` was
+built for. **No `SearchAction`:** there is no site search, and a
+`potentialAction` pointing at a search box that does not exist is a
+placeholder that happens to be invisible to everyone except a crawler.
+
+*Graph integrity measured across all eleven pages:* five `@id`s defined
+(`#business`, `#website`, `#person`, and a `#service` per pillar), and
+**zero dangling references** — every `@id` pointed at by any node is defined
+somewhere.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1527,7 +1572,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **10/12 slices done** · in progress |
+| 2 | Multipage & SEO | **11/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |

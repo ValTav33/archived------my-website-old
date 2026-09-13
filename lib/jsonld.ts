@@ -13,6 +13,8 @@ export const SCHEMA_ID = {
   /* The one person behind the business. Declared on `/about`, which is the
      only page that shows him, and referenced from there by `worksFor`. */
   person: `${SITE.url}/#person`,
+  /* The site itself, as distinct from the business publishing it. */
+  website: `${SITE.url}/#website`,
 } as const;
 
 /**

@@ -48,6 +48,18 @@ export type Route = {
    * shipped. Every other route takes the template.
    */
   absoluteTitle?: boolean;
+
+  /**
+   * Sitemap weighting. Added in S2.11, the slice that reads it — a `priority`
+   * invented earlier for a file written later is a guess wearing the costume
+   * of a decision.
+   *
+   * These are relative hints within one site and nothing more. Google has
+   * said for years that it largely ignores them; they are here so the
+   * ordering is at least deliberate rather than accidental.
+   */
+  priority: number;
+  changeFrequency: "daily" | "weekly" | "monthly" | "yearly";
 };
 
 export const ROUTES = [
@@ -59,6 +71,8 @@ export const ROUTES = [
     description:
       "Σχεδιασμός high-performance web εφαρμογών (Next.js) και αυτόνομα AI pipelines για επιχειρήσεις. Μειώστε τα χειροκίνητα tasks και αυτοματοποιήστε τις λειτουργίες σας.",
     absoluteTitle: true,
+    priority: 1,
+    changeFrequency: "monthly",
   },
   {
     path: "/websites",
@@ -69,6 +83,8 @@ export const ROUTES = [
     title: "Κατασκευή ιστοσελίδων Θεσσαλονίκη",
     description:
       "Κατασκευή ιστοσελίδων και web εφαρμογών σε Next.js, από τη Θεσσαλονίκη. Ο κώδικας και το repository είναι δικά σας, η εγκατάσταση παραδίδεται τεκμηριωμένη.",
+    priority: 0.9,
+    changeFrequency: "monthly",
   },
   {
     path: "/automations",
@@ -76,6 +92,8 @@ export const ROUTES = [
     title: "Αυτοματισμοί AI επιχειρήσεων",
     description:
       "Αυτοματισμοί AI για επιχειρήσεις: παραλαβή αιτημάτων, follow-up, εμπλουτισμός στοιχείων και αναφορές — χωρίς χειροκίνητη δουλειά, σε λογαριασμούς δικούς σας.",
+    priority: 0.9,
+    changeFrequency: "monthly",
   },
   {
     path: "/faq",
@@ -83,6 +101,8 @@ export const ROUTES = [
     title: "Συχνές ερωτήσεις",
     description:
       "Τι γίνεται αν μας χάσετε, πόσο κοστίζει, πόσο θα πάρει, γιατί όχι WordPress, και τι ακριβώς παίρνετε από το δωρεάν audit.",
+    priority: 0.7,
+    changeFrequency: "monthly",
   },
   {
     path: "/about",
@@ -90,6 +110,8 @@ export const ROUTES = [
     title: "Ποιοι είμαστε",
     description:
       "Πίσω από το Tavlikos Systems υπάρχει ένα πρόσωπο, στη Θεσσαλονίκη. Πώς επικοινωνούμε, πότε απαντάμε, και ποια δουλειά δεν αναλαμβάνουμε.",
+    priority: 0.7,
+    changeFrequency: "yearly",
   },
   {
     path: "/process",
@@ -97,6 +119,8 @@ export const ROUTES = [
     title: "Η διαδικασία",
     description:
       "Πώς τρέχει μια συνεργασία: δωρεάν audit, συμφωνημένο εύρος και κατασκευή σε στάδια, παράδοση με τον κώδικα δικό σας. Τι χρειάζεται από εσάς σε κάθε βήμα.",
+    priority: 0.7,
+    changeFrequency: "yearly",
   },
   {
     path: "/work",
@@ -106,6 +130,8 @@ export const ROUTES = [
        third lands, and nobody re-reads a meta description. */
     description:
       "Ονομαστικά έργα που έχουν παραδοθεί: ένα αυτοματοποιημένο pipeline εμπλουτισμού και επικοινωνίας, και ένας ζωντανός ιστότοπος πελάτη.",
+    priority: 0.8,
+    changeFrequency: "monthly",
   },
   {
     path: "/privacy",
@@ -113,6 +139,8 @@ export const ROUTES = [
     title: "Πολιτική Απορρήτου",
     description:
       "Τι στοιχεία συλλέγει η φόρμα, τι γίνεται με αυτά, τι καταγράφεται και τι όχι. Χωρίς cookies, χωρίς analytics, χωρίς trackers.",
+    priority: 0.3,
+    changeFrequency: "yearly",
   },
   {
     path: "/terms",
@@ -120,6 +148,8 @@ export const ROUTES = [
     title: "Όροι Χρήσης",
     description:
       "Τι είναι αυτός ο ιστότοπος, τι δεν αποτελεί δεσμευτική προσφορά, σε ποιον ανήκει ο κώδικας κάθε έργου, και ποιο δίκαιο εφαρμόζεται.",
+    priority: 0.3,
+    changeFrequency: "yearly",
   },
   {
     path: "/contact",
@@ -130,6 +160,8 @@ export const ROUTES = [
        description is exactly the kind of surface where a hand-written second
        copy goes unnoticed for months. */
     description: `Ζητήστε δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Τηλέφωνο, email, WhatsApp ή Telegram, Θεσσαλονίκη και remote.`,
+    priority: 0.8,
+    changeFrequency: "yearly",
   },
 ] as const satisfies readonly Route[];
 
