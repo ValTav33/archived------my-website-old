@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.7 · 2026-09-13
-**Blocked on:** nothing for S2.8–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.8 · 2026-09-13
+**Blocked on:** nothing for S2.9–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -48,7 +48,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit · 2026-09-13
 - [x] **S2.6** `/process`, homepage section condensed · 2026-09-13
 - [x] **S2.7** `/about` and the `Person` node · 2026-09-13
-- [ ] **S2.8** `/faq`, the `FAQPage` node, homepage subset
+- [x] **S2.8** `/faq`, the `FAQPage` node, homepage subset · 2026-09-13
 - [ ] **S2.9** `/privacy` and `/terms`
 - [ ] **S2.10** Favicon, OG cards, 404
 - [ ] **S2.11** Sitemap, robots, schema graph
@@ -477,6 +477,62 @@ overflow, zero text below 12px. Homepage unchanged apart from the link out and
 still one `h1` with seven `h2`s. No raw hex, no raw `zinc-600/700/800`.
 
 *`/faq` is the last 404 on the branch*, closed by S2.8.
+
+**S2.8.** `/faq` renders all six objections and carries the only `FAQPage`
+node on the site; the homepage shows the first four and carries none.
+
+*This slice found two real defects in its own work, both by measuring.*
+
+1. **The schema asserted six answers the document did not contain.** The
+   disclosure panels were conditionally rendered, so a collapsed answer
+   existed nowhere in the HTML — measured immediately after adding the node:
+   **6 questions present, 0 answers.** Google allows FAQ content inside
+   expandable sections; it does not allow content that is absent until a
+   click, and a payload describing text the page does not have is the exact
+   mismatch this markup gets penalised for. The panel now always renders and
+   animates height between 0 and `auto`, with `aria-hidden` while collapsed
+   so a screen reader still skips it. Re-measured: **6/6 questions and
+   answers present** in `/faq`'s `<main>`. (The first re-check said 5/6; the
+   sixth answer interpolates the trading hours, whose `&` renders as `&amp;`,
+   so it was the comparison failing and not the page. Unescaping entities
+   before comparing gave 6/6.)
+2. **`/faq` skipped a heading level.** The questions are `h3`, which is right
+   on the homepage where the section's `h2` sits above them, and wrong on a
+   page whose `h1` does — the outline read `h1 → h3`. `FaqList` now takes a
+   `headingLevel`, `h2` on `/faq` and `h3` on the homepage: the level follows
+   the document rather than the component.
+
+*Heading outlines re-measured across the whole site, not just the new page.*
+All nine built routes: **exactly one `h1` and zero skipped levels on every
+one.**
+
+*One extraction, which also moved the client boundary.* `FaqList` is the
+disclosure and the only part that needs JavaScript; `FaqSection` and the
+`/faq` page are now **server components**. Two surfaces render the same
+disclosure behaviour from one implementation, and S1.4's rule got applied to
+the section that had grown a second caller.
+
+*The homepage subset is the first four, and order is the selection.* `FAQ` is
+already written worst-objection-first — continuity leads because §12 names it
+the deal-killer — so the highlight is `FAQ.slice(0, 4)` rather than a second
+hand-picked list that can drift out of agreement with that ordering.
+Verified: homepage renders four disclosures (`continuity`, `pricing`,
+`timeline`, `wordpress`), all four answers in its HTML, the two `/faq`-only
+answers absent, and **no `FAQPage` node** — which Phase 1's exit gate
+established and this slice had to preserve rather than quietly break.
+
+*A D1 note, because this page is the exception.* Unlike `/process` and
+`/about`, `/faq` and its homepage section render the **same sentences**; the
+homepage just shows fewer. That is not a D1 violation — D1 forbids a deeper
+page that copies a shallower one, and an FAQ answer cannot be split into a
+highlight and an expansion without becoming a worse answer in both places.
+The subset *is* the highlight, and the canonical set lives on `/faq`, which is
+why the schema lives there too.
+
+*Schema placement across the site, verified route by route:* `FAQPage` on
+`/faq` only; `Person` on `/about` only; `Service` on the two pillars only;
+`BreadcrumbList` on the case study only; `ProfessionalService` on all nine
+from the layout.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1370,7 +1426,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **7/12 slices done** · in progress |
+| 2 | Multipage & SEO | **8/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |

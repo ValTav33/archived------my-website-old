@@ -61,3 +61,21 @@ export const FAQ: readonly FaqEntry[] = [
     answer: `${AUDIT_DELIVERABLE.charAt(0).toUpperCase()}${AUDIT_DELIVERABLE.slice(1)}. Χωρίς κόστος και χωρίς δέσμευση να συνεχίσετε. Αν δεν έχουμε κάτι χρήσιμο να προτείνουμε, θα σας το πούμε και αυτό.`,
   },
 ] as const;
+
+/**
+ * The subset the homepage shows.
+ *
+ * Four of six, and **order is the selection**: `FAQ` is already written
+ * worst-objection-first — continuity leads because §12's risk register names
+ * it the one that kills deals silently — so the highlight is the first four
+ * rather than a second hand-picked list that can drift out of agreement with
+ * the ordering above.
+ *
+ * The two that move to `/faq` only are the ones a visitor seeks out rather
+ * than stumbles over: whether we work outside Thessaloniki, and what exactly
+ * the free audit contains. The second is also stated in full by the form and
+ * by process step 01, so the homepage is not hiding it.
+ */
+const HOMEPAGE_FAQ_COUNT = 4;
+
+export const HOMEPAGE_FAQ = FAQ.slice(0, HOMEPAGE_FAQ_COUNT);
