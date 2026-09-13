@@ -143,6 +143,20 @@ export const SAME_AS = [
   SITE.social.telegram,
 ] as const;
 
+/**
+ * The portrait. **Ships as `null` on purpose.**
+ *
+ * Val's photo is a Phase 5 asset. While this is `null` every surface renders
+ * *nothing* — no frame, no silhouette, no grey circle. Phase 0 spent eight
+ * slices removing placeholders and a portrait frame is exactly the shape one
+ * grows back in.
+ *
+ * It lives here rather than in a component because S2.7 gave `/about` a
+ * second slot, and two `null`s in two files is two places to remember on the
+ * day a photo finally exists. Setting this constant is the whole change.
+ */
+export const PORTRAIT: { src: string; alt: string } | null = null;
+
 /** Capability list — feeds both `knowsAbout` and the offer catalog. */
 export const SERVICE_CATALOG = [
   "Custom Web Development (Next.js, TypeScript)",

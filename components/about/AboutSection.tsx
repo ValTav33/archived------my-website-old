@@ -1,8 +1,9 @@
+import ArrowLink from "@/components/ui/ArrowLink";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import SectionHeader from "@/components/ui/SectionHeader";
 import StatusDot from "@/components/ui/StatusDot";
-import { SITE } from "@/lib/site";
+import { PORTRAIT, SITE } from "@/lib/site";
 
 /**
  * Who the visitor is actually dealing with.
@@ -24,17 +25,6 @@ import { SITE } from "@/lib/site";
  * what we will not do — which is the part that is hard to fake and therefore
  * the part worth reading.
  */
-
-/**
- * The portrait slot. **Ships as `null` on purpose.**
- *
- * Val's photo is a Phase 5 asset. Until it exists this renders *nothing* — no
- * frame, no silhouette, no grey circle — and the text runs at full width. When
- * a photo arrives, setting this constant is the entire change: the card
- * already switches to a two-column layout for it, so nothing has to be
- * redesigned around a face.
- */
-const PORTRAIT: { src: string; alt: string } | null = null;
 
 const PARAGRAPHS = [
   /* The heading asks who. This answers it, in the first line, with a name —
@@ -102,6 +92,12 @@ export default function AboutSection() {
             </div>
           </div>
         </Card>
+
+        {/* How we communicate, when we answer, and the reasons behind the
+            four refusals above all live on `/about`. */}
+        <ArrowLink href="/about" className="mt-8">
+          Περισσότερα για εμάς
+        </ArrowLink>
       </div>
     </section>
   );

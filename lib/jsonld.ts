@@ -10,6 +10,9 @@ import { SITE } from "@/lib/site";
  */
 export const SCHEMA_ID = {
   business: `${SITE.url}/#business`,
+  /* The one person behind the business. Declared on `/about`, which is the
+     only page that shows him, and referenced from there by `worksFor`. */
+  person: `${SITE.url}/#person`,
 } as const;
 
 /**

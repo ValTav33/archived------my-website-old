@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.6 · 2026-09-13
-**Blocked on:** nothing for S2.7–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.7 · 2026-09-13
+**Blocked on:** nothing for S2.8–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -47,7 +47,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.4** `/automations` — service pillar 2, and the shared service shell · 2026-09-13
 - [x] **S2.5** `/work` and `/work/[slug]`, and the showcase's exit · 2026-09-13
 - [x] **S2.6** `/process`, homepage section condensed · 2026-09-13
-- [ ] **S2.7** `/about` and the `Person` node
+- [x] **S2.7** `/about` and the `Person` node · 2026-09-13
 - [ ] **S2.8** `/faq`, the `FAQPage` node, homepage subset
 - [ ] **S2.9** `/privacy` and `/terms`
 - [ ] **S2.10** Favicon, OG cards, 404
@@ -413,6 +413,70 @@ still one `h1` and seven `h2`s with no skips. No raw hex, no raw
 *`/process` now resolves*, which closes the forward links `/websites` and
 `/automations` have been carrying since S2.3. `/faq` is the last one still
 404, closed by S2.8.
+
+**S2.7.** `/about` expands the homepage section, and the `Person` node finally
+sits on the page it was always meant to sit on — `lib/site.ts` has carried
+`SITE.person` since S1.8 with a comment saying Phase 2's `/about` would read
+it.
+
+*The §2.1 sweep is clean, and it was run against the rendered site rather
+than the source.* Every banned construction from the playbook's voice
+guardrail — «η ομάδα μας», «οι developers μας», «οι ειδικοί μας», «το γραφείο
+μας», «η εταιρεία μας», «το τμήμα», "founded by", «συνιδρυτ», «το προσωπικό
+μας» — grepped across **all eight built pages: zero hits on every one.** No
+headcount anywhere, and no years-of-experience figure: the numbers on `/about`
+are the trading hours from `SITE.hoursLong`, the two section eyebrows, and
+`AUDIT_DELIVERABLE` in the CTA. Nothing else.
+
+*D1 constrained the content here, not the layout.* The homepage already states
+the name, the city, the hours, the two things we build, code ownership and
+four refusals — so the question was what was left to say. The answer is what
+those facts *mean in practice*: who you actually talk to, what happens outside
+the stated hours, and why each refusal is a refusal. **Verified: 16 sentences
+on `/about` longer than 45 characters, zero of them present verbatim in the
+homepage's `<main>`.**
+
+*The most useful sentence on the page is the one that admits a limit.* Under
+«Έξω από αυτές»: «Δεν απαντάμε αμέσως, και δεν προσποιούμαστε ότι
+απαντάμε.» A site that implies round-the-clock availability from one person is
+making a promise the next unanswered evening breaks, and §12 says the
+solo-operator objection is the one that kills deals silently — stating the
+limit is what makes the rest of the page believable.
+
+*What is deliberately **not** on this page.* No invented policy. Whether Val
+takes meetings in person, what he charges, which sectors he declines — none of
+that is written down anywhere in this repo, and a page is not the place to
+guess at a business's boundaries on its behalf. The four refusals are the four
+the homepage already makes; this page adds the reasoning, not new rules.
+
+*The `Person` node asserts four properties and the restraint is the point.*
+`name`, `url`, `worksFor` (a reference to the business `@id`, not a copy of
+the name, address, phone and hours) and `sameAs` (the same profile list the
+business node uses, which already excludes WhatsApp because a `wa.me`
+deeplink is a chat window and not a profile). **No `jobTitle`** — the page
+gives him no title, and the exit gate says every string in the structured
+data has to be visible on the page carrying it, so a title asserted only to
+search engines is a claim nobody on the site has made. No `alumniOf` or
+`award`, which would be invented; no `birthDate`, `address` or `telephone`,
+which are personal data a marketing page has no business publishing about a
+private individual. **Verified property by property:** the name renders, the
+business name renders, all three `sameAs` URLs are linked on the page, and the
+six forbidden properties are absent.
+
+*One extraction.* `PORTRAIT` moved from `AboutSection` into `lib/site.ts`,
+because this slice would have given the site a **second** `null` photo slot
+in a second file — two places to remember on the day a photo exists. Both
+surfaces read the one constant; while it is `null` neither renders anything,
+and `/about` was measured with **zero `img` elements in `<main>`**. Setting
+that constant is the whole of the Phase 5 change.
+
+*Measured.* One `h1`, which names him; heading order h1 → h2×2 → h3×3, no
+skips; unique title, description and canonical. At 375px: 16 interactive
+elements, **zero** under 44×44 but the `sr-only` skip link, zero horizontal
+overflow, zero text below 12px. Homepage unchanged apart from the link out and
+still one `h1` with seven `h2`s. No raw hex, no raw `zinc-600/700/800`.
+
+*`/faq` is the last 404 on the branch*, closed by S2.8.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1306,7 +1370,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **6/12 slices done** · in progress |
+| 2 | Multipage & SEO | **7/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
