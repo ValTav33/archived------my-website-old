@@ -7,8 +7,8 @@
 **Current phase:** 2 — Multipage & SEO
 **Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
 **Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.8 · 2026-09-13
-**Blocked on:** nothing for S2.9–S2.11. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Last slice:** S2.9 · 2026-09-13
+**Blocked on:** nothing for S2.10–S2.12. **Val must read `/privacy` and `/terms`** before the PR merges (D3). **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -49,7 +49,7 @@ spec, and *Decisions changed* at the bottom of this file.
 - [x] **S2.6** `/process`, homepage section condensed · 2026-09-13
 - [x] **S2.7** `/about` and the `Person` node · 2026-09-13
 - [x] **S2.8** `/faq`, the `FAQPage` node, homepage subset · 2026-09-13
-- [ ] **S2.9** `/privacy` and `/terms`
+- [x] **S2.9** `/privacy` and `/terms` · 2026-09-13 · **Val must read both before merge (D3)**
 - [ ] **S2.10** Favicon, OG cards, 404
 - [ ] **S2.11** Sitemap, robots, schema graph
 - [ ] **S2.12** Navigation and final assembly
@@ -533,6 +533,60 @@ why the schema lives there too.
 `/faq` only; `Person` on `/about` only; `Service` on the two pillars only;
 `BreadcrumbList` on the case study only; `ProfessionalService` on all nine
 from the layout.
+
+**S2.9.** `/privacy` and `/terms`, both describing what the site does today.
+D3 records why they ship in Phase 2 while §3 puts the privacy policy in
+Phase 3.
+
+*The policy was written against the code, not from a template.*
+`app/api/audit/route.ts` was read line by line and each claim cross-checked:
+
+| The page says | The code does |
+|---|---|
+| Collects only the form's fields | Seven `audit-*` inputs, one a honeypot no human sees |
+| Not stored in a database | No DB write; `package.json` has no Supabase, Prisma, pg, Mongo or MySQL package |
+| Name, email and phone are never logged | The stub logs `receivedAt`, `intent`, `hasWebsite`, `briefLength` and nothing else |
+| IP kept in memory one hour at most | `RATE_WINDOW_MS = 60 * 60 * 1000` |
+| No cookies, analytics, pixels or trackers | Zero `cookie`/`localStorage`/analytics/third-party-script references anywhere in `app`, `components`, `lib` |
+| Fonts served from our own domain | `next/font` self-hosts both faces — **zero** requests to `fonts.googleapis` or `fonts.gstatic` in the built HTML |
+| Vercel is the only other party | No third-party SDK imported; every `Resend`/`Supabase`/`Nodemailer` mention in the route is inside a comment |
+
+*§8.6 swept and clean.* «ΑΦΜ», «myDATA», «τιμολόγι», «νόμιμο παραστατικό»,
+«εταιρεία», «ΓΕΜΗ», «Δ.Ο.Υ.», «Ε.Π.Ε.», «Ι.Κ.Ε.», «Α.Ε.» — **zero hits on
+both legal pages.** The sweep flagged one «Εταιρεία» on `/` and `/contact`;
+run down rather than waved off, it is the **honeypot's label** inside
+`aria-hidden="true" class="sr-only"` — it means the *visitor's* company, no
+human ever sees it, and it asserts nothing about our legal status.
+
+*What is deliberately not in `/terms`.* No forum-selection clause naming
+specific courts, no cancellation or refund schedule, and no
+limitation-of-liability boilerplate broad enough to be unenforceable. None of
+those exist anywhere in this repo, and inventing commercial terms on a
+business's behalf is not a decision a page can make for it. Every clause that
+*is* there restates a promise the site already makes — code ownership is the
+FAQ's continuity answer and both pillars' closing section, "no ranking
+guarantees" is `/about`'s third refusal, the timeline is the §2.2 range. Terms
+that contradict the marketing copy are worse than no terms.
+
+*One judgment call worth Val's attention, and it is in the report rather than
+buried here.* The policy states the purpose (to answer your enquiry) and the
+storage (none). It does **not** announce that the form currently delivers
+nowhere. Val's Phase 1 decision was to keep the 24-hour promise as written and
+treat the stub as temporary; a privacy policy is about processing, not about
+advertising a known functional gap, and Phase 3 closes both in the same slice.
+If Val wants the stronger disclosure while the stub stands, it is one
+paragraph.
+
+*Both pages are deliberately plain* — no cards, no eyebrows, no terminal
+texture. A privacy policy dressed as a product feature reads as though it is
+distracting from its contents. Each carries a literal "last updated" date
+rather than a build timestamp, because `new Date()` would advance on every
+deploy and claim a review that had not happened.
+
+*Measured.* `/privacy`: one `h1`, outline `122222222333`, no skips.
+`/terms`: one `h1`, outline `1222222333`, no skips. Both: unique title,
+description and canonical; zero targets under 44×44 at 375px but the
+`sr-only` skip link; zero horizontal overflow; zero text below 12px.
 
 ### Known mid-phase state on this branch, closed by S2.12
 
@@ -1426,7 +1480,7 @@ miss and the score still clears the Phase 0 budget.
 | # | Phase | Status |
 |---|---|---|
 | 1 | Homepage Restructure | **10/10 slices done** · closeout measured · awaiting Val's manual passes + merge |
-| 2 | Multipage & SEO | **8/12 slices done** · in progress |
+| 2 | Multipage & SEO | **9/12 slices done** · in progress |
 | 3 | Backend & Go-Live | Not started · **← LAUNCH** · stays after Phase 2 (decided 2026-09-11) |
 | 4 | Craft & Motion | Not started |
 | 5 | Evidence | Asset-gated · can start any time · **BTL Industries and roz-inn.com both cleared** |
