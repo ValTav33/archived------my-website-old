@@ -2,9 +2,6 @@ import { notFound } from "next/navigation";
 import ServiceCta from "@/components/services/ServiceCta";
 import ServiceSection from "@/components/services/ServiceSection";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
-import Badge from "@/components/ui/Badge";
-import Card from "@/components/ui/Card";
-import Eyebrow from "@/components/ui/Eyebrow";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { pageMetadata } from "@/lib/seo";
@@ -106,18 +103,6 @@ export default async function CaseStudyPage({ params }: Params) {
         title="Τι φτάνει στα χέρια του πελάτη."
         lede={study.now}
       >
-        {item.stack && (
-          <Card tone="glass" className="mt-8 max-w-3xl p-5">
-            <Eyebrow variant="label">Εργαλεία που χρησιμοποιήθηκαν</Eyebrow>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {item.stack.map((tool) => (
-                <Badge key={tool} shape="tag">
-                  {tool}
-                </Badge>
-              ))}
-            </div>
-          </Card>
-        )}
       </ServiceSection>
 
       <ServiceCta id="cta" title="Θέλετε κάτι αντίστοιχο στη δική σας δουλειά;" />

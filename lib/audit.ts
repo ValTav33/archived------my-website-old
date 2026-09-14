@@ -8,7 +8,7 @@
  */
 
 export const AUDIT_INTENTS = [
-  "Χρειάζομαι νέα high-performance ιστοσελίδα / web app",
+  "Χρειάζομαι νέα ιστοσελίδα ή web εφαρμογή",
   "Χάνω εργατοώρες σε χειροκίνητες εργασίες & data entry",
   "Χρειάζομαι αυτοματοποιημένο lead generation & cold outreach",
   "Χρειάζομαι 24/7 AI Concierge / Assistant εξυπηρέτησης",

@@ -173,11 +173,20 @@ export const PORTRAIT: { src: string; alt: string } | null = null;
 
 /** Capability list — feeds both `knowsAbout` and the offer catalog. */
 export const SERVICE_CATALOG = [
-  "Custom Web Development (Next.js, TypeScript)",
-  "Business Process Automation (n8n, Workflows)",
-  "AI Concierge & Voice/Chat Agents",
-  "Lead Generation & Outreach Pipelines",
-  "Client Portals & Admin Dashboards",
+  /* **These four are verbatim the footer's `CORE_TRACKS` labels**, and that
+     is deliberate rather than tidy. Phase 2's exit gate requires every string
+     in the structured data to be visible on the page carrying it; the footer
+     renders on all eleven routes, so mirroring it is the only arrangement
+     where that holds for `knowsAbout` everywhere at once.
+
+     S3.5 S3 rewrote this from tool names ("Next.js, TypeScript", "n8n,
+     Workflows") to what a client actually buys — and in doing so removed
+     «AI Concierge & Voice/Chat Agents», which is V10: a capability no
+     delivered project backs. */
+  "Κατασκευή ιστοσελίδων & web εφαρμογών",
+  "AI εξυπηρέτηση πελατών",
+  "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
+  "Dashboards διαχείρισης για πελάτες",
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -222,8 +231,6 @@ export type ProofItem = {
   summary: string;
   /** A URL a visitor can open right now, when one exists. */
   href?: string;
-  /** Tooling, rendered as badges. Only what was genuinely used. */
-  stack?: readonly string[];
   /**
    * The case-study body. **Optional, and the absence is meaningful.**
    *
@@ -264,20 +271,16 @@ export const PROOF: readonly ProofItem[] = [
     kind: "Κατασκευαστής ιατροτεχνολογικού εξοπλισμού",
     /* The vendor names are deliberately NOT in this sentence. A clinic owner
        reading "FullEnrich, BetterContact, ZoomInfo" learns nothing and hears
-       someone else's suppliers; what the system DOES is the claim. The tools
-       go in the badge row underneath, where they read as evidence. */
+       someone else's suppliers; what the system DOES is the claim.
+
+       That comment used to end "the tools go in the badge row underneath,
+       where they read as evidence". S3.5 S3 deleted the badge row: Val's
+       instruction is that no technology name appears anywhere, because a shop
+       owner cares about the outcome and not the toolchain. The reasoning that
+       kept the names out of the sentence simply now applies to the whole
+       page. */
     summary:
       "Βρίσκει και επιβεβαιώνει στοιχεία επικοινωνίας, μελετά κάθε υποψήφιο πελάτη, γράφει προσωποποιημένο πρώτο email και φορτώνει την καμπάνια.",
-    stack: [
-      "FullEnrich",
-      "BetterContact",
-      "ZoomInfo",
-      "LinkedIn",
-      "Google Sheets",
-      "Perplexity",
-      "OpenAI",
-      "Instantly",
-    ],
     study: {
       problem:
         "Ένας κατασκευαστής ιατροτεχνολογικού εξοπλισμού απευθύνεται σε κλινικές και διανομείς σε πολλές αγορές. Κάθε υποψήφιος πελάτης χρειάζεται στοιχεία επικοινωνίας που ισχύουν, λίγη έρευνα για το τι κάνει, και ένα πρώτο email που δεν διαβάζεται ως μαζικό. Αυτά τα τρία, πολλαπλασιασμένα, είναι η δουλειά.",

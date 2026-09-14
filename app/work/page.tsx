@@ -1,8 +1,6 @@
 import ServiceCta from "@/components/services/ServiceCta";
 import ArrowLink from "@/components/ui/ArrowLink";
-import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
-import Eyebrow from "@/components/ui/Eyebrow";
 import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { routeMetadata } from "@/lib/seo";
@@ -46,19 +44,6 @@ export default function WorkPage() {
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400">
               {item.summary}
             </p>
-
-            {item.stack && (
-              <div className="mt-5">
-                <Eyebrow variant="label">Εργαλεία</Eyebrow>
-                <div className="mt-2.5 flex flex-wrap gap-2">
-                  {item.stack.map((tool) => (
-                    <Badge key={tool} shape="tag">
-                      {tool}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Internal when there is a study to read, external when the live
                 site is the evidence, absent when there is neither. */}

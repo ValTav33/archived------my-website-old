@@ -1,5 +1,4 @@
 import { ArrowUpRight } from "lucide-react";
-import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
 import { PROOF, TESTIMONIALS, type ProofItem } from "@/lib/site";
@@ -97,15 +96,6 @@ function ProofCard({ item }: { item: ProofItem }) {
         {item.summary}
       </p>
 
-      {item.stack && (
-        <ul className="mt-4 flex flex-wrap gap-1.5">
-          {item.stack.map((tool) => (
-            <Badge as="li" key={tool} variant="metric" shape="tag">
-              {tool}
-            </Badge>
-          ))}
-        </ul>
-      )}
     </Card>
   );
 }

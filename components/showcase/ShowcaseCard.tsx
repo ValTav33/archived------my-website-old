@@ -23,7 +23,6 @@ export type ShowcaseCase = {
   title: string;
   problem: string;
   solution: string;
-  stack: readonly string[];
   metrics: readonly string[];
   /* Ordered hops of the system's data flow, rendered as a terminal trace. */
   architecture: readonly string[];
@@ -77,15 +76,6 @@ export default function ShowcaseCard({ item }: { item: ShowcaseCase }) {
             Τρέχει σε πελάτη — δείτε το έργο
           </ArrowLink>
         )}
-
-        {/* Stack */}
-        <ul className="mt-5 flex flex-wrap gap-1.5">
-          {item.stack.map((tech) => (
-            <Badge as="li" key={tech} shape="tag">
-              {tech}
-            </Badge>
-          ))}
-        </ul>
 
         {/* Impact — stacked rather than inline, so long Greek metrics stay on
             one line each instead of wrapping mid-phrase. */}

@@ -73,9 +73,9 @@ export default function HeroSection() {
               className={`${RISE} mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg`}
               style={delay(160)}
             >
-              Σχεδιάζουμε high-performance web συστήματα στο Next.js και
-              στήνουμε αυτόνομα workflows που μειώνουν τα χειροκίνητα tasks και
-              αυξάνουν τα έσοδά σας.
+              Φτιάχνουμε ιστοσελίδες και web εφαρμογές που φορτώνουν
+              γρήγορα, και αναλαμβάνουμε με αυτοματισμούς τη δουλειά ρουτίνας
+              που σήμερα τρώει τις ώρες σας.
             </p>
 
             {/* ---- Action group ---- */}

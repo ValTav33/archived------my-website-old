@@ -69,7 +69,7 @@ export const ROUTES = [
     title:
       "Web Development & AI Automations Θεσσαλονίκη | Custom Web Apps & Workflows",
     description:
-      "Σχεδιασμός high-performance web εφαρμογών (Next.js) και αυτόνομα AI pipelines για επιχειρήσεις. Μειώστε τα χειροκίνητα tasks και αυτοματοποιήστε τις λειτουργίες σας.",
+      "Κατασκευή ιστοσελίδων και web εφαρμογών, και αυτοματισμοί που αναλαμβάνουν τη δουλειά ρουτίνας. Για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα.",
     absoluteTitle: true,
     priority: 1,
     changeFrequency: "monthly",
@@ -100,7 +100,7 @@ export const ROUTES = [
     label: "Ερωτήσεις",
     title: "Συχνές ερωτήσεις",
     description:
-      "Τι γίνεται αν μας χάσετε, πόσο κοστίζει, πόσο θα πάρει, γιατί όχι WordPress, και τι ακριβώς παίρνετε από το δωρεάν audit.",
+      "Τι γίνεται αν μας χάσετε, τι ακριβώς φτιάχνουμε, πόσο κοστίζει, πόσο θα πάρει, και τι παίρνετε από το δωρεάν audit.",
     priority: 0.7,
     changeFrequency: "monthly",
   },

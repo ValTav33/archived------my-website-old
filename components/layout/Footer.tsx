@@ -15,10 +15,10 @@ import StatusDot from "@/components/ui/StatusDot";
  */
 const CORE_TRACKS = [
   {
-    label: "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
+    label: "Κατασκευή ιστοσελίδων & web εφαρμογών",
     href: "/websites",
   },
-  { label: "AI εξυπηρέτηση πελατών & φωνητικοί agents", href: "/automations" },
+  { label: "AI εξυπηρέτηση πελατών", href: "/automations" },
   { label: "Αυτοματισμοί leads & εμπλουτισμός δεδομένων", href: "/automations" },
   { label: "Dashboards διαχείρισης για πελάτες", href: undefined },
 ] as const;
@@ -169,7 +169,7 @@ export default function Footer() {
         {/* ---------------------------- Sub-bar --------------------------- */}
         <div className="mt-12 flex flex-col gap-2 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-mono text-mono-xs text-ink-ghost">
-            © {YEAR}. Κατασκευασμένο με Next.js, Tailwind &amp; TypeScript.
+            © {YEAR} {SITE.brand}.
           </p>
           <p className="font-mono text-mono-xs text-ink-ghost">
             Γραπτό εύρος πριν την κατασκευή — χωρίς εκπλήξεις στην παράδοση.

@@ -32,7 +32,7 @@ const PARAGRAPHS = [
      one who does. A prospect who reads this and then meets Val meets exactly
      who the page said. */
   `Το ${SITE.brand} είναι ο ${SITE.person}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα, remote. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
-  "Κατασκευάζουμε δύο πράγματα. Γρήγορα site και web εφαρμογές σε Next.js, και αυτοματισμούς που αναλαμβάνουν δουλειά ρουτίνας που σήμερα γίνεται με το χέρι.",
+  "Κατασκευάζουμε δύο πράγματα. Ιστοσελίδες και web εφαρμογές που φορτώνουν γρήγορα, και αυτοματισμούς που αναλαμβάνουν δουλειά ρουτίνας που σήμερα γίνεται με το χέρι.",
   /* S2 stripped the false half of this paragraph; S5 rewrites the section. */
   "Κάθε έργο ξεκινά με γραπτή συμφωνία για το τι παραδίδεται και ποιος διαχειρίζεται τι.",
   /* The "what we do not do" line. Every clause here is a promise NOT to do

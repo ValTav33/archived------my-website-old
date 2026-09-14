@@ -30,8 +30,8 @@ const ROUTE = getRoute("/websites");
  */
 const DELIVERABLES: readonly Feature[] = [
   {
-    title: "Site ή web εφαρμογή σε Next.js",
-    body: "TypeScript, server rendering και ένα build που δεν στηρίζεται σε plugins τρίτων για να λειτουργήσει.",
+    title: "Φτιαγμένο από την αρχή για εσάς",
+    body: "Χωρίς έτοιμα πρότυπα και χωρίς πρόσθετα τρίτων για να λειτουργήσει — άρα λιγότερα πράγματα που μπορούν να χαλάσουν.",
   },
   {
     title: "Σωστό σε κινητό πρώτα",
@@ -82,7 +82,7 @@ export default function WebsitesPage() {
           titleAs="h1"
           eyebrow="[ // ΚΑΤΑΣΚΕΥΗ ΙΣΤΟΣΕΛΙΔΩΝ ]"
           title="Κατασκευή ιστοσελίδων στη Θεσσαλονίκη, που φορτώνουν γρήγορα και κάνουν δουλειά."
-          lede="Σχεδιάζουμε και κατασκευάζουμε ιστοσελίδες και web εφαρμογές σε Next.js, για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα. Το site δεν σπάει επειδή ενημερώθηκε κάποιο plugin, γιατί δεν στηρίζεται σε plugins."
+          lede="Σχεδιάζουμε και κατασκευάζουμε ιστοσελίδες και web εφαρμογές για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα. Φτιαγμένες από την αρχή για αυτό που κάνει η δική σας, και έτσι φορτώνουν γρήγορα και αλλάζουν εύκολα όταν αλλάζει κάτι."
         />
 
         <ServiceSection
@@ -128,12 +128,14 @@ export default function WebsitesPage() {
           {/* §11.6: the objection gets answered here in structure, and the
               full answer lives in the FAQ rather than in two places. */}
           <Card tone="glass" className="mt-8 max-w-3xl p-5">
-            <Eyebrow variant="label">Γιατί όχι WordPress</Eyebrow>
+            <Eyebrow variant="label">Γιατί custom</Eyebrow>
             <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-              Δεν πουλάμε Next.js σε όποιον χρειάζεται ένα blog — αν το
-              WordPress κάνει τη δουλειά, θα σας το πούμε. Η διαφορά φαίνεται
-              όταν το site πρέπει να κάνει κάτι: λογαριασμούς χρηστών,
-              σύνδεση με τα εργαλεία που ήδη χρησιμοποιείτε, δικά σας δεδομένα.
+              Μια έτοιμη πλατφόρμα σας δίνει ό,τι έχει προβλέψει για όλους.
+              Όταν το site πρέπει να κάνει κάτι συγκεκριμένο — να συνδεθεί με
+              τα εργαλεία που ήδη χρησιμοποιείτε, να έχει λογαριασμούς
+              χρηστών, να δείχνει τα δικά σας δεδομένα — το custom βγαίνει
+              πιο γρήγορο και αλλάζει πιο εύκολα. Αν αυτό που θέλετε δεν το
+              χρειάζεται, θα σας το πούμε.
             </p>
 
             <ArrowLink href="/faq" size="quiet" className="mt-4">

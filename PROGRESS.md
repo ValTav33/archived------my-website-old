@@ -12,7 +12,7 @@
 **Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
 **Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
 **Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S2 · 2026-09-14 · accounts and ownership
+**Last slice:** S3 · 2026-09-14 · technology names removed
 **Blocked on:** Val's approval on two pieces of copy — the FAQ set (S4) and the `/about` draft (S5). Everything else in the phase can proceed without him. **Phase 4 follows this, not Phase 3.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -57,7 +57,7 @@ rejected paragraph would drag ten design commits with it.
 
 - [x] **S1** The surname · 2026-09-14
 - [x] **S2** Accounts and ownership · 2026-09-14 · **14 files, not 8**
-- [ ] **S3** Remove the technology names · 11 files · **closes V10**
+- [x] **S3** Remove the technology names · 2026-09-14 · **18 files** · closes V10
 - [ ] **S4** The FAQ · **copy needs Val's approval**
 - [ ] **S5** `/about` · **draft needs Val's approval**
 - [ ] **S6** `/pricing`
@@ -131,6 +131,62 @@ content the client supplies stays theirs.
 every inflection of the claim — `repository`, `όμηρο`, `στο όνομά σας`,
 `κλείδωμα`, `παραδίδεται δικός σας` and the rest: **zero occurrences of all
 ten**. The new phrasings are present where intended.
+
+**S3.** `TechStackStrip` deleted outright, and every technology name removed
+from visitor-facing copy. **18 files, against the 11 the spec estimated** —
+and the overrun came from three different directions, each worth its own note.
+
+**The typed route manifest earned its keep.** Removing `stack` from
+`ProofItem` produced six compile errors in two files I had not listed:
+`components/proof/ProofStrip.tsx` — **on the homepage** — and the `/work`
+index. Both rendered tool badges. A `grep` would not have found them, because
+neither file contains a technology name; they iterate over an array that does.
+This is the second time in two slices that the thing which found the problem
+was not the thing I went looking with.
+
+**V10 was never one place.** Its Backlog row named `SERVICE_CATALOG`, so that
+is what the spec scoped. But «φωνητικοί agents» was also sitting in the
+footer's `CORE_TRACKS`, **rendering on all eleven routes** — a capability no
+delivered project backs, on every page, for two phases. Removed. The
+showcase's AI-concierge card **stays**: it is labelled «Ενδεικτικές
+Αρχιτεκτονικές», which §8.2 explicitly permits for describing capability.
+
+**A stem sweep caught what a phrase sweep missed.** After the first batch of
+thirteen edits, `AboutSection` still read «web εφαρμογές σε Next.js» in
+visible copy. The S2 lesson applied — search `next\.?js`, not a sentence.
+
+*One deliberate keep, and it is not an oversight.* **`/privacy` retains
+Supabase, Resend and Vercel by name** — 3, 3 and 12 occurrences. A privacy
+policy is legally required to identify who processes the data. That is not
+tech-stack showmanship, it is the one place the names have to appear, and
+removing them would break the compliance the whole of Phase 3 was built to
+establish.
+
+*`SERVICE_CATALOG` now mirrors the footer's four labels verbatim*, which is
+deliberate rather than tidy: Phase 2's gate requires every string in the
+structured data to be visible on the page carrying it, and the footer renders
+on all eleven routes, so this is the only arrangement where `knowsAbout`
+satisfies that everywhere at once. **Measured: 4 of 4 visible** in the
+homepage's text after stripping tags.
+
+*Structure after deleting a whole section:* one `h1`, `h2` count 7 → 6, **zero
+heading skips**, and **zero remaining references to the `#tech` anchor** —
+checked before deleting rather than discovered after.
+
+**Rendered-HTML sweep across ten routes, eighteen probes** — `Next.js`,
+`TypeScript`, `Tailwind`, `Supabase`, `PostgreSQL`, `n8n`, `Vapi`, `webhook`,
+`WordPress`, `plugin`, `FullEnrich`, `ZoomInfo`, `Instantly`, `OpenAI`,
+`high-performance`, `workflows` and two casings: **zero occurrences of all
+eighteen.**
+
+*Logged for Val rather than swept:* `AUDIT_INTENTS`, the form's five dropdown
+options, is thick with English business vocabulary — «data entry», «lead
+generation & cold outreach», «AI Concierge / Assistant». S3 changed only
+«high-performance», which was a performance claim; the rest is Greeklish a
+Greek SMB owner may genuinely recognise, so rewriting it is a content decision
+rather than a sweep — and it is the first thing a lead interacts with. Backlog
+row carries the caveat that the list is both a server-side whitelist and a
+stored value.
 
 **A process failure worth recording, since §7 exists to catch exactly this.**
 S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
@@ -2500,6 +2556,7 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | `text-decor` / bullet marks, the `dl` pairs on `/process` and `/about`, and the legal pages' prose were all built with the existing primitives, but the two service pillars, `/work` and `/process` now share a shell (`PageShell`, `ServiceSection`, `FeatureGrid`, `BulletList`, `ServiceCta`, `ArrowLink`) that no one has design-reviewed as a system — worth one pass in Phase 4 alongside the bento hierarchy row | S2.4 | 4 |
 | The shared rate limiter is **not atomic**: two simultaneous requests can both read four and both pass, so the bound it enforces is "roughly five per hour". Closing it needs a stored function and an RPC. Documented in `lib/ratelimit.ts` rather than hidden, and not worth the machinery at this volume | S3.5 | 8 |
 | The `/about` OG card renders eyebrow «ΠΟΙΟΙ ΕΙΜΑΣΤΕ» directly above title «Ποιοι είμαστε» — the same words twice, one uppercased. Seen while verifying S1's surname fix by opening the card. Cosmetic, OG-card only, and the generator is shared by eleven routes so the fix is one template | S3.5 S1 | 4 |
+| `AUDIT_INTENTS` — the form's five dropdown options — is heavy with English business vocabulary: «data entry», «lead generation & cold outreach», «AI Concierge / Assistant», «Web Development». S3 changed only «high-performance», which was a technology claim; the rest is Greeklish business language a Greek SMB owner may genuinely recognise, so rewriting it is **Val's content decision, not a sweep**. It is also the first thing a lead interacts with. Note: the list is a server-side whitelist and a stored value, so changing it after leads exist needs care | S3.5 S3 | Val |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
