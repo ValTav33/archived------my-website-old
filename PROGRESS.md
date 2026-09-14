@@ -12,8 +12,8 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.7 · 2026-09-14 · analytics
-**Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
+**Last slice:** S3.7 · 2026-09-14 · analytics · **S3.8 half done — the gate needs a deployment**
+**Blocked on:** **V3, V6, V7 and V19 in `docs/VAL-ACTIONS.md`** — Deployment Protection, the three Supabase secrets, the Resend key, and `CRON_SECRET`. All seven code slices are done and every failure path is measured; what cannot be measured locally is the success path. **Two independent reasons the gate now needs a deployment:** the exit gate's first line is a real submission landing in an inbox, and since S3.7 localhost *cannot* produce Best Practices = 100 — the analytics script 404s on a path only the platform serves.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -63,7 +63,7 @@ of this file once they are settled.
 - [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
 - [x] **S3.6** Daily retention + keepalive cron · 2026-09-14 · **D3 = 24 months**
 - [x] **S3.7** Analytics · 2026-09-14 · **D4 = yes**
-- [ ] **S3.8** Closeout and go-live
+- [~] **S3.8** Closeout and go-live · **partial** — playbook and handover done; the gate measurement and the PR need V3/V6/V7/V19
 
 **S3.1.** `lib/env.ts` is the only reader of a Phase 3 secret, and
 `.env.example` documents all five. Two rules, pulling opposite ways on
@@ -481,6 +481,37 @@ that section instead of implying the form is the only thing happening, and the
 processor list says the measurement is Vercel's own tool rather than a third
 company. Verified against the rendered page: four new claims present, three
 retired claims absent.
+
+### Phase 3 exit gate — what is measured, and what is not
+
+Locally measurable rows, all green:
+
+- [x] Broken mail credential → 502, Greek retry-or-call message, **no row written**, scrubbed log
+- [x] Broken database credential → email path unaffected, visitor still sees success, scrubbed log (**D1**)
+- [x] Honeypot and sub-2.5 s submissions → 200, nothing sent, nothing stored
+- [x] A failed validation does not consume a rate-limit slot — *demonstrated by two probes changing status*
+- [x] `audit_rate_limit` holds no value resembling an IP address — the column's constraint **refuses** one
+- [x] RLS verified **with the browser-safe keys**, not inferred from the migration — 8/8 `401 / 42501`
+- [x] Cron route: 401 unauthenticated, 401 for *everything* when no secret is set, correct counts authenticated, boundary rows handled
+- [x] `grep -rn "TODO\|FIXME\|Placeholder\|yourdomain\|domain.gr" app components lib` → nothing
+- [x] Zero `console.log`; the only `console.*` in the lead path are one `info` per route and the single `console.error` inside `lib/logging.ts`
+- [x] **`process.env` for a Phase 3 secret appears in exactly one file, `lib/env.ts`** — every other reader imports a validated constant, and no secret name carries a `NEXT_PUBLIC_` prefix
+- [x] `npx tsc --noEmit`, `npm run lint`, `npm run build` all clean
+
+Rows that **cannot** be measured from here, and why:
+
+| Row | Needs |
+|---|---|
+| A real submission lands in Val's inbox, six fields, Greek intact | V7 — the Resend key |
+| The same submission is one row in `audit_requests` | V6 — the three secrets |
+| Runtime logs for that submission contain no PII, **read from the deployment** | V3 + V6 + V7 |
+| Sixth submission → 429, and the counter survives a redeploy | V6, and two deployments |
+| Lighthouse: Perf ≥ 95 · A11y 100 · **BP 100** · SEO 100 | V3 — and BP 100 is now *impossible* on localhost (S3.7) |
+| Real phone pass, keyboard pass, Val re-reads `/privacy` | V1, V2 |
+
+**Nothing in the first list substitutes for the second.** Every failure path
+in this phase is verified and the success path is not, which is an unusual
+shape for a launch and worth saying plainly rather than rounding up.
 
 ---
 
@@ -2165,9 +2196,6 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Item | Found in | Target phase |
 |---|---|---|
 | Showcase cards carry ~9 elements each at equal weight — needs real hierarchy | Audit | 4 |
-| Rate limiting is per-instance on serverless — move counter to Supabase | S0.6 | 3 |
-| Preview deployments share the production rate-limit and origin rules; if preview traffic ever matters, key the limiter per deployment | Exit gate | 3 |
-| Rate limit counts requests before validation, so a failed submit consumes a slot. Harmless today (the client validates with the same function first) but revisit with the Supabase counter | S0.6 | 3 |
 | Proof strip ships with two named references and an empty testimonial slot. The **assets** half is still open: Fiverr quotes, screenshots and Val's photo | S0.12 · structure closed S1.6 | 5 |
 | Framer Motion ignores `prefers-reduced-motion`: `globals.css` collapses CSS animation and transition durations under the media query, but height/opacity driven through JS never sees it. Affects the FAQ disclosure, `ShowcaseCard` and the `Navbar` drawer — fix all three together with `useReducedMotion`, since fixing one leaves the page with two behaviours | S1.9 | 4 |
 | `PipelineSimulator` run button (`0.12` / hover `0.22`), its completed node (`0.12`) and the form field's focus border (`0.25`) sit outside the two-value hairline system. All three are control emphasis or focus states rather than structural hairlines, so S1.2 left them raw — decide in Phase 4 whether they become a named `emphasis` ramp | S1.2 | 4 |
@@ -2175,10 +2203,19 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | `SERVICE_CATALOG` claims "AI Concierge & Voice/Chat Agents", which feeds `knowsAbout` and the schema offer catalog, but **no voice work has been delivered** — the showcase's concierge architecture is labelled indicative. S2.4 left voice off `/automations` under §8.5 and did not touch the catalog, because it is a structured-data decision rather than a copy tweak: either the claim comes out, or Phase 5 supplies something that backs it | S2.4 | 5 |
 | Lighthouse mobile Performance reads **93** on `/` and 94 on `/websites` against Phase 1's 95, both on a local `next start`, with LCP 2.9s → 3.2s. Phase 4 owns performance (its gate is Perf ≥ 95 with budgets in CI); chasing LCP in a phase that does not own it is how a slice stops being reviewable | S2.12 | 4 |
 | `text-decor` / bullet marks, the `dl` pairs on `/process` and `/about`, and the legal pages' prose were all built with the existing primitives, but the two service pillars, `/work` and `/process` now share a shell (`PageShell`, `ServiceSection`, `FeatureGrid`, `BulletList`, `ServiceCta`, `ArrowLink`) that no one has design-reviewed as a system — worth one pass in Phase 4 alongside the bento hierarchy row | S2.4 | 4 |
+| The shared rate limiter is **not atomic**: two simultaneous requests can both read four and both pass, so the bound it enforces is "roughly five per hour". Closing it needs a stored function and an RPC. Documented in `lib/ratelimit.ts` rather than hidden, and not worth the machinery at this volume | S3.5 | 8 |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |
 | `.DS_Store` files are tracked-adjacent clutter in the working tree; `.gitignore` covers them but stray copies exist | S0.1 | any |
+
+### Closed during Phase 3
+
+| Item | Found in | Closed by |
+|---|---|---|
+| Rate limiting is per-instance on serverless — move the counter to Supabase | S0.6 | **S3.5** |
+| Preview deployments share production's rate limit | Phase 2 exit gate | **S3.5** — `environment` is part of the counter's key |
+| The rate limit counted requests **before** validation, so a failed submit consumed a slot | S0.6 | **S3.5** — and demonstrated: two probes moved from 429 to their correct 422 and 400 |
 
 ### Closed during Phase 2
 
@@ -2233,8 +2270,16 @@ by a session that has the skill loaded but not the playbook.
 
 Deferred rather than rejected: the Next.js guideline to use Server Actions for
 form mutations. The form deliberately posts to `/api/audit`, which carries the
-origin allowlist and rate limiting from S0.6. Phase 3 owns delivery and can
-weigh it then.
+origin allowlist and rate limiting from S0.6.
+
+**Weighed in Phase 3, which owns delivery, and still deferred.** Swapping the
+transport mechanism in the same phase that first makes the form actually work
+would mean a failed submission has two candidate causes instead of one — and
+this phase's exit gate is a single end-to-end submission, which is precisely
+the measurement that ambiguity would ruin. The route now also carries the
+shared rate limiter, the scrubbed failure logging and the cron's sibling
+route; none of that is easier as an action. Revisit if a second form ever
+exists.
 
 ---
 
@@ -2261,6 +2306,23 @@ weigh it then.
 ---
 
 ## Decisions changed since the playbook was written
+
+### Phase 3 — D1 to D5, and two rules
+
+**All seven rows are in the playbook's §14 decision log, with dates and
+reasons.** They are pointed at rather than copied here, for the reason
+`docs/VAL-ACTIONS.md` exists: a decision recorded in two places is a decision
+that will disagree with itself. §2.2 gained a retention row and §2.5 gained
+Resend and a confirmation that the analytics line is now real.
+
+The one worth reading before anything else in this phase is **D1**, because it
+is the only decision here driven by a measurement rather than a preference:
+every Supabase project in the organisation was paused when the spec was
+written, the free tier pauses after roughly a week of quiet, and a marketing
+site's lead volume is exactly that traffic profile. Everything about the order
+of operations in `app/api/audit/route.ts` follows from that.
+
+
 
 - **2026-09-12 — D1: a deeper page expands its homepage section, it never
   copies it.** §2.3 says the homepage carries highlights; Phase 1 built the
