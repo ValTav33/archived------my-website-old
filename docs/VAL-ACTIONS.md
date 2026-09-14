@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after the exit gate was measured on the deployment.
+**Last synced:** 2026-09-14, after the Phase 3.5 content pass. **Nothing on this list is blocking.**
 
 ---
 
@@ -81,7 +81,13 @@ Then open `/privacy` and `/terms`.
 > processing — a database, two processors, a retention period — so a mistake
 > in it is a mistake about what you are actually doing with people's details.
 >
-> **Read it on the deployment, here** *(link works until 15 Sep, no sign-in
+> **`/terms` also changed, in Phase 3.5.** Its «Σε ποιον ανήκει ο κώδικας»
+> section no longer says the repository is in your name from day one — it says
+> delivery and ownership are agreed in writing per project, because your
+> packages differ. That is the sentence with the most legal weight on the site
+> and it is the one to read most carefully.
+>
+> **Read both on the deployment, here** *(link works until 15 Sep, no sign-in
 > needed)*:
 > `https://my-website-git-phase-3-backend-valtav33s-projects.vercel.app/privacy?_vercel_share=xbn58HlVESroBMcjx5WKp0NpEQnh3iI5`
 
@@ -227,69 +233,6 @@ real deployment.
 
 ---
 
-### V4 — Merge three PRs, in this order
-
-**Why it is yours, now confirmed twice over:** `gh` is not installed on this
-machine, the GitHub connector is unauthorised in this session, **and** a local
-`git merge --squash` onto `main` was refused by the permission classifier as
-*Merge Without Review*. That refusal is playbook §5 enforced by tooling rather
-than by discipline, so it is not something to work around — the merge is a
-human's call.
-
-**This is the only thing standing between the work and production.**
-Everything else in Phase 3 is measured, on the deployment: a real submission
-reached the inbox and the database, the Vercel runtime log carries no personal
-data, and Accessibility and Best Practices are 100 on every audited route.
-`main` is still `8749c7f`, three phases behind, which is why the live site
-still runs the form that discards leads.
-
-**Three branches are now open, each stacked on the one below**, so the order
-matters: `phase/3-backend` (9 commits) on `phase/2-multipage` (15) on
-`phase/1-homepage` (13) on `main`.
-
-**1. Phase 1 — Homepage Restructure.** Branch `phase/1-homepage`, 13 commits,
-pushed. PR body: the template at the end of
-`docs/phases/PHASE-1-HOMEPAGE.md`. Squash merge, then delete the branch.
-
-**2. Rebase Phase 2 onto the new `main`:**
-
-```bash
-git rebase --onto main phase/1-homepage phase/2-multipage
-```
-
-This conflicts with nothing, whatever the commit count. `main` is a direct
-ancestor of `phase/1-homepage` (`git merge-base` returns `main`'s own HEAD),
-so a squash merge leaves `main` with a tree **identical** to
-`phase/1-homepage`, and replaying Phase 2's commits onto an identical tree has
-nothing to resolve. *(An earlier note of mine said the rebase had to happen
-before the first Phase 2 slice. That was overcautious and is corrected here
-and in the Phase 2 spec.)*
-
-**3. Phase 2 — Multipage & SEO.** Branch `phase/2-multipage`, 15 commits.
-PR body: the template at the end of `docs/phases/PHASE-2-MULTIPAGE-SEO.md`.
-Squash merge, delete the branch.
-
-**4. Rebase Phase 3 onto the new `main`:**
-
-```bash
-git rebase --onto main phase/2-multipage phase/3-backend
-```
-
-Same reasoning, one link further down the chain.
-
-**5. Phase 3 — Backend & Go-Live.** Branch `phase/3-backend`, 9 commits.
-PR body: the template at the end of
-`docs/phases/PHASE-3-BACKEND-GOLIVE.md`. **Do not merge this one until V6 and
-V7 are done** — merging it with no Resend key turns the form's 24-hour promise
-into "call us instead" on the live site.
-
-**Review the Vercel preview URL before merging each one** — playbook §5 says
-that is the entire point of branching, and V3 is what makes it possible.
-
-**Done when:** all three are merged and `main` contains Phases 1, 2 and 3.
-
----
-
 ### V5 — After each merge, check the deployed SHA
 
 **Why it is yours:** it needs the Vercel dashboard.
@@ -373,6 +316,31 @@ six fields and Greek intact, and you can hit reply and reach the visitor
 
 ---
 
+### V21 — Merge the Phase 3.5 PR 🔴
+
+**Why it is yours:** the same three walls as V4. `gh` is not installed, the
+GitHub connector is unauthorised in this session, and a local merge onto
+`main` is refused by the permission classifier as *Merge Without Review* —
+which is playbook §5 enforced by tooling rather than by discipline.
+
+**One PR, one branch.** `phase/3.5-content`, branched cleanly from `main`, so
+there is no stack and no rebase this time.
+
+```
+https://github.com/ValTav33/my-website/compare/main...phase/3.5-content?expand=1
+```
+
+Title, then paste the body a session hands you, then **Squash and merge**.
+
+**What this changes on the live site:** the surname, every ownership and
+account claim, every technology name, the FAQ set, the homepage's about
+paragraphs, and a new `/pricing` route. No backend behaviour changes at all —
+the form, the database and the cron are untouched by this phase.
+
+**Done when:** `main` carries it and production serves the new SHA.
+
+---
+
 ### V19 — `CRON_SECRET` 🟠 *(generated locally; still needs setting in Vercel)*
 
 **Why it is yours:** a generated secret, same reason as the rest.
@@ -444,22 +412,6 @@ reaches production.
 
 Each of these has a recommendation and a real consequence either way. None is
 blocking today.
-
-### V10 — `SERVICE_CATALOG` claims voice agents that have not shipped 🟠
-
-`lib/site.ts` lists **"AI Concierge & Voice/Chat Agents"**, and that array
-feeds both `knowsAbout` and the schema offer catalog on every page. No voice
-work has been delivered — the homepage's concierge architecture is explicitly
-labelled *indicative*.
-
-S2.4 therefore left voice off `/automations` under §8.5, and deliberately did
-**not** edit the catalog: changing it is a structured-data decision, not a copy
-tweak.
-
-**Two ways out:** remove the claim, or have Phase 5 supply something that backs
-it. **Recommendation:** remove it until there is a delivered example. It is the
-only line in the catalog with nothing behind it, and it sits in markup where a
-visitor cannot see it and cannot contradict it.
 
 ### V12 — `.claude/launch.json` is committed 🔵
 
@@ -547,4 +499,9 @@ line.
 | — | Supabase **project** created | 2026-09-14 — `tavlikos-systems-website`, `eu-central-1`, free tier, €0/month; migration applied and verified. The **credentials** are still V6 |
 | V8 | Analytics: yes or no | 2026-09-14 — **yes**, Vercel Analytics, installed in S3.7. Measured: Performance unchanged at 93, Best Practices 100 → 96 **locally only**, from the insights-script 404 that the platform serves |
 | V11 | Should `/privacy` say the form delivers nowhere? | 2026-09-14 — **moot.** S3.3 made the form deliver, so there is no gap to disclose. The page now describes what actually happens, five revisions deep |
+| V10 | `SERVICE_CATALOG` claimed voice agents | 2026-09-14 — **closed by S3.5 S3**, and it was in two places, not one: the catalogue *and* the footer's service list, which renders on all eleven routes. Both gone. The showcase's AI-concierge card stays, because it is labelled «Ενδεικτικές Αρχιτεκτονικές» and §8.2 permits that |
+| V4 | Merge the Phase 1-3 PRs | 2026-09-14 — merged as one squash commit `b76e3f5`, PR `#1`. Production verified by SHA |
+| V5 | Check the deployed SHA after merge | 2026-09-14 — production serves `b76e3f5`, tree byte-identical to the verified branch |
+| V19 | `CRON_SECRET` | 2026-09-14 — set in Vercel; the cron route answers 401 without it on production |
+| V3 | Vercel Deployment Protection | 2026-09-14 — **not needed.** Protected previews turned out to be measurable via the connector's bypass cookie. Setting left on |
 | — | D3 — lead retention period | 2026-09-14 — **24 months**, enforced by the S3.6 job, interpolated into `/privacy` from the code |

@@ -71,17 +71,21 @@ export const PROCESS: readonly ProcessStep[] = [
     n: "03",
     title: "Παράδοση & υποστήριξη",
     summary:
-      "Ο κώδικας και το repository μένουν δικά σας, με τεκμηριωμένη εγκατάσταση και μηνιαία υποστήριξη μόνο αν τη θέλετε.",
+      "Το έργο πηγαίνει live, και τι παραδίδεται και ποιος διαχειρίζεται τι είναι συμφωνημένα από την αρχή. Μηνιαία υποστήριξη μόνο αν τη θέλετε.",
     detail: {
-      /* The solo-operator objection (§11.6, §12) answered in structure before
-         the FAQ answers it in words. Note "άλλος developer" — another one, an
-         outsider. §2.1 is plural voice with singular facts, so no copy here
-         may imply staff, and the repo-wide sweep for staff language has to
-         stay clean in comments too or it stops being a useful sweep. */
-      what: "Το έργο πηγαίνει live, το repository περνά στο όνομά σας και η εγκατάσταση παραδίδεται τεκμηριωμένη.",
+      /* **Rewritten in S3.5 S2 (D1, D2).** This step used to promise that the
+         repository passed into the client's name and that any other developer
+         could continue without us. Neither is true across all of Val's
+         packages, so both are gone — see the phase spec.
+
+         What replaces them is the choice, which is a better sentence anyway:
+         the client decides how much account administration they want to own.
+         §2.1 still applies — plural voice, singular facts, and no copy here
+         may imply staff, in the comments either. */
+      what: "Το έργο πηγαίνει live και παραδίδεται με ό,τι έχει συμφωνηθεί γραπτά — τεκμηρίωση, πρόσβαση, και μια διαδρομή μέσα από το έργο.",
       provides:
-        "Τους λογαριασμούς όπου θα ζήσει το έργο — domain, hosting, ό,τι συνδέεται. Είναι δικοί σας από την αρχή, όχι δικοί μας με πρόσβαση για εσάς.",
-      gets: "Κώδικα, repository, τεκμηρίωση, και τη δυνατότητα να συνεχίσει άλλος developer χωρίς εμάς.",
+        "Μια απόφαση: κρατάτε εσείς τους λογαριασμούς όπου ζει το έργο — domain, hosting, ό,τι συνδέεται — ή τους αναλαμβάνουμε εμείς. Εξαρτάται από πόσο χρόνο θέλετε να δίνετε στη διαχείρισή τους, και συμφωνείται πριν την παράδοση.",
+      gets: "Ένα έργο που δουλεύει, τεκμηρίωση για το πώς λειτουργεί, και ξεκάθαρο ποιος κρατά τι — γραμμένο από την αρχή, όχι ανακοινωμένο στο τέλος.",
       costsYou:
         "Μία διαδρομή μέσα από το έργο, ώστε να ξέρετε πού βρίσκεται τι.",
     },

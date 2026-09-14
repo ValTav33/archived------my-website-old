@@ -91,8 +91,36 @@ export const SITE = {
      solo-operator objection is the one that kills deals silently. Naming one
      real person is the maximally §2.1-compliant move: the guardrail forbids
      claiming MORE people, never stating the actual one. Phase 2's `/about`
-     route and its `Person` schema read this. */
-  person: "Βαλσάμης Ταυλίκος",
+     route and its `Person` schema read this.
+
+     **Ταβλίκος, with a beta.** It shipped as «Ταυλίκος» from Phase 0 until
+     Val caught it on the live site on 2026-09-14 — his own surname,
+     misspelled in the `Person` JSON-LD node and in the visible copy of `/`,
+     `/about` and `/privacy`. One constant is why the correction is one line
+     instead of a sweep, which is the whole argument for the single-source
+     rule; it is also why the error was uniform enough to survive four
+     phases of review. Do not "fix" this back.
+
+     *Corrected while verifying:* a first draft of this comment claimed the
+     name was also burnt into the generated OG cards. It is not — those
+     render the page title and eyebrow, not the person. The card was opened
+     and looked at rather than assumed, which is the same method that caught
+     the Greek all-caps tonos bug in S2.5. */
+  person: "Βαλσάμης Ταβλίκος",
+  /**
+   * The same name in the accusative, because **Greek inflects and one
+   * constant cannot serve both cases.**
+   *
+   * S5 shipped «Με τον ${person}» into a build and it rendered «Με τον
+   * Βαλσάμης Ταβλίκος» — nominative in a slot that demands accusative, wrong
+   * in a way no English-speaking reviewer would catch and every Greek
+   * visitor would. The alternative was rephrasing every sentence to dodge the
+   * case, which is writing around the language instead of in it.
+   *
+   * Use `person` after «ο», as a title or a label; use this after «με τον»,
+   * «για τον», «στον».
+   */
+  personAccusative: "Βαλσάμη Ταβλίκο",
   siteName: "Tavlikos Systems",
   /** Name used in structured data. Not a registered entity — see playbook §2.2. */
   legalName: "Tavlikos Systems",
@@ -118,7 +146,7 @@ export const SITE = {
      nobody. Printed beside a `StatusDot` in the hero, the footer and the
      about section; the day this stops being true it has to stop being true
      in one place, not three. */
-  availability: "Διαθέσιμοι για νέα projects",
+  availability: "Διαθέσιμοι για νέα έργα",
 
   social: {
     /* Share/QR tracking params (stkn, mibextid, utm_source) stripped — they
@@ -159,11 +187,20 @@ export const PORTRAIT: { src: string; alt: string } | null = null;
 
 /** Capability list — feeds both `knowsAbout` and the offer catalog. */
 export const SERVICE_CATALOG = [
-  "Custom Web Development (Next.js, TypeScript)",
-  "Business Process Automation (n8n, Workflows)",
-  "AI Concierge & Voice/Chat Agents",
-  "Lead Generation & Outreach Pipelines",
-  "Client Portals & Admin Dashboards",
+  /* **These four are verbatim the footer's `CORE_TRACKS` labels**, and that
+     is deliberate rather than tidy. Phase 2's exit gate requires every string
+     in the structured data to be visible on the page carrying it; the footer
+     renders on all eleven routes, so mirroring it is the only arrangement
+     where that holds for `knowsAbout` everywhere at once.
+
+     S3.5 S3 rewrote this from tool names ("Next.js, TypeScript", "n8n,
+     Workflows") to what a client actually buys — and in doing so removed
+     «AI Concierge & Voice/Chat Agents», which is V10: a capability no
+     delivered project backs. */
+  "Κατασκευή ιστοσελίδων & web εφαρμογών",
+  "AI εξυπηρέτηση πελατών",
+  "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
+  "Dashboards διαχείρισης για πελάτες",
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -208,8 +245,6 @@ export type ProofItem = {
   summary: string;
   /** A URL a visitor can open right now, when one exists. */
   href?: string;
-  /** Tooling, rendered as badges. Only what was genuinely used. */
-  stack?: readonly string[];
   /**
    * The case-study body. **Optional, and the absence is meaningful.**
    *
@@ -250,20 +285,16 @@ export const PROOF: readonly ProofItem[] = [
     kind: "Κατασκευαστής ιατροτεχνολογικού εξοπλισμού",
     /* The vendor names are deliberately NOT in this sentence. A clinic owner
        reading "FullEnrich, BetterContact, ZoomInfo" learns nothing and hears
-       someone else's suppliers; what the system DOES is the claim. The tools
-       go in the badge row underneath, where they read as evidence. */
+       someone else's suppliers; what the system DOES is the claim.
+
+       That comment used to end "the tools go in the badge row underneath,
+       where they read as evidence". S3.5 S3 deleted the badge row: Val's
+       instruction is that no technology name appears anywhere, because a shop
+       owner cares about the outcome and not the toolchain. The reasoning that
+       kept the names out of the sentence simply now applies to the whole
+       page. */
     summary:
       "Βρίσκει και επιβεβαιώνει στοιχεία επικοινωνίας, μελετά κάθε υποψήφιο πελάτη, γράφει προσωποποιημένο πρώτο email και φορτώνει την καμπάνια.",
-    stack: [
-      "FullEnrich",
-      "BetterContact",
-      "ZoomInfo",
-      "LinkedIn",
-      "Google Sheets",
-      "Perplexity",
-      "OpenAI",
-      "Instantly",
-    ],
     study: {
       problem:
         "Ένας κατασκευαστής ιατροτεχνολογικού εξοπλισμού απευθύνεται σε κλινικές και διανομείς σε πολλές αγορές. Κάθε υποψήφιος πελάτης χρειάζεται στοιχεία επικοινωνίας που ισχύουν, λίγη έρευνα για το τι κάνει, και ένα πρώτο email που δεν διαβάζεται ως μαζικό. Αυτά τα τρία, πολλαπλασιασμένα, είναι η δουλειά.",
@@ -358,4 +389,9 @@ export const AUDIT_DELIVERABLE =
  *
  * Phase 1's FAQ answers «Πόσο θα πάρει;» with this same constant.
  */
+/* **Reads as a complete clause, qualifier included.** S3.5 S6 appended
+   «, ανάλογα με το εύρος» after interpolating this and shipped
+   «…ανάλογα με το εύρος, ανάλογα με το εύρος» into a build — caught by
+   looking at a screenshot of the page, not by reading the code. Interpolate
+   it and stop; do not add a qualifier of your own. */
 export const TIMELINE_RANGE = "3 ημέρες έως 2 μήνες, ανάλογα με το εύρος";

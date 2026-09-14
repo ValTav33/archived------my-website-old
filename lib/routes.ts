@@ -69,7 +69,7 @@ export const ROUTES = [
     title:
       "Web Development & AI Automations Θεσσαλονίκη | Custom Web Apps & Workflows",
     description:
-      "Σχεδιασμός high-performance web εφαρμογών (Next.js) και αυτόνομα AI pipelines για επιχειρήσεις. Μειώστε τα χειροκίνητα tasks και αυτοματοποιήστε τις λειτουργίες σας.",
+      "Κατασκευή ιστοσελίδων και web εφαρμογών, και αυτοματισμοί που αναλαμβάνουν τη δουλειά ρουτίνας. Για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα.",
     absoluteTitle: true,
     priority: 1,
     changeFrequency: "monthly",
@@ -82,7 +82,7 @@ export const ROUTES = [
        as four insertions of the same phrase. */
     title: "Κατασκευή ιστοσελίδων Θεσσαλονίκη",
     description:
-      "Κατασκευή ιστοσελίδων και web εφαρμογών σε Next.js, από τη Θεσσαλονίκη. Ο κώδικας και το repository είναι δικά σας, η εγκατάσταση παραδίδεται τεκμηριωμένη.",
+      "Κατασκευή ιστοσελίδων και web εφαρμογών από τη Θεσσαλονίκη: γρήγορες, προσβάσιμες, και φτιαγμένες γύρω από αυτό που κάνει η επιχείρησή σας.",
     priority: 0.9,
     changeFrequency: "monthly",
   },
@@ -91,7 +91,7 @@ export const ROUTES = [
     label: "Automations",
     title: "Αυτοματισμοί AI επιχειρήσεων",
     description:
-      "Αυτοματισμοί AI για επιχειρήσεις: παραλαβή αιτημάτων, follow-up, εμπλουτισμός στοιχείων και αναφορές — χωρίς χειροκίνητη δουλειά, σε λογαριασμούς δικούς σας.",
+      "Αυτοματισμοί AI για επιχειρήσεις: παραλαβή αιτημάτων, follow-up, εμπλουτισμός στοιχείων και αναφορές — δουλειά ρουτίνας που σταματά να γίνεται με το χέρι.",
     priority: 0.9,
     changeFrequency: "monthly",
   },
@@ -100,7 +100,7 @@ export const ROUTES = [
     label: "Ερωτήσεις",
     title: "Συχνές ερωτήσεις",
     description:
-      "Τι γίνεται αν μας χάσετε, πόσο κοστίζει, πόσο θα πάρει, γιατί όχι WordPress, και τι ακριβώς παίρνετε από το δωρεάν audit.",
+      "Τι γίνεται αν μας χάσετε, τι ακριβώς φτιάχνουμε, πόσο κοστίζει, πόσο θα πάρει, και τι παίρνετε από το δωρεάν audit.",
     priority: 0.7,
     changeFrequency: "monthly",
   },
@@ -118,7 +118,7 @@ export const ROUTES = [
     label: "Διαδικασία",
     title: "Η διαδικασία",
     description:
-      "Πώς τρέχει μια συνεργασία: δωρεάν audit, συμφωνημένο εύρος και κατασκευή σε στάδια, παράδοση με τον κώδικα δικό σας. Τι χρειάζεται από εσάς σε κάθε βήμα.",
+      "Πώς τρέχει μια συνεργασία: δωρεάν audit, συμφωνημένο εύρος και κατασκευή σε στάδια, και ξεκάθαρη παράδοση. Τι χρειάζεται από εσάς σε κάθε βήμα.",
     priority: 0.7,
     changeFrequency: "yearly",
   },
@@ -130,6 +130,19 @@ export const ROUTES = [
        third lands, and nobody re-reads a meta description. */
     description:
       "Ονομαστικά έργα που έχουν παραδοθεί: ένα αυτοματοποιημένο pipeline εμπλουτισμού και επικοινωνίας, και ένας ζωντανός ιστότοπος πελάτη.",
+    priority: 0.8,
+    changeFrequency: "monthly",
+  },
+  {
+    path: "/pricing",
+    label: "Τιμολόγηση",
+    title: "Πόσο κοστίζει",
+    /* No figures in the description either. A meta description promising a
+       price and a page that does not carry one is the worst version of this
+       page — the click happens and the disappointment happens on our side of
+       it. */
+    description:
+      "Πώς τιμολογούμε: σταθερή αμοιβή για την κατασκευή, συμφωνημένη πριν ξεκινήσουμε, και προαιρετική μηνιαία υποστήριξη. Τι μετακινεί το κόστος και τι χρειάζεται για να σας δώσουμε νούμερο.",
     priority: 0.8,
     changeFrequency: "monthly",
   },
@@ -147,7 +160,7 @@ export const ROUTES = [
     label: "Όροι Χρήσης",
     title: "Όροι Χρήσης",
     description:
-      "Τι είναι αυτός ο ιστότοπος, τι δεν αποτελεί δεσμευτική προσφορά, σε ποιον ανήκει ο κώδικας κάθε έργου, και ποιο δίκαιο εφαρμόζεται.",
+      "Τι είναι αυτός ο ιστότοπος, τι δεν αποτελεί δεσμευτική προσφορά, τι ισχύει για την ιδιοκτησία και την παράδοση κάθε έργου, και ποιο δίκαιο εφαρμόζεται.",
     priority: 0.3,
     changeFrequency: "yearly",
   },

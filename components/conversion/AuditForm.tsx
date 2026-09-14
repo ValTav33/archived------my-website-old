@@ -353,7 +353,7 @@ export default function AuditForm() {
             id="audit-brief"
             name="brief"
             rows={4}
-            placeholder="Π.χ. έχουμε WordPress που αργεί και 3 ώρες/ημέρα χειροκίνητη καταχώρηση παραγγελιών…"
+            placeholder="Π.χ. το site μας αργεί, και χάνουμε 3 ώρες/ημέρα σε χειροκίνητη καταχώρηση παραγγελιών…"
             value={values.brief}
             disabled={isSubmitting}
             onChange={(event) => update("brief", event.target.value)}

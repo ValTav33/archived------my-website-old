@@ -6,9 +6,14 @@ import StatusDot from "@/components/ui/StatusDot";
 import { SITE } from "@/lib/site";
 
 /* What the client walks away with, not what the build lacks. Each of these
-   is demonstrable today — see playbook §11.5. */
+   is demonstrable today — see playbook §11.5.
+
+   The first point used to read «Ο κώδικας παραδίδεται δικός σας». S3.5 S2
+   removed it under D2: it is not true of every package, and it sat in the
+   hero of every visit. What replaces it is demonstrable in the same breath —
+   process step 02 is literally "we agree the scope in writing first". */
 const TRUST_POINTS = [
-  "Ο κώδικας παραδίδεται δικός σας",
+  "Γραπτό εύρος πριν την κατασκευή",
   "Ταχύτητα χωρίς βαριά πρόσθετα",
   "Απάντηση εντός 24 ωρών",
 ] as const;
@@ -68,9 +73,9 @@ export default function HeroSection() {
               className={`${RISE} mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg`}
               style={delay(160)}
             >
-              Σχεδιάζουμε high-performance web συστήματα στο Next.js και
-              στήνουμε αυτόνομα workflows που μειώνουν τα χειροκίνητα tasks και
-              αυξάνουν τα έσοδά σας.
+              Φτιάχνουμε ιστοσελίδες και web εφαρμογές που φορτώνουν
+              γρήγορα, και αναλαμβάνουμε με αυτοματισμούς τη δουλειά ρουτίνας
+              που σήμερα τρώει τις ώρες σας.
             </p>
 
             {/* ---- Action group ---- */}

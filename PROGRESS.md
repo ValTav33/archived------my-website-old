@@ -9,11 +9,11 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3 — Backend & Go-Live · **the launch phase**
-**Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
-**Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.8 · 2026-09-14 · exit gate measured on the deployment · **only the merge is left**
-**Blocked on:** **V4 — the merges, and only those.** Everything measurable is measured, on the deployment: a real submission reached the inbox and the database, the Vercel runtime log is PII-free, and Accessibility and Best Practices are 100 on all three audited routes. `main` is still `8749c7f`, three phases behind, which is why production still serves the lead-discarding form. **A session cannot do this step:** the local squash merge was refused by the permission classifier as *Merge Without Review*, which is the playbook's §5 rule enforced by tooling, and `gh` is not installed. **V1 should happen before the merge, not after** — Val reads `/privacy` on the preview, because that page now describes real data processing. V3 is downgraded: protected previews turned out to be measurable anyway.
+**Current phase:** 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge (V21)
+**Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
+**Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
+**Last slice:** S7 · 2026-09-14 · closeout · **all seven slices done**
+**Blocked on:** **V21 — the merge**, which a session cannot do (see V4's history). One branch, no stack, no rebase. **Phase 4 is next: the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -43,7 +43,347 @@
 
 ---
 
-## Phase 3 — Backend & Go-Live 🚧 IN PROGRESS · **the launch phase**
+## Phase 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge
+
+Five corrections Val gave on 2026-09-14 after reading the live site. All five
+are **truth** problems, not polish, which is why they run before Phase 4 even
+though the homepage's appearance is what he actually complained about.
+Spec: `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`.
+
+**Its own phase rather than Phase 4's first slices — Val's call.** Phase 4's
+gate is a performance measurement; mixing copy rewrites into that PR means a
+reviewer cannot tell a scroll-reveal regression from a sentence change, and a
+rejected paragraph would drag ten design commits with it.
+
+- [x] **S1** The surname · 2026-09-14
+- [x] **S2** Accounts and ownership · 2026-09-14 · **14 files, not 8**
+- [x] **S3** Remove the technology names · 2026-09-14 · **18 files** · closes V10
+- [x] **S4** The FAQ · 2026-09-14 · five entries, homepage shows three
+- [x] **S5** The homepage about copy · 2026-09-14 · Val: «άλλαξέ το τελείως»
+- [x] **S6** `/pricing` · 2026-09-14 · **built before S4**, see below
+- [x] **S7** Closeout · 2026-09-14
+
+**D1–D5 recorded in the spec before any slice ran.** The two with teeth: **D2**
+takes code-ownership claims out entirely — Val's rule was *don't mention it
+unless every developer does it*, and they do not, so by his own rule it goes —
+and **D4** ships `/pricing` as a real page carrying the model with no numbers
+rather than the bare «σύντομα» he asked for, because Phase 0's whole objective
+was deleting placeholder text. D4 is flagged in the spec as an interpretation
+he can overrule.
+
+**S1.** `SITE.person` → «Βαλσάμης Ταβλίκος». **One line**, because Phase 0 put
+identity in a single constant — and that is also why a misspelling of Val's
+own surname survived four phases of review: it was wrong *uniformly*, so
+nothing ever looked inconsistent against anything else.
+
+Verified on rendered HTML rather than in source, across nine routes: zero
+occurrences of the old spelling anywhere, and the correct one appears 3× on
+`/`, 4× on `/about`, 3× on `/privacy`. The `Person` JSON-LD node reads
+«Βαλσάμης Ταβλίκος» and still references `#business`.
+
+*One claim of mine corrected during verification.* The code comment I wrote
+said the name was also burnt into the generated OG cards. **It is not** —
+they render the page's eyebrow and title, not the person. I generated the
+`/about` card and looked at it instead of assuming, the same method that
+caught the Greek all-caps tonos bug in S2.5, and the comment now records the
+correction rather than quietly dropping the claim.
+
+*Noticed while looking at that card, logged rather than fixed:* it prints
+«ΠΟΙΟΙ ΕΙΜΑΣΤΕ» as an eyebrow directly above the title «Ποιοι είμαστε» — the
+same words twice. Backlog, Phase 4, one shared template across eleven routes.
+
+**S2.** Three claims lived tangled together and all three are resolved per
+D1 and D2:
+
+| Claim | Outcome |
+|---|---|
+| domain/hosting end up in the client's name | **replaced by the choice** — hold them yourself or we hold them, decided on how much time you want to spend administering them |
+| the code and repository are the client's | **removed** |
+| «δεν κρατάμε τον κώδικά σας όμηρο», zero lock-in | **removed** — it only meant something beside the claim above |
+
+**My survey undercounted this badly, and the number is the finding.** The spec
+scoped 8 files. It is **14**, because the initial grep searched «δικό σας»,
+«repository» and «όμηρο» but not the nominative «δικός σας» — and that
+inflection is where the claim actually lived:
+
+- **`HeroSection`** — `TRUST_POINTS[0]` read «Ο κώδικας παραδίδεται δικός σας». **In the hero, on the homepage, first screen of every visit.**
+- **`Footer`** — on all eleven routes, hence six hits in a nine-route sample before the fix
+- **`/websites` `<h1>`** — «…με κώδικα που μένει δικός σας», the page's main heading
+- `DirectContactCard` — listed as one of four guarantees beside the form
+- `lib/routes.ts` — the `/process` and `/terms` meta descriptions
+
+A grep is only as good as the inflection you guess. The lesson for later
+content sweeps in Greek: **search the stem, not a form** — `κώδικ`, not
+`κώδικα δικό σας`. That single change is what surfaced all six.
+
+*What replaced the hero line matters more than that it was removed.* «Γραπτό
+εύρος πριν την κατασκευή» is demonstrable in the same breath, because process
+step 02 already says exactly that — §11.5 requires every trust point to be
+demonstrable today, and a hero bullet is the worst place to keep one that is
+not.
+
+`/terms` got the D2 treatment and **still answers its own heading**, verified
+by reading the rendered section: this site's own code is ours, delivery and
+ownership are agreed in writing per project because packages differ, and
+content the client supplies stays theirs.
+
+**Verified on rendered HTML across all eleven routes**, ten probes covering
+every inflection of the claim — `repository`, `όμηρο`, `στο όνομά σας`,
+`κλείδωμα`, `παραδίδεται δικός σας` and the rest: **zero occurrences of all
+ten**. The new phrasings are present where intended.
+
+**S3.** `TechStackStrip` deleted outright, and every technology name removed
+from visitor-facing copy. **18 files, against the 11 the spec estimated** —
+and the overrun came from three different directions, each worth its own note.
+
+**The typed route manifest earned its keep.** Removing `stack` from
+`ProofItem` produced six compile errors in two files I had not listed:
+`components/proof/ProofStrip.tsx` — **on the homepage** — and the `/work`
+index. Both rendered tool badges. A `grep` would not have found them, because
+neither file contains a technology name; they iterate over an array that does.
+This is the second time in two slices that the thing which found the problem
+was not the thing I went looking with.
+
+**V10 was never one place.** Its Backlog row named `SERVICE_CATALOG`, so that
+is what the spec scoped. But «φωνητικοί agents» was also sitting in the
+footer's `CORE_TRACKS`, **rendering on all eleven routes** — a capability no
+delivered project backs, on every page, for two phases. Removed. The
+showcase's AI-concierge card **stays**: it is labelled «Ενδεικτικές
+Αρχιτεκτονικές», which §8.2 explicitly permits for describing capability.
+
+**A stem sweep caught what a phrase sweep missed.** After the first batch of
+thirteen edits, `AboutSection` still read «web εφαρμογές σε Next.js» in
+visible copy. The S2 lesson applied — search `next\.?js`, not a sentence.
+
+*One deliberate keep, and it is not an oversight.* **`/privacy` retains
+Supabase, Resend and Vercel by name** — 3, 3 and 12 occurrences. A privacy
+policy is legally required to identify who processes the data. That is not
+tech-stack showmanship, it is the one place the names have to appear, and
+removing them would break the compliance the whole of Phase 3 was built to
+establish.
+
+*`SERVICE_CATALOG` now mirrors the footer's four labels verbatim*, which is
+deliberate rather than tidy: Phase 2's gate requires every string in the
+structured data to be visible on the page carrying it, and the footer renders
+on all eleven routes, so this is the only arrangement where `knowsAbout`
+satisfies that everywhere at once. **Measured: 4 of 4 visible** in the
+homepage's text after stripping tags.
+
+*Structure after deleting a whole section:* one `h1`, `h2` count 7 → 6, **zero
+heading skips**, and **zero remaining references to the `#tech` anchor** —
+checked before deleting rather than discovered after.
+
+**Rendered-HTML sweep across ten routes, eighteen probes** — `Next.js`,
+`TypeScript`, `Tailwind`, `Supabase`, `PostgreSQL`, `n8n`, `Vapi`, `webhook`,
+`WordPress`, `plugin`, `FullEnrich`, `ZoomInfo`, `Instantly`, `OpenAI`,
+`high-performance`, `workflows` and two casings: **zero occurrences of all
+eighteen.**
+
+*Logged for Val rather than swept:* `AUDIT_INTENTS`, the form's five dropdown
+options, is thick with English business vocabulary — «data entry», «lead
+generation & cold outreach», «AI Concierge / Assistant». S3 changed only
+«high-performance», which was a performance claim; the rest is Greeklish a
+Greek SMB owner may genuinely recognise, so rewriting it is a content decision
+rather than a sweep — and it is the first thing a lead interacts with. Backlog
+row carries the caveat that the list is both a server-side whitelist and a
+stored value.
+
+**S5.** Val read the draft and rejected the opening outright: *«Το Tavlikos
+Systems είναι ο Βαλσάμης Ταβλίκος» δεν βγάζει καν νόημα.* He was right twice
+over — it equates a company with a human being, which is not a sentence that
+means anything, and it answers a question nobody asked.
+
+**The section's heading is «Με ποιον θα δουλέψετε.» The first line now
+answers it: «Με τον Βαλσάμη Ταβλίκο.»** That is the whole fix, and it took
+rejecting the sentence rather than polishing it.
+
+Also in this rewrite: «εξ αποστάσεως» replaces «remote», the second paragraph
+says what the work *solves* instead of what it *is*, and the third — the one
+S2 left as a stub after removing the ownership promise — now answers the same
+anxiety from what holds in every package: *τι μπαίνει, τι δεν μπαίνει, και
+ποιος κρατά τι στο τέλος.* The refusal line is deliberately **three** of the
+four refusals `/about` expands; «εκπλήξεις στο τέλος» is left out because the
+paragraph above already makes that point on this page.
+
+**No premises noun anywhere in it.** §2.1 bans «το γραφείο μας»; «έδρα» is
+the same claim in a more formal register, and it was considered and rejected
+while drafting.
+
+*A Greek-language defect that shipped into a build and was caught by reading
+the rendered page.* «Με τον ${SITE.person}» rendered as **«Με τον Βαλσάμης
+Ταβλίκος»** — nominative in a slot that demands accusative. Wrong in a way no
+English-speaking reviewer would notice and every Greek visitor would, and the
+second time this project has been bitten by Greek inflection after the
+all-caps tonos bug in S2.5.
+
+**The fix is a second constant, not a rephrase.** `SITE.personAccusative`
+exists now, because Greek inflects and one constant cannot serve both cases —
+`person` after «ο» or as a title, `personAccusative` after «με τον», «για
+τον», «στον». Rewording every sentence to dodge the case would be writing
+around the language instead of in it.
+
+Swept while there: `SITE.availability` read «Διαθέσιμοι για νέα projects» and
+now reads «…νέα έργα». Zero occurrences of `projects` anywhere on the site.
+
+*Sentence-overlap measurement between `/` and `/about`* — the Phase 2 D1
+property — **one common sentence, and it is the footer's**, which renders on
+all eleven routes and is chrome rather than section content. Zero overlap in
+the copy the two pages actually own.
+
+**S6 ran before S4, and the type system is why.** The money answer needed to
+link to `/pricing`, and `FaqEntry.link.href` is typed `RoutePath` — a closed
+union built from the route manifest. Linking to an unregistered route is a
+**compile error**, not a broken link discovered later. The spec had S4 first;
+the compiler corrected the order for free.
+
+**S6 — `/pricing`.** Four sections: the model, what moves the number, what the
+optional monthly covers, and why there are no figures yet. **Zero prices**,
+verified by scanning the rendered text for currency amounts — none — and
+listing every bare number on the page: section labels, the trading hours, the
+timeline range and the phone number. Nothing that reads as a price.
+
+*D4's interpretation, restated because it went against what Val asked for.*
+He asked for a placeholder saying «σύντομα». What shipped is a real page
+carrying the model, with one section saying plainly that the numbered packages
+are coming. The reason is on the record in the page's own comment: Phase 0's
+entire objective was deleting placeholder text from this site, and this is a
+route the FAQ now sends people to. **The page is finished except for its
+numbers** — they drop into one section without anything being rewritten. If
+Val wants the bare «σύντομα» instead, it is one file.
+
+Registered in `lib/routes.ts`, so the sitemap picked it up with no second
+edit; linked from the footer, not the navigation, because §2.3 caps navigation
+at five and that cap has held three phases. **Measured:** 200, one `h1`, five
+`h2`, zero heading skips, unique title and canonical, OG card resolves, 1
+sitemap entry, 1 footer link.
+
+**S4 — the FAQ.** Val: *«τα faqs απαράδεκτα»*. Five entries now, in the order
+a prospect actually thinks: **what do you build → what does it cost → how long
+→ what if I lose you → what is the free thing.**
+
+| | Status |
+|---|---|
+| «Τι ακριβώς φτιάχνετε;» | **new** — Val's first topic, and the right opener: a visitor who cannot tell what we sell has none of the other objections yet |
+| «Πόσο κοστίζει;» | rewritten, and links to `/pricing` |
+| «Πόσο θα πάρει;» | unchanged — Val read it and said «σωστά» |
+| «Τι γίνεται αν σας χάσω;» | rewritten, because D2 removed the claim it rested on |
+| «Τι παίρνω από το δωρεάν audit;» | unchanged |
+| ~~«Δουλεύετε εκτός Θεσσαλονίκης;»~~ | **deleted** — Val called it irrelevant, and it was |
+| ~~«Γιατί όχι WordPress;»~~ | **deleted** (D5). The speed-and-flexibility argument it carried survives inside the new `scope` answer, where it reads as a reason to choose us rather than a reason to dislike a competitor |
+
+**The homepage went from four-of-six to three-of-five, and that was a
+judgment call.** Four of five would have made `/faq` almost pointless, which
+is the exact failure D1 exists to prevent — a deeper page has to be worth
+opening. «Τι γίνεται αν σας χάσω;» is one of the two held back, and §11.6
+requires it be answered explicitly *in the FAQ*: `/faq` is the FAQ, and the
+objection is also answered structurally in process step 03 and on `/about`.
+
+*Two small correctness details.* The link renders **inside** the disclosure
+panel, so it is unreachable by pointer and by tab while the answer is
+collapsed — a focusable link behind a closed disclosure is a keyboard trap
+that looks fine on screen. And it is **not** part of the schema `text`, so
+`FaqJsonLd` never asserts a string the page does not show.
+
+**Measured:** `FAQPage` carries exactly five entries, **all five answers
+present in the HTML** including the collapsed ones (the S2.8 property), the
+visible order matches the array, both deleted questions are absent from the
+rendered page, and the homepage renders three disclosures. `SITE` dropped out
+of `lib/faq.ts`'s imports — the Thessaloniki answer was the only one quoting
+the hours.
+
+### Phase 3.5 exit gate — measured on the preview deployment
+
+Deployment `dpl_9hB9beMttF9TYquF9AioHLMWWL7Z`, built from `7dc1dd4`, read
+through the connector's bypass cookie with Deployment Protection left on.
+
+| Gate row | Result |
+|---|---|
+| «Ταυλίκος» in source or any rendered route | **zero** — the only hit is the code comment documenting the error |
+| Claims that accounts, code or repositories transfer | **zero**, across eleven routes, ten inflections |
+| `/terms` answers its own «Σε ποιον ανήκει ο κώδικας» heading | yes, and accurately for every package |
+| Technology names in visitor copy | **zero**, ten routes, eighteen probes |
+| `SERVICE_CATALOG` free of undelivered capability | yes — **V10 closed** |
+| Every JSON-LD string visible on its page | **4/4** `knowsAbout`, **5/5** FAQ answers |
+| FAQ set | five entries, homepage shows a strict prefix of three |
+| `/pricing` | 200 · in the sitemap · linked from footer and FAQ · **zero figures** |
+| Verbatim sentence overlap `/` vs `/about` | **one**, and it is the footer's — chrome, not content |
+| One `h1`, no heading skips | **12/12 routes** |
+| `TODO` / `FIXME` / `Placeholder` | nothing |
+| `tsc` · `lint` · `build` | clean |
+| Tap targets ≥ 44×44 at 375px on `/pricing` | **30 interactive elements, zero under** |
+
+**Lighthouse mobile on the preview:**
+
+| | `/` | `/faq` | `/pricing` |
+|---|---|---|---|
+| **Accessibility** | **100** | **100** | **100** |
+| **Best Practices** | **100** | **100** | **100** |
+| Performance | 89 | 92 | 99 |
+| SEO | 58 | 58 | 58 |
+
+SEO 58 is the deliberate preview `noindex`, same as Phase 3. Performance on a
+preview runs below production — production measured 92 on `/` two hours
+earlier — and Phase 4 owns it either way.
+
+### Three defects this phase introduced and caught
+
+**1. An accessibility regression, and the comment claiming to prevent it was
+the tell.** S4 put a link inside the FAQ disclosure panel with a comment
+saying it was *"unreachable by pointer and by tab while collapsed"*. That is
+false: `aria-hidden` plus `height: 0` hides a link and leaves it **focusable**.
+axe reports it as `aria-hidden-focus`, weight 7, and **Accessibility fell from
+100 to 96 on the homepage** — a keyboard user could tab to a link a screen
+reader had been told does not exist, which is worse than either fault alone.
+**The slice built the exact keyboard trap its comment claimed to prevent.**
+
+Fixed with `inert` on the panel rather than `tabIndex={-1}` on the link, so
+the whole subtree leaves the tab order and stays out for anything focusable
+added there later. **Verified behaviourally, not by score:** five panels
+inert when closed, one link inside a closed panel, and it **cannot take
+focus**. Open, the same link measures 126×44 and focuses normally.
+
+**2. A duplicated clause, caught by looking at a screenshot.** `/pricing`
+shipped «…ανάλογα με το εύρος, **ανάλογα με το εύρος**», because
+`TIMELINE_RANGE` already ends with that qualifier and S6 appended it again.
+`tsc`, `lint` and `build` were all clean; only the rendered page showed it.
+The constant now carries a comment saying it reads as a complete clause.
+
+**3. The same word echoing, found while checking for the second.** Three
+ledes read «…ανάλογα με το εύρος — εύρος, όχι υπόσχεση.» Pre-existing since
+Phase 2, and fixed here rather than logged, because a phase whose purpose is
+better Greek should not leave that behind: «— όχι υπόσχεση ημερομηνίας.»
+
+**A pattern across all three phases now.** S2.5's Greek all-caps tonos, S5's
+nominative-for-accusative, and both of the above were found by **looking at
+the output** — a rendered page, a generated card, a screenshot. None was
+catchable by reading the source, and the type checker was clean for every one
+of them.
+
+### Playbook edits this phase earned
+
+§2.2 gains three rows — the `/pricing` page, no promise of account or code
+transfer, and no technology names in visitor copy. §2.3's route tree gains
+`/pricing`. §14 gains five decision rows. `docs/VAL-ACTIONS.md`: **V10 to
+Done** (closed by S3, and it was in two places), V4 archived, and **V21 added
+— the merge**.
+
+**A process failure worth recording, since §7 exists to catch exactly this.**
+S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
+edit failed on a stale anchor, the assertion fired, and the commit went
+through anyway. §7.1 says the tracker moves in the same commit as the slice,
+and it did not. The cause was the next finding.
+
+**The Phase 3 closeout was stranded.** Commit `7107756`, which carries the
+entire launch verification and the Lighthouse numbers, was made *after* Val
+merged, so it landed on `phase/3-backend` and never reached `main` — and this
+branch, cut from `main`, did not have it. That is why S1's anchors did not
+match. Recovered by cherry-picking it onto this branch. **The lesson is
+sequencing:** a closeout commit belongs before the merge, or it has to be
+carried forward deliberately.
+
+---
+
+## Phase 3 — Backend & Go-Live ✅ COMPLETE · **LAUNCHED 2026-09-14**
 
 Wire the form to email and Supabase, revise `/privacy` in the same commit as
 every slice that changes what happens to a submission, decide analytics, and
@@ -63,7 +403,7 @@ of this file once they are settled.
 - [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
 - [x] **S3.6** Daily retention + keepalive cron · 2026-09-14 · **D3 = 24 months**
 - [x] **S3.7** Analytics · 2026-09-14 · **D4 = yes**
-- [~] **S3.8** Closeout and go-live · **partial** — playbook and handover done; the gate measurement and the PR need V3/V6/V7/V19
+- [x] **S3.8** Closeout and go-live · 2026-09-14 · **merged as `#1`, production on `b76e3f5`**
 
 **S3.1.** `lib/env.ts` is the only reader of a Phase 3 secret, and
 `.env.example` documents all five. Two rules, pulling opposite ways on
@@ -620,6 +960,57 @@ jar had come back empty because curl writes the bypass cookie with a
 only by asserting on `finalDisplayedUrl`. **Any future deployment audit must
 check the URL Lighthouse actually measured**; a login page scores well enough
 to look like a real result.
+
+### LAUNCHED — measured on `tavlikossystems.com`
+
+**2026-09-14.** Val merged PR `#1` as one squash commit, `b76e3f5`. Its tree is
+**byte-identical** to `phase/3-backend`, the branch verified on the preview, so
+production serves exactly what was tested rather than something assembled at
+merge time.
+
+**Production is serving the new code, confirmed by SHA and not by eye.**
+Deployment `dpl_Gg9aLJk7dnqF9VSsNA6Dzj8CebRZ`, `githubCommitSha`
+`b76e3f5df06cc…`, built in 24 seconds. This check exists because **three
+earlier production deploys served stale code** while commits sat unpushed.
+
+| Check | Result |
+|---|---|
+| All eleven routes, plus `/sitemap.xml` and `/robots.txt` | **200** |
+| `/work/roz-inn` — a real entry with no case study | **404**, as designed |
+| `robots.txt` | `Allow: /` · `Disallow: /api/` · `Host` · `Sitemap` |
+| Homepage robots meta | `index, follow` — the preview's `noindex` correctly did not follow it to production |
+| Sitemap | 11 `<loc>` entries |
+| **A real submission on the live domain** | **200**, **one row**, `environment` = **`production`** |
+| Greek and normalisation | «Νίκος Αντωνίου» intact; `example-praxi.gr` → `https://example-praxi.gr/` |
+| **Production runtime log for it** | `receivedAt`, `environment`, `intent`, `hasWebsite`, `briefLength` — **and nothing else** |
+| Honeypot · sub-2.5 s · wrong origin · bad email · cron without key · `GET` | 200 no row · 200 no row · **403** · **422** · **401** · **405** |
+
+**Lighthouse mobile on the live domain** — no protection in the way, so this is
+the first clean production measurement since Phase 0:
+
+| | `/` | `/websites` | `/contact` |
+|---|---|---|---|
+| Performance | 92 | 94 | 94 |
+| **Accessibility** | **100** | **100** | **100** |
+| **Best Practices** | **100** | **100** | **100** |
+| **SEO** | **100** | **100** | **100** |
+| LCP | 3.1 s | 2.7 s | 2.8 s |
+| CLS | 0 | 0 | 0 |
+
+**Three categories at 100 on all three routes — a first for this project.**
+Best Practices had been stuck at 96 since Phase 0 on the favicon 404, which
+Phase 2 fixed; this is the run that proves it on production rather than on
+localhost.
+
+**Performance 92 / 94 / 94 against the Phase 3+ budget of 95 — short, and
+recorded as short.** The only weighted failures on any of the three pages are
+`first-contentful-paint`, `largest-contentful-paint` and `speed-index`: pure
+load speed, nothing structural, nothing introduced by this phase. Phase 4 owns
+performance and its gate is Perf ≥ 95 with budgets in CI. The Backlog row
+carries these numbers now instead of Phase 2's localhost ones.
+
+The launch test row was deleted. **Both tables are empty, so every row from
+here is a real enquiry.**
 
 ### Still outstanding
 
@@ -2343,6 +2734,8 @@ Discovered outside the current slice. Do not fix in place — log here, schedule
 | Lighthouse mobile Performance reads **93** on `/` and 94 on `/websites` against Phase 1's 95, both on a local `next start`, with LCP 2.9s → 3.2s. Phase 4 owns performance (its gate is Perf ≥ 95 with budgets in CI); chasing LCP in a phase that does not own it is how a slice stops being reviewable | S2.12 | 4 |
 | `text-decor` / bullet marks, the `dl` pairs on `/process` and `/about`, and the legal pages' prose were all built with the existing primitives, but the two service pillars, `/work` and `/process` now share a shell (`PageShell`, `ServiceSection`, `FeatureGrid`, `BulletList`, `ServiceCta`, `ArrowLink`) that no one has design-reviewed as a system — worth one pass in Phase 4 alongside the bento hierarchy row | S2.4 | 4 |
 | The shared rate limiter is **not atomic**: two simultaneous requests can both read four and both pass, so the bound it enforces is "roughly five per hour". Closing it needs a stored function and an RPC. Documented in `lib/ratelimit.ts` rather than hidden, and not worth the machinery at this volume | S3.5 | 8 |
+| The `/about` OG card renders eyebrow «ΠΟΙΟΙ ΕΙΜΑΣΤΕ» directly above title «Ποιοι είμαστε» — the same words twice, one uppercased. Seen while verifying S1's surname fix by opening the card. Cosmetic, OG-card only, and the generator is shared by eleven routes so the fix is one template | S3.5 S1 | 4 |
+| `AUDIT_INTENTS` — the form's five dropdown options — is heavy with English business vocabulary: «data entry», «lead generation & cold outreach», «AI Concierge / Assistant», «Web Development». S3 changed only «high-performance», which was a technology claim; the rest is Greeklish business language a Greek SMB owner may genuinely recognise, so rewriting it is **Val's content decision, not a sweep**. It is also the first thing a lead interacts with. Note: the list is a server-side whitelist and a stored value, so changing it after leads exist needs care | S3.5 S3 | Val |
 | `.claude/launch.json` is committed — decide whether to keep tracked | Audit | any |
 | Vercel production still served `867f6a1` while eight Phase 0 commits sat unpushed, and that build was marked `index, follow` with placeholder copy live. Watch for stale-deploy drift again after any long local run | Deploy | 8 |
 | Project lives in an iCloud-synced folder; sync creates `* 2.ts` / `* 2.json` duplicates inside `.next` that break `tsc --noEmit` until the cache is cleared. Consider moving the repo outside iCloud | S0.7 | any |

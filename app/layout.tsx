@@ -54,9 +54,7 @@ export const metadata: Metadata = {
     "Web development Θεσσαλονίκη",
     "Custom web εφαρμογές",
     "Αυτοματισμοί AI επιχειρήσεων",
-    "Next.js developer Greece",
     "AI Customer Support Greece",
-    "n8n automations Greece",
   ],
 
   authors: [{ name: SITE.siteName, url: SITE.url }],

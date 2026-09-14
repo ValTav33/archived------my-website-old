@@ -62,6 +62,7 @@ export const CTA_LINK: NavLink = { href: "/contact", label: "Δωρεάν Audit"
  */
 export const FOOTER_LINKS: readonly NavLink[] = [
   link("/about"),
+  link("/pricing"),
   link("/faq"),
   link("/privacy"),
   link("/terms"),
