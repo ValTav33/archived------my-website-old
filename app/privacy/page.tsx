@@ -53,12 +53,18 @@ export const metadata = routeMetadata("/privacy");
  * this site with consequences off it, and "the cron lands in twenty minutes"
  * is not a basis for writing it down now.
  *
+ * *S3.5, this revision* — the rate limiter no longer holds the caller's IP in
+ * server memory. It stores an **HMAC-SHA256 of the IP under a secret salt**,
+ * in a database row, for one hour. That is a stronger claim than the old one,
+ * so the page states it rather than simplifying it away: the value kept is
+ * not the address, the column's own constraint accepts nothing but a 64-
+ * character digest, and the salt is required configuration precisely so the
+ * digest cannot be brute-forced back into an address.
+ *
  * Still true at this revision, and checked against the code rather than
  * assumed: no cookies, no `localStorage`, no analytics, no third-party
  * scripts, and zero requests to `fonts.gstatic` or `fonts.googleapis` because
- * `next/font` self-hosts both faces. The rate limiter still holds caller IPs
- * in one instance's memory for at most an hour — S3.5 changes that, and this
- * page with it.
+ * `next/font` self-hosts both faces.
  *
  * §8.6 is absolute here: no ΑΦΜ, no myDATA, no τιμολόγιο, no
  * registered-entity language. **Val re-reads this page before the Phase 3 PR
@@ -101,7 +107,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Τι καταγράφεται — και τι όχι",
     body: [
       "Στα τεχνικά αρχεία του διακομιστή καταγράφεται, για κάθε αίτημα, η ώρα, το τι σας ενδιαφέρει, το αν δώσατε website, και το μήκος του κειμένου που γράψατε. Το ονοματεπώνυμο, το email και το τηλέφωνό σας δεν καταγράφονται εκεί — υπάρχουν μόνο μέσα στο email που λαμβάνουμε και στη γραμμή της βάσης.",
-      "Η διεύθυνση IP από την οποία στάλθηκε το αίτημα κρατείται προσωρινά στη μνήμη του διακομιστή, για μία ώρα κατά το μέγιστο, και μόνο για να μην μπορεί κάποιος να στείλει αυτόματα εκατοντάδες αιτήματα. Δεν συνδέεται με το περιεχόμενο του αιτήματος και δεν αποθηκεύεται μόνιμα.",
+      "Η διεύθυνση IP από την οποία στάλθηκε το αίτημα δεν αποθηκεύεται. Στη θέση της κρατάμε έναν κρυπτογραφικό αριθμό που παράγεται από αυτήν με μυστικό κλειδί — από τον αριθμό δεν βγαίνει η διεύθυνση. Κρατείται για μία ώρα κατά το μέγιστο, και μόνο για να μην μπορεί κάποιος να στείλει αυτόματα εκατοντάδες αιτήματα.",
+      "Αυτός ο αριθμός δεν συνδέεται με το περιεχόμενο του αιτήματός σας: βρίσκεται σε ξεχωριστό πίνακα, χωρίς τίποτα που να τον δένει με τα στοιχεία που συμπληρώσατε.",
     ],
   },
   {

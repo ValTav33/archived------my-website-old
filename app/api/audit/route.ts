@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { looksAutomated, validateAuditPayload, type AuditPayload } from "@/lib/audit";
 import { ENVIRONMENT } from "@/lib/env";
 import { archiveLead } from "@/lib/leads";
+import { isRateLimited } from "@/lib/ratelimit";
 import { LeadPathError, classify, logLeadFailure } from "@/lib/logging";
 import { deliver } from "@/lib/notify";
 import { SITE_URL } from "@/lib/site";
@@ -10,45 +11,6 @@ import { SITE_URL } from "@/lib/site";
    publishable key pasted where the service-role key belongs, and S3.5's IP
    hash uses `node:crypto`. Neither exists on the edge runtime. */
 export const runtime = "nodejs";
-
-/* ------------------------------------------------------------------ */
-/*  Rate limiting                                                      */
-/* ------------------------------------------------------------------ */
-
-const RATE_LIMIT = 5;
-const RATE_WINDOW_MS = 60 * 60 * 1000; // one hour
-
-/**
- * Per-IP submission counter.
- *
- * LIMITATION, on purpose: this Map lives in one serverless instance's memory.
- * Instances do not share it, they are recycled without warning, and a request
- * routed to a cold one starts from zero. This is a speed bump against casual
- * scripted abuse, not a wall. Phase 3 moves the counter to Supabase, where it
- * is actually shared across instances.
- */
-const submissions = new Map<string, number[]>();
-
-/** Drops timestamps that have aged out, and any IP left with none. */
-function sweep(now: number): void {
-  for (const [ip, times] of submissions) {
-    const fresh = times.filter((t) => now - t < RATE_WINDOW_MS);
-    if (fresh.length === 0) submissions.delete(ip);
-    else submissions.set(ip, fresh);
-  }
-}
-
-/** Records a submission and reports whether this IP is now over the limit. */
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  sweep(now);
-
-  const times = submissions.get(ip) ?? [];
-  if (times.length >= RATE_LIMIT) return true;
-
-  submissions.set(ip, [...times, now]);
-  return false;
-}
 
 /**
  * Client IP. `x-forwarded-for` is a comma-separated chain and the first entry
@@ -151,17 +113,6 @@ export async function POST(request: Request) {
     );
   }
 
-  if (isRateLimited(clientIp(request))) {
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          "Έχετε στείλει πολλά αιτήματα. Δοκιμάστε ξανά σε λίγη ώρα ή καλέστε μας απευθείας.",
-      },
-      { status: 429 },
-    );
-  }
-
   let body: unknown;
 
   try {
@@ -189,6 +140,22 @@ export async function POST(request: Request) {
         errors: result.errors,
       },
       { status: 422 },
+    );
+  }
+
+  /* Rate limited **after** validation, which is the point of the move. The
+     old in-memory counter ran before the body was even parsed, so a mistyped
+     email spent one of the caller's five slots — a Backlog row since S0.6,
+     and a genuinely user-hostile one, because the person most likely to
+     submit twice is the person who got it wrong the first time. */
+  if (await isRateLimited(clientIp(request), ENVIRONMENT)) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Έχετε στείλει πολλά αιτήματα. Δοκιμάστε ξανά σε λίγη ώρα ή καλέστε μας απευθείας.",
+      },
+      { status: 429 },
     );
   }
 

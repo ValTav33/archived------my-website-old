@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.4 · 2026-09-14 · lead persistence
+**Last slice:** S3.5 · 2026-09-14 · the shared rate limiter
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -60,7 +60,7 @@ of this file once they are settled.
 - [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **applied and verified**
 - [x] **S3.3** Email delivery + `/privacy` revision · 2026-09-14 · **← the launch gate** · code complete, **no inbox test yet (V7)**
 - [x] **S3.4** Lead persistence + `/privacy` revision · 2026-09-14
-- [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
+- [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
 - [ ] **S3.6** Daily retention + keepalive cron · needs V6, D3
 - [ ] **S3.7** Analytics · gated on D4 / V8
 - [ ] **S3.8** Closeout and go-live
@@ -299,6 +299,72 @@ happened. That last section now records that the promise was kept once, in
 the past tense, rather than continuing to promise it in the future. The claim
 that the table is unreachable from a browser is the measured one: eight of
 eight `401 / 42501` with both browser-safe key forms.
+
+**S3.5.** `lib/ratelimit.ts` replaces the in-memory `Map`, which is
+**deleted** rather than kept as a first line of defence — 1368 characters of
+it — and with it three Backlog rows logged in S0.6 and at Phase 2's exit gate:
+
+| Backlog row | How it closes |
+|---|---|
+| Counter lived in one instance's memory, unshared, reset on recycle | It is a table now |
+| Preview traffic shared production's limit | `environment` is part of the key |
+| A failed submission consumed a slot | The check runs **after** validation |
+
+*The third one was demonstrated rather than argued.* The probe suite was run
+before and after the change, and two rows moved:
+
+| Probe | Before | After |
+|---|---|---|
+| Intent off the whitelist | **429** | **422** with the per-field message |
+| Malformed JSON | **429** | **400** |
+
+Both were 429s because the old counter ran before the body was parsed, so the
+four earlier probes had already spent the caller's five slots. A person who
+mistypes an email is the person most likely to submit again, and the old
+counter charged them for the mistake.
+
+*Verified against the live database, again without touching the real table's
+security.* A throwaway `public._probe_rate_limit` with the same shape and
+constraint took the exact count query `lib/ratelimit.ts` sends, then was
+dropped:
+
+| Case | `content-range` | Parsed |
+|---|---|---|
+| 4 rows inside the window | `0-0/4` (206) | 4 |
+| 1 row, different `environment` | `0-0/1` (200) | 1 |
+| An unseen caller | a star, then `/0` (200) | 0 |
+| 6 rows, after two inserts | `0-0/6` (206) | 6 |
+| A row two hours old | excluded by `created_at=gte.` | — |
+
+The star-slash-zero case is the one worth having measured: it is the shape an
+empty result takes, and the parser reads the total from after the slash
+precisely so that case needs no special handling. Writing that header value
+literally in a block comment closes the comment — which cost a compile and is
+now recorded in the comment itself.
+
+*The hash.* `HMAC-SHA256(ip)` keyed with `AUDIT_IP_SALT`, not
+`sha256(ip + salt)` — HMAC is the primitive built for keyed hashing and there
+is no reason to hand-roll the construction that keeps having
+length-extension problems. Measured: 64 lowercase hex characters, matching the
+column's constraint, and the same IP under a different salt produces a
+different digest.
+
+**Two properties stated rather than hidden.** It **fails open**: every path
+that cannot get an answer allows the submission and logs. With the database
+unreachable there is no submission ceiling beyond the honeypot, the timing
+gate and the origin check — and in a phase whose whole purpose is to stop
+losing leads, dropping a real one to stop a hypothetical bot is the wrong
+trade. Verified: seventeen requests with no database configured produced zero
+429s. And it is **not atomic** — two simultaneous requests can both read four
+and both pass. The bound it enforces is "roughly five per hour"; closing the
+race needs a stored function and an RPC, which is more machinery than a speed
+bump justifies.
+
+`/privacy` revision 3, and it is a **stronger** claim than the one it
+replaces, so the page states it rather than simplifying: the IP is no longer
+kept in server memory — it is not kept at all. What is kept is a keyed digest
+of it, in a separate table with nothing linking it to the submission, for at
+most an hour.
 
 ---
 
