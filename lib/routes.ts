@@ -134,6 +134,19 @@ export const ROUTES = [
     changeFrequency: "monthly",
   },
   {
+    path: "/pricing",
+    label: "Τιμολόγηση",
+    title: "Πόσο κοστίζει",
+    /* No figures in the description either. A meta description promising a
+       price and a page that does not carry one is the worst version of this
+       page — the click happens and the disappointment happens on our side of
+       it. */
+    description:
+      "Πώς τιμολογούμε: σταθερή αμοιβή για την κατασκευή, συμφωνημένη πριν ξεκινήσουμε, και προαιρετική μηνιαία υποστήριξη. Τι μετακινεί το κόστος και τι χρειάζεται για να σας δώσουμε νούμερο.",
+    priority: 0.8,
+    changeFrequency: "monthly",
+  },
+  {
     path: "/privacy",
     label: "Πολιτική Απορρήτου",
     title: "Πολιτική Απορρήτου",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
 import { type FaqEntry } from "@/lib/faq";
 import { cn } from "@/lib/utils";
@@ -145,9 +146,22 @@ function FaqItem({
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         className="overflow-hidden"
       >
-        <p className="px-5 pb-5 text-sm leading-relaxed text-zinc-400">
-          {entry.answer}
-        </p>
+        <div className="px-5 pb-5">
+          <p className="text-sm leading-relaxed text-zinc-400">
+            {entry.answer}
+          </p>
+
+          {/* Optional, and only the money answer uses it today. Rendered
+              inside the panel so it is unreachable — by pointer and by tab —
+              while the answer is collapsed, which is the same reason the
+              panel carries `aria-hidden`. A focusable link behind a closed
+              disclosure is a keyboard trap that looks fine on screen. */}
+          {entry.link && (
+            <ArrowLink href={entry.link.href} size="quiet" className="mt-4">
+              {entry.link.label}
+            </ArrowLink>
+          )}
+        </div>
       </motion.div>
     </Card>
   );

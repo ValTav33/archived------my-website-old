@@ -9,9 +9,14 @@ import { FAQ } from "@/lib/faq";
  * paragraph maintained separately is a mismatch search engines notice and
  * visitors do not, which is the worst combination.
  *
- * It is on `/faq` and nowhere else because that is the only page showing all
- * six. The homepage shows four; marking up six there would assert answers a
- * visitor cannot see, which is the mismatch this markup gets penalised for.
+ * It is on `/faq` and nowhere else because that is the only page showing the
+ * whole set. The homepage shows a prefix of it — three of five since S3.5 S4
+ * — and marking up five there would assert answers a visitor cannot see,
+ * which is the mismatch this markup gets penalised for.
+ *
+ * The counts are deliberately not hardcoded anywhere but this sentence: the
+ * node maps over `FAQ`, so adding an entry updates the payload without
+ * touching this file.
  */
 export default function FaqJsonLd() {
   const schema = {

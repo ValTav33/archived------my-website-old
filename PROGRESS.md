@@ -12,8 +12,8 @@
 **Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
 **Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
 **Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S5 · 2026-09-14 · the homepage about copy
-**Blocked on:** Val's approval on two pieces of copy — the FAQ set (S4) and the `/about` draft (S5). Everything else in the phase can proceed without him. **Phase 4 follows this, not Phase 3.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
+**Last slice:** S4 · 2026-09-14 · the FAQ set, and `/pricing` ahead of it
+**Blocked on:** nothing. Only the closeout (S7) and the PR remain. **Phase 4 follows — the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -58,9 +58,9 @@ rejected paragraph would drag ten design commits with it.
 - [x] **S1** The surname · 2026-09-14
 - [x] **S2** Accounts and ownership · 2026-09-14 · **14 files, not 8**
 - [x] **S3** Remove the technology names · 2026-09-14 · **18 files** · closes V10
-- [ ] **S4** The FAQ · **copy needs Val's approval**
+- [x] **S4** The FAQ · 2026-09-14 · five entries, homepage shows three
 - [x] **S5** The homepage about copy · 2026-09-14 · Val: «άλλαξέ το τελείως»
-- [ ] **S6** `/pricing`
+- [x] **S6** `/pricing` · 2026-09-14 · **built before S4**, see below
 - [ ] **S7** Closeout
 
 **D1–D5 recorded in the spec before any slice ran.** The two with teeth: **D2**
@@ -229,6 +229,67 @@ now reads «…νέα έργα». Zero occurrences of `projects` anywhere on the
 property — **one common sentence, and it is the footer's**, which renders on
 all eleven routes and is chrome rather than section content. Zero overlap in
 the copy the two pages actually own.
+
+**S6 ran before S4, and the type system is why.** The money answer needed to
+link to `/pricing`, and `FaqEntry.link.href` is typed `RoutePath` — a closed
+union built from the route manifest. Linking to an unregistered route is a
+**compile error**, not a broken link discovered later. The spec had S4 first;
+the compiler corrected the order for free.
+
+**S6 — `/pricing`.** Four sections: the model, what moves the number, what the
+optional monthly covers, and why there are no figures yet. **Zero prices**,
+verified by scanning the rendered text for currency amounts — none — and
+listing every bare number on the page: section labels, the trading hours, the
+timeline range and the phone number. Nothing that reads as a price.
+
+*D4's interpretation, restated because it went against what Val asked for.*
+He asked for a placeholder saying «σύντομα». What shipped is a real page
+carrying the model, with one section saying plainly that the numbered packages
+are coming. The reason is on the record in the page's own comment: Phase 0's
+entire objective was deleting placeholder text from this site, and this is a
+route the FAQ now sends people to. **The page is finished except for its
+numbers** — they drop into one section without anything being rewritten. If
+Val wants the bare «σύντομα» instead, it is one file.
+
+Registered in `lib/routes.ts`, so the sitemap picked it up with no second
+edit; linked from the footer, not the navigation, because §2.3 caps navigation
+at five and that cap has held three phases. **Measured:** 200, one `h1`, five
+`h2`, zero heading skips, unique title and canonical, OG card resolves, 1
+sitemap entry, 1 footer link.
+
+**S4 — the FAQ.** Val: *«τα faqs απαράδεκτα»*. Five entries now, in the order
+a prospect actually thinks: **what do you build → what does it cost → how long
+→ what if I lose you → what is the free thing.**
+
+| | Status |
+|---|---|
+| «Τι ακριβώς φτιάχνετε;» | **new** — Val's first topic, and the right opener: a visitor who cannot tell what we sell has none of the other objections yet |
+| «Πόσο κοστίζει;» | rewritten, and links to `/pricing` |
+| «Πόσο θα πάρει;» | unchanged — Val read it and said «σωστά» |
+| «Τι γίνεται αν σας χάσω;» | rewritten, because D2 removed the claim it rested on |
+| «Τι παίρνω από το δωρεάν audit;» | unchanged |
+| ~~«Δουλεύετε εκτός Θεσσαλονίκης;»~~ | **deleted** — Val called it irrelevant, and it was |
+| ~~«Γιατί όχι WordPress;»~~ | **deleted** (D5). The speed-and-flexibility argument it carried survives inside the new `scope` answer, where it reads as a reason to choose us rather than a reason to dislike a competitor |
+
+**The homepage went from four-of-six to three-of-five, and that was a
+judgment call.** Four of five would have made `/faq` almost pointless, which
+is the exact failure D1 exists to prevent — a deeper page has to be worth
+opening. «Τι γίνεται αν σας χάσω;» is one of the two held back, and §11.6
+requires it be answered explicitly *in the FAQ*: `/faq` is the FAQ, and the
+objection is also answered structurally in process step 03 and on `/about`.
+
+*Two small correctness details.* The link renders **inside** the disclosure
+panel, so it is unreachable by pointer and by tab while the answer is
+collapsed — a focusable link behind a closed disclosure is a keyboard trap
+that looks fine on screen. And it is **not** part of the schema `text`, so
+`FaqJsonLd` never asserts a string the page does not show.
+
+**Measured:** `FAQPage` carries exactly five entries, **all five answers
+present in the HTML** including the collapsed ones (the S2.8 property), the
+visible order matches the array, both deleted questions are absent from the
+rendered page, and the homepage renders three disclosures. `SITE` dropped out
+of `lib/faq.ts`'s imports — the Thessaloniki answer was the only one quoting
+the hours.
 
 **A process failure worth recording, since §7 exists to catch exactly this.**
 S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
