@@ -141,6 +141,21 @@ function FaqItem({
         role="region"
         aria-labelledby={buttonId}
         aria-hidden={!isOpen}
+        /* **`inert` is load-bearing, not belt-and-braces.**
+
+           S4 added a link inside this panel with a comment claiming it was
+           "unreachable by pointer and by tab while collapsed". That was wrong
+           and Lighthouse caught it: `aria-hidden` plus `height: 0` hides a
+           link visually and from assistive tech, and leaves it **focusable**.
+           axe flags exactly that as `aria-hidden-focus`, weight 7, and it took
+           Accessibility from 100 to 96 — a keyboard user could tab to a link
+           a screen reader had been told does not exist, which is worse than
+           either problem alone.
+
+           `inert` removes the whole subtree from the tab order as well as the
+           accessibility tree, and keeps doing so for any focusable element
+           added here later — which `tabIndex={-1}` on one link would not. */
+        inert={!isOpen}
         initial={false}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -151,11 +166,13 @@ function FaqItem({
             {entry.answer}
           </p>
 
-          {/* Optional, and only the money answer uses it today. Rendered
-              inside the panel so it is unreachable — by pointer and by tab —
-              while the answer is collapsed, which is the same reason the
-              panel carries `aria-hidden`. A focusable link behind a closed
-              disclosure is a keyboard trap that looks fine on screen. */}
+          {/* Optional, and only the money answer uses it today.
+
+              Rendered inside the panel, which carries `inert` while closed —
+              see the comment on that attribute. The first version of this
+              said the link was already unreachable by tab because the panel
+              was `aria-hidden` and zero-height. It was not, and that is the
+              whole reason `inert` is there. */}
           {entry.link && (
             <ArrowLink href={entry.link.href} size="quiet" className="mt-4">
               {entry.link.label}
