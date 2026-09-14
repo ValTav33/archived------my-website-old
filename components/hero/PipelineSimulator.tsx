@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import StatusDot from "@/components/ui/StatusDot";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -37,20 +40,41 @@ type StepStatus = "pending" | "active" | "done";
 type LinkStatus = "idle" | "tracing" | "done";
 type LogEntry = { time: string; text: string; emphasis?: boolean };
 
+/*
+ * Greek, except for the nouns a Greek professional actually says out loud:
+ * `lead`, `AI agent`, `CRM`. Everything that was decoration — Trigger,
+ * Validation, Scoring, Sync — is translated, per playbook §11.2.
+ *
+ * Titles are kept short on purpose. The row truncates them (`min-w-0
+ * flex-1 truncate`) and Greek runs longer than English, so a title that
+ * reads fine in a mockup arrives on a 375px phone as an ellipsis. These
+ * are labels; the detail belongs to the log lines below, which wrap.
+ */
 const STEPS = [
-  { title: "Trigger: Form & Inbound Lead", activeLabel: "CAPTURING" },
-  { title: "AI Agent: Validation & Scoring", activeLabel: "ANALYZING" },
-  { title: "Action: CRM Sync & Instant Calendar", activeLabel: "SYNCING" },
+  { title: "Έναυσμα: νέο lead", activeLabel: "ΛΗΨΗ" },
+  { title: "AI agent: αξιολόγηση", activeLabel: "ΑΝΑΛΥΣΗ" },
+  { title: "Ενέργεια: CRM & κράτηση", activeLabel: "ΕΓΓΡΑΦΗ" },
 ] as const;
 
-/** Log lines emitted on entering each cursor value. */
+/**
+ * Log lines emitted on entering each cursor value.
+ *
+ * `exit 0` survives translation: it is a terminal convention, not a word,
+ * and translating it would read as a mistake to the exact visitor the
+ * terminal motif is aimed at. `source=web_form` did not survive — a
+ * key=value pair with a Greek key reads as neither one language nor the
+ * other, so the line just says where the lead came from.
+ *
+ * No measurement appears here. S0.10 removed an invented latency and an
+ * invented lead score from this component; §8.1 means none comes back.
+ */
 const STAGE_LOGS: Record<number, Omit<LogEntry, "time">[]> = {
-  1: [{ text: "Inbound payload received · source=web_form" }],
-  2: [{ text: "Normalizing fields → queue:validation" }],
-  3: [{ text: "AI agent parsing intent + budget signals" }],
-  4: [{ text: "Lead verified via AI" }],
-  5: [{ text: "CRM record written · calendar slot reserved" }],
-  6: [{ text: "Pipeline complete · exit 0", emphasis: true }],
+  1: [{ text: "Νέο lead από τη φόρμα επικοινωνίας" }],
+  2: [{ text: "Τακτοποίηση πεδίων → ουρά ελέγχου" }],
+  3: [{ text: "Έλεγχος πρόθεσης και προϋπολογισμού" }],
+  4: [{ text: "Το lead επιβεβαιώθηκε με AI" }],
+  5: [{ text: "Εγγραφή στο CRM · κράτηση ραντεβού" }],
+  6: [{ text: "Η ροή ολοκληρώθηκε · exit 0", emphasis: true }],
 };
 
 /** Wall-clock stamp, e.g. "12:04:02". Only ever called client-side, from a
@@ -118,27 +142,39 @@ export default function PipelineSimulator() {
     return "idle";
   };
 
-  const badgeLabel = isRunning ? "RUNNING" : isComplete ? "DONE" : "READY";
+  const badgeLabel = isRunning
+    ? "ΣΕ ΕΞΕΛΙΞΗ"
+    : isComplete
+      ? "ΟΛΟΚΛΗΡΩΘΗΚΕ"
+      : "ΕΤΟΙΜΟ";
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#0D0F16] shadow-panel">
+    <Card className="overflow-hidden shadow-panel">
       {/* --------------------------- Window chrome -------------------------- */}
-      <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-3 border-b border-hairline px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
+          <span className="h-2.5 w-2.5 rounded-full bg-trace-line" />
         </div>
 
-        <span className="truncate font-mono text-xs text-ink-faint">
-          pipeline-lead-engine.ts
+        {/* Shortened from `pipeline-lead-engine.ts` in S1.5. The Greek status
+            badge beside it is up to 12 characters where `DONE` was four, and
+            `truncate` was eating eight characters off the end of the longer
+            name — a filename cut mid-word reads as broken rather than tidy.
+            The shorter name matches the showcase's `lead-engine` case id. */}
+        <span className="truncate font-mono text-mono-xs text-ink-faint">
+          lead-engine.ts
         </span>
 
-        <span className="ml-auto flex shrink-0 items-center gap-1.5 rounded border border-white/[0.08] px-1.5 py-0.5 font-mono text-[10px] tracking-[0.12em] text-ink-muted">
+        <Badge
+          shape="chip"
+          className="ml-auto shrink-0 gap-1.5 bg-transparent tracking-[0.12em] text-ink-muted"
+        >
           {/* The only colour in the component: a 6px live-status dot. */}
-          <span className="h-1.5 w-1.5 rounded-full bg-live" />
+          <StatusDot pulse={false} />
           {badgeLabel}
-        </span>
+        </Badge>
       </div>
 
       {/* ------------------------------ Pipeline ---------------------------- */}
@@ -159,15 +195,15 @@ export default function PipelineSimulator() {
       </div>
 
       {/* --------------------------- Execution log -------------------------- */}
-      <div className="border-t border-white/[0.07] bg-obsidian-950/60 px-4 py-3">
+      <div className="border-t border-hairline bg-obsidian-950/60 px-4 py-3">
         <div
           ref={logViewRef}
-          className="scrollbar-slim h-[92px] space-y-1 overflow-y-auto font-mono text-[11.5px] leading-relaxed"
+          className="scrollbar-slim h-[92px] space-y-1 overflow-y-auto font-mono text-mono-xs leading-relaxed"
           aria-live="polite"
         >
           {logs.length === 0 ? (
             <p className="text-ink-ghost">
-              $ awaiting trigger
+              $ αναμονή για έναυσμα
               <span className="ml-0.5 animate-caret-blink">▋</span>
             </p>
           ) : (
@@ -190,15 +226,15 @@ export default function PipelineSimulator() {
       </div>
 
       {/* ----------------------------- Trigger ------------------------------ */}
-      <div className="border-t border-white/[0.07] px-4 py-3.5">
+      <div className="border-t border-hairline px-4 py-3.5">
         <button
           type="button"
           onClick={runSimulation}
           disabled={isRunning}
           className={cn(
-            "w-full rounded-lg border px-4 py-2.5 font-mono text-xs transition-colors duration-200",
+            "flex min-h-tap w-full items-center justify-center rounded-lg border px-4 py-2.5 font-mono text-mono-xs transition-colors duration-200",
             isRunning
-              ? "cursor-not-allowed border-white/[0.06] bg-white/[0.02] text-ink-ghost"
+              ? "cursor-not-allowed border-hairline bg-white/[0.02] text-ink-ghost"
               : "border-white/[0.12] bg-white/[0.03] text-white hover:border-white/[0.22] hover:bg-white/[0.07]",
           )}
         >
@@ -209,11 +245,11 @@ export default function PipelineSimulator() {
           ) : isComplete ? (
             "Επανάληψη Προσομοίωσης"
           ) : (
-            "Εκτέλεση Προσομοίωσης (Simulate Lead)"
+            "Εκτέλεση Προσομοίωσης"
           )}
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -241,13 +277,13 @@ function PipelineStep({
         "flex items-center gap-3 rounded-lg border px-3.5 py-3 transition-colors duration-500",
         isActive && "animate-border-glow bg-white/[0.04]",
         isDone && "border-white/[0.12] bg-white/[0.02]",
-        status === "pending" && "border-white/[0.07] bg-transparent",
+        status === "pending" && "border-hairline bg-transparent",
       )}
     >
       {/* Slot number — the constant left rail of the monitor. */}
       <span
         className={cn(
-          "shrink-0 font-mono text-[11px] tabular-nums transition-colors duration-500",
+          "shrink-0 font-mono text-mono-xs tabular-nums transition-colors duration-500",
           isActive || isDone ? "text-ink-muted" : "text-ink-ghost",
         )}
       >
@@ -256,7 +292,7 @@ function PipelineStep({
 
       <p
         className={cn(
-          "min-w-0 flex-1 truncate font-mono text-[12.5px] transition-colors duration-500",
+          "min-w-0 flex-1 truncate font-mono text-mono-xs transition-colors duration-500",
           isActive || isDone ? "text-white" : "text-ink-muted",
         )}
       >
@@ -277,11 +313,11 @@ function PipelineStep({
         ) : (
           <span
             className={cn(
-              "font-mono text-[10px] tracking-[0.12em] transition-colors duration-300",
+              "font-mono text-mono-xs tracking-[0.12em] transition-colors duration-300",
               isActive ? "text-white" : "text-ink-ghost",
             )}
           >
-            {isActive ? step.activeLabel : "QUEUED"}
+            {isActive ? step.activeLabel : "ΑΝΑΜΟΝΗ"}
           </span>
         )}
       </span>
@@ -299,7 +335,7 @@ function Connector({ status }: { status: LinkStatus }) {
       <div
         className={cn(
           "absolute inset-0 border-l border-dashed transition-colors duration-500",
-          isDone || isTracing ? "border-zinc-600" : "border-zinc-800",
+          isDone || isTracing ? "border-trace-active" : "border-trace-node",
         )}
       />
 

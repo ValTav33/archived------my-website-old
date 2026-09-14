@@ -5,6 +5,8 @@ Greek-first marketing site. Before any work, read:
 1. `docs/PROJECT-PLAYBOOK.md` — rules, locked decisions, phase map
 2. `PROGRESS.md` — current state
 3. The current phase spec in `docs/phases/`
+4. `docs/VAL-ACTIONS.md` — what is waiting on Val, and therefore what **not**
+   to re-raise, block on, or quietly do on his behalf
 
 When sources disagree: Val's instruction in the session → the playbook → `PROGRESS.md` (for state) → skills and their output.
 

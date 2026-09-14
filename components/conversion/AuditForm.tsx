@@ -11,6 +11,8 @@ import {
   type AuditFieldErrors,
   type AuditPayload,
 } from "@/lib/audit";
+import Card from "@/components/ui/Card";
+import { AUDIT_DELIVERABLE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /*
@@ -25,12 +27,12 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 /* Shared between input/select/textarea so focus and error styling stay
    identical across control types. */
 const FIELD_BASE =
-  "w-full rounded-lg border bg-[#12151E] px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-ink-ghost focus:outline-none disabled:opacity-60";
+  "w-full rounded-lg border bg-obsidian-775 px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-ink-ghost focus:outline-none disabled:opacity-60";
 
 const fieldTone = (hasError: boolean) =>
   hasError
     ? "border-red-500/40 focus:border-red-500/60"
-    : "border-white/[0.08] focus:border-white/[0.25]";
+    : "border-hairline focus:border-white/[0.25]";
 
 export default function AuditForm() {
   const [values, setValues] = useState<AuditPayload>(EMPTY_AUDIT_PAYLOAD);
@@ -141,11 +143,7 @@ export default function AuditForm() {
   /* ------------------------ Success confirmation ------------------------ */
   if (status === "success") {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
-      >
+      <Card role="status" aria-live="polite" className="p-6 md:p-8">
         <div className="flex flex-col items-start">
           <span
             aria-hidden
@@ -167,32 +165,33 @@ export default function AuditForm() {
             λεπτών και θα στείλουμε τη γραπτή σύνοψη εντός 24 ωρών.
           </p>
 
-          <div className="mt-6 w-full rounded-lg border border-white/[0.07] bg-obsidian-950/70 p-3.5 font-mono text-[11.5px]">
+          <Card tone="sunken" className="mt-6 w-full p-3.5 font-mono text-mono-xs">
             <p className="text-ink-ghost">$ audit --status</p>
             <p className="mt-2 flex gap-2 text-zinc-300">
               <span className="text-ink-ghost">01</span>
               Το αίτημα καταχωρήθηκε · απάντηση εντός 24 ωρών
             </p>
-          </div>
+          </Card>
 
           <button
             type="button"
             onClick={reset}
-            className="btn-secondary mt-6 px-4 py-2.5 text-[13px]"
+            className="btn-secondary mt-6 min-h-tap px-4 py-2.5 text-xs"
           >
             Νέο αίτημα
           </button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   /* ------------------------------- Form -------------------------------- */
   return (
-    <form
+    <Card
+      as="form"
       onSubmit={handleSubmit}
       noValidate
-      className="rounded-xl border border-white/[0.08] bg-[#0D0F16] p-6 md:p-8"
+      className="p-6 md:p-8"
     >
       {/* Honeypot. Hidden from sight, from the tab order and from assistive
           tech — a human cannot reach it, so anything in it is a bot. */}
@@ -323,14 +322,14 @@ export default function AuditForm() {
                 values.intent ? "text-zinc-100" : "text-ink-ghost",
               )}
             >
-              <option value="" disabled className="bg-[#12151E] text-ink-faint">
+              <option value="" disabled className="bg-obsidian-775 text-ink-faint">
                 Επιλέξτε προτεραιότητα…
               </option>
               {AUDIT_INTENTS.map((intent) => (
                 <option
                   key={intent}
                   value={intent}
-                  className="bg-[#12151E] text-zinc-100"
+                  className="bg-obsidian-775 text-zinc-100"
                 >
                   {intent}
                 </option>
@@ -386,18 +385,17 @@ export default function AuditForm() {
       {status === "error" && submitMessage && (
         <p
           role="alert"
-          className="mt-3 rounded-lg border border-red-500/25 bg-red-500/[0.07] px-3.5 py-2.5 text-[12.5px] text-red-300"
+          className="mt-3 rounded-lg border border-red-500/25 bg-red-500/[0.07] px-3.5 py-2.5 text-xs text-red-300"
         >
           {submitMessage}
         </p>
       )}
 
-      <p className="mt-4 text-center text-[11.5px] leading-relaxed text-ink-faint">
-        Θα λάβετε κλήση 15 λεπτών και σύντομη γραπτή σύνοψη με τις τρεις πρώτες
-        κινήσεις, εντός 24 ωρών. Τα στοιχεία σας χρησιμοποιούνται μόνο για
-        αυτό.
+      <p className="mt-4 text-center text-xs leading-relaxed text-ink-faint">
+        Θα λάβετε {AUDIT_DELIVERABLE}. Τα στοιχεία σας χρησιμοποιούνται μόνο
+        για αυτό.
       </p>
-    </form>
+    </Card>
   );
 }
 
@@ -422,7 +420,7 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint"
+        className="mb-2 block font-mono text-mono-xs uppercase tracking-[0.12em] text-ink-faint"
       >
         {label}
         {required && (
@@ -435,7 +433,7 @@ function Field({
       {children}
 
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-[11.5px] text-red-400">
+        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-400">
           {error}
         </p>
       )}

@@ -87,6 +87,7 @@ Plural people: never.
 | Pricing on site | **None yet.** FAQ explains the *model* (fixed build fee + monthly retainer) without numbers. |
 | Timeline claim | "3 ημέρες έως 2 μήνες, ανάλογα με το εύρος" — stated as a range, never a promise |
 | Legal status | Not registered, and **not currently planned**. **No myDATA / τιμολόγιο / ΑΦΜ / "νόμιμο παραστατικό" claims anywhere on the site, in any phase.** Revisit only if registration actually happens. |
+| Lead retention | **24 months**, then deleted automatically. Stated on `/privacy` and **enforced** by the daily job in `app/api/cron/maintenance`. The number is interpolated into the page from `RETENTION_MONTHS`, so the policy and the deletion cannot disagree. Changing it means changing the constant, not the prose. |
 
 ### 2.3 Structure
 
@@ -102,8 +103,8 @@ Multipage. Homepage carries highlights only; every section has a deeper page.
 /about                  Ποιος είμαι
 /faq                    Technical FAQ
 /contact                Audit form + direct channels
-/privacy                Πολιτική Απορρήτου
-/terms                  Όροι Χρήσης
+/privacy                Πολιτική Απορρήτου                   [built Phase 2, revised Phase 3]
+/terms                  Όροι Χρήσης                          [built Phase 2]
 /blog                   Article index                        [Phase 7]
 /blog/[slug]            Article                              [Phase 7]
 /en/*                   English mirror                       [Phase 6]
@@ -134,8 +135,13 @@ and `#work` as homepage anchors are **deleted**, not filled.
 ### 2.5 Tech
 
 Next.js 16 (App Router) · TypeScript · Tailwind 3 · Framer Motion · Lucide ·
-Supabase (leads) · Vercel (hosting) · Vercel Analytics (cookieless, no consent
-banner required).
+Supabase (leads) · Resend (lead notification) · Vercel (hosting) · Vercel
+Analytics (cookieless, no consent banner required).
+
+**All of these are installed as of Phase 3.** Supabase is reached over
+PostgREST rather than through `@supabase/supabase-js` — see §14, 2026-09-14 —
+so the only runtime dependency this row adds to `package.json` is
+`@vercel/analytics`.
 
 ### 2.6 Working method
 
@@ -162,7 +168,7 @@ marked. **Launch happens at the end of Phase 3.**
 | **0** | **Truth & Foundations** | Remove everything on the site that is false, broken, inaccessible or insecure. No new sections. | Zero placeholder text, zero placeholder data, AA contrast throughout, form can't be spammed, no PII in logs, lint + typecheck + build all green |
 | **1** | **Homepage Restructure** | Correct the funnel order and add the sections that carry credibility: Process, About, FAQ. Extract UI primitives. | Homepage reads top-to-bottom as one argument ending in the CTA. `Badge`/`Card`/`SectionHeader` primitives exist and are used. |
 | **2** | **Multipage & SEO** | Build the route tree in §2.3. Service pages, work index, legal pages, sitemap, robots, OG, favicon. | Every route in §2.3 (minus Phase 6/7 items) returns 200 with unique title, description and OG image |
-| **3** | **Backend & Go-Live** | Wire the form to Supabase + email. Analytics. Privacy policy. Then ship. | A real submission lands in Supabase and in your inbox. **← LAUNCH** |
+| **3** | **Backend & Go-Live** | Wire the form to Supabase + email. Analytics. **Revise `/privacy` in the same slice that wires delivery** — it currently states that submissions are not stored, which stops being true the moment they are. Then ship. | A real submission lands in Supabase and in your inbox, **and `/privacy` describes what now happens to it**. **← LAUNCH** |
 | **4** | **Craft & Motion** | Scroll reveals, scroll-spy nav, real bento hierarchy, ESLint/CI, Lighthouse budgets in CI. | Lighthouse Perf ≥ 95, A11y = 100, SEO = 100 on `/` and `/websites` |
 | **5** | **Evidence** *(asset-gated, can start any time)* | Named clients (BTL Industries), the roz-inn.com live link, Fiverr testimonials, screenshots, your photo, one live demo. **No registration/invoicing markers — see §2.2.** | At least one named client, one live link, one testimonial, one photo on the site |
 | **6** | **English** | `/en` mirror with proper `hreflang` and locale routing. Re-enable the EL\|EN toggle. | Both locales pass Phase 4's Lighthouse gate |
@@ -385,12 +391,20 @@ and it applies to every phase.
 
 Paste this into every new Claude Code session, verbatim.
 
+*Gained a fourth file on 2026-09-13: `docs/VAL-ACTIONS.md`. By the end of
+Phase 2, work that needed Val personally was scattered across phase
+write-ups, §15's open questions and PROGRESS.md — fourteen items in three
+places. A session that has not read it will either block on something that is
+not its to do, re-raise a settled question, or helpfully do something that
+was deliberately left to Val.*
+
 ```
-Read these three files before doing anything:
+Read these four files before doing anything:
 
 1. docs/PROJECT-PLAYBOOK.md — the rules and the phase map
 2. PROGRESS.md — where we are right now
 3. docs/phases/PHASE-<N>-<NAME>.md — the current phase spec
+4. docs/VAL-ACTIONS.md — what is waiting on me, so you don't re-raise it
 
 Then:
 - Tell me the current phase and the next unchecked slice.
@@ -500,6 +514,22 @@ Append here whenever a locked decision in §2 changes. Never edit §2 silently.
 | 2026-09-10 | **Brand set to Tavlikos Systems; domain `tavlikossystems.com`; email `info@tavlikossystems.com`** | Bare "Tavlikos" on `tavlikos.com` with `hello@` | Val registered the domain and mailbox. This reverses the 2026-09-09 brand entry above — "Systems" is back. The name follows the domain, not the other way round. Q1 and Q6 closed; S0.2 unblocked. |
 | 2026-09-11 | **ui-ux-pro-max installed as an advisory reviewer.** Its design-system generator is banned: the generator's output for this site (light slate background, navy/blue palette, Plus Jakarta Sans) contradicts §2.4. The skill is restricted to `ux`, `landing`, `icons` and `nextjs` searches, and the playbook outranks it on any conflict. Guardrail lives in `CLAUDE.md`, which loads in every session. | No skills installed | The skill activates on any UI task and its own workflow wants to generate a design system for new pages — exactly what Phases 1 and 2 build. Useful as a reviewer, dangerous as a designer. |
 | 2026-09-11 | **Definition of Done gains a 1024px manual check and a 44×44px tap-target rule** (§6) | 375 / 768 / 1440 only, no tap-target line | The hero and nav both change layout at 1024px, which the three-width check stepped over; the mobile menu button is 36×36px, below the AA target size. |
+
+---
+
+| 2026-09-13 | **`/privacy` and `/terms` are built in Phase 2; the privacy page is revised in Phase 3.** §2.3 listed both in the route tree Phase 2 builds while §3 listed "Privacy policy" inside Phase 3's objective — the playbook contradicted itself. Resolution: the routes ship in Phase 2 describing what the site actually does today (a submission validated and discarded, no database, no processor, no cookies, no analytics), and Phase 3 revises the privacy page in the same slice that wires delivery. §3's Phase 3 row and §2.3's route tree are both updated above. | §2.3 said Phase 2, §3 said Phase 3 | Val approved D1–D3 on 2026-09-12 before any Phase 2 slice ran. The route had to exist for Phase 2's exit gate ("every route in §2.3 returns 200"), and a policy naming a processor that does not exist yet is the one §8 violation with consequences off the website. |
+| 2026-09-13 | **A deeper page expands its homepage section; it never copies it (D1).** `/process` and `/faq` hold the full content and the homepage keeps a highlight plus a link. The homepage therefore got *shorter* in Phase 2, in two places, on purpose. `/faq` is the stated exception: an FAQ answer cannot be split into a highlight and an expansion without becoming a worse answer in both places, so the homepage shows four of the six and `/faq` carries the canonical set and the only `FAQPage` node. | Undefined — §2.3 said "homepage carries highlights" without saying what happened to Phase 1's full-length sections | Verified per page rather than asserted: zero verbatim sentence overlap between `/process` and `/`, and between `/about` and `/`. |
+| 2026-09-13 | **The showcase keeps «Ενδεικτικές Αρχιτεκτονικές» and gains an exit (D2).** §8.2 requires that label for architectures describing capability, so the framing stays; the section gains one link to `/work` and the `lead-engine` card links to the BTL case study. **One amendment:** the lede's «Τα πρώτα ονομαστικά case studies προστίθενται σύντομα» became false the moment `/work` shipped with a named study, so it now points at `/work`. Heading, eyebrow and the thirteen translated trace nodes are untouched. | Open question raised in S1.6, deferred 2026-09-11 | Val chose to settle it once `/work` existed rather than rewrite the section twice; this is that, and it cost no re-translation. |
+| 2026-09-13 | **Greek text uppercased in JavaScript must go through `greekUpper`.** Monotonic Greek drops the tonos in all-caps (ΑΡΧΙΚΗ, not ΑΡΧΙΚΉ) and keeps only the dialytika; `String.prototype.toUpperCase` does neither. CSS `text-transform: uppercase` is fine and needs no helper — the document is `lang="el"`, which is what tells a browser to apply Greek casing rules, and this was confirmed by inspection. | Not previously stated | Found by generating an OG card and looking at it. The same call had already shipped a Greek typography error in S2.5's case-study eyebrow. |
+
+| 2026-09-14 | **The email is the delivery; Supabase is the archive (D1).** A visitor's success response depends on the notification and on nothing else: if the email fails the route returns 502 and writes no row, so a retry creates no duplicate; if the insert fails the visitor is still told yes and the miss is logged. **The finding behind it:** all five Supabase projects in the organisation read `INACTIVE` when Phase 3 was specced, because the free tier pauses a project after about a week without traffic — and a marketing site's lead volume is exactly that traffic profile. Wiring the promise to an insert means the form starts failing in week two, silently, for the same reason it worked in week one. | Undefined — §3 said "Supabase + email" without an order | Measured, not assumed: the pause state was read from the account before the spec was written. S3.6's daily job is the mitigation; the ordering holds even when it fails. |
+| 2026-09-14 | **Supabase is reached over PostgREST with `fetch`, not `@supabase/supabase-js` (D2).** The whole phase makes one insert, one count and two deletes. The SDK would pull auth, realtime and storage to serve them, add a monthly `npm outdated` row under §13, and wrap a plain HTTP call in a client whose error objects have to be kept away from every log line anyway. `lib/leads.ts` is the only file that changes if this is ever reversed; §2.5 locks *Supabase*, the product, and does not name a client. | Unstated | The HTTP contract was verified against the live database rather than trusted — 201 with `return=minimal`, 400/23514 on a constraint violation, 204 with the affected count in `content-range` for a delete. |
+| 2026-09-14 | **Lead retention is 24 months, and the enforcement ships with the number (D3).** §2.2 updated. `/privacy` interpolates `RETENTION_MONTHS`, and the daily job deletes past it. | Unstated — the form stored nothing | A retention period a privacy policy promises and nothing deletes is the one §8 violation with consequences off the website. Either the deletion is real or the number does not get written down. |
+| 2026-09-14 | **Analytics: yes — Vercel Analytics, bare (D4).** No custom events, no goals, no second provider. §2.5 confirmed rather than corrected. Measured before and after: Performance unchanged at 93, LCP unchanged at 3.2 s, and Best Practices 100 → 96 **on localhost only**, entirely from the 404 on `/_vercel/insights/script.js`, a path the platform serves and a local `next start` cannot. | §2.5 named it; it had never been installed | §13's weekly cadence has asked for "skim Vercel Analytics for the top entry page" since v1.0, against a tool that did not exist. The measurement was the condition of installing it. |
+| 2026-09-14 | **Resend is the transport, single path (D5), and a visitor confirmation email is a deliberate non-goal.** Building both Resend and an n8n webhook "so the configured one wins" was considered and rejected: the unconfigured path would ship having never run, and the exit gate can only exercise the one with a credential. The confirmation email is out because sending *to* a visitor needs a verified sending domain, and keeping the launch off the DNS critical path is worth more than a second confirmation the success card already gives. Swap point if this reverses: `deliver()` in `lib/notify.ts`, one function, one env var. | The stub's comment offered both | One primitive per pattern (§10). n8n puts a second always-on system between the form and the inbox and buys nothing for a one-hop notification. |
+| 2026-09-14 | **`/privacy` is revised in the same commit as every slice that changes what happens to a submission** — not once per phase. §3's Phase 3 row says "the same slice that wires delivery"; in practice delivery was four slices (email, archive, IP counter, analytics), each falsifying a different sentence. The page moved five times in one phase and `UPDATED` moved with it. | §3 said "the same slice" | Stricter than the playbook's wording and satisfies it exactly. The page's own closing section promised it would be updated if any of this changed; keeping that promise is a phase requirement, not a courtesy. |
+| 2026-09-14 | **No error object is ever passed to a log line in the lead path.** `lib/logging.ts` accepts a stage, a reason from a fixed union, an HTTP status and a hint authored in this repository — and nothing else, so leaking a payload is not a mistake to avoid but a thing the signature cannot express. A PostgREST error can echo the row it refused; a mail API's 4xx can echo the recipient and body it rejected. Both would land the whole submission in a retained, searchable log from code that looks careful. | Phase 0 stated the rule as a comment | The rule already existed and `/privacy` states it to visitors. Phase 3 is when it became possible to break it accidentally, so it stopped being a convention. |
+| 2026-09-14 | **Phases 1, 2 and 3 merged in a single PR, not three.** §5 says one PR per phase; the three branches were stacked, and the artifact verified end to end on a real deployment was `phase/3-backend` **as a whole**. Merging in three steps would have put two never-deployed states on production — Phase 1 alone and Phase 2 alone — to buy revert granularity. All three branches stay pushed, so history is recoverable, and reverting the squash commit returns production to its pre-merge state. **§5 is unchanged for future phases:** this is a one-off consequence of three phases accumulating unmerged, which is itself the thing to avoid. | §5: one feature branch per phase, PR into `main`, squash merge | Val's decision, asked and answered before the merge. The general rule stands; do not treat this as precedent for batching phases. |
 
 ---
 

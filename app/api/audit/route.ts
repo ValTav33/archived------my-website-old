@@ -1,49 +1,16 @@
 import { NextResponse } from "next/server";
 import { looksAutomated, validateAuditPayload, type AuditPayload } from "@/lib/audit";
+import { ENVIRONMENT } from "@/lib/env";
+import { archiveLead } from "@/lib/leads";
+import { isRateLimited } from "@/lib/ratelimit";
+import { LeadPathError, classify, logLeadFailure } from "@/lib/logging";
+import { deliver } from "@/lib/notify";
 import { SITE_URL } from "@/lib/site";
 
-/* Uses the Node runtime because the delivery integrations wired in below
-   (Nodemailer / Resend SDK / signed webhook push) expect Node APIs. */
+/* Node runtime. `lib/env.ts` decodes a JWT payload with `Buffer` to catch a
+   publishable key pasted where the service-role key belongs, and S3.5's IP
+   hash uses `node:crypto`. Neither exists on the edge runtime. */
 export const runtime = "nodejs";
-
-/* ------------------------------------------------------------------ */
-/*  Rate limiting                                                      */
-/* ------------------------------------------------------------------ */
-
-const RATE_LIMIT = 5;
-const RATE_WINDOW_MS = 60 * 60 * 1000; // one hour
-
-/**
- * Per-IP submission counter.
- *
- * LIMITATION, on purpose: this Map lives in one serverless instance's memory.
- * Instances do not share it, they are recycled without warning, and a request
- * routed to a cold one starts from zero. This is a speed bump against casual
- * scripted abuse, not a wall. Phase 3 moves the counter to Supabase, where it
- * is actually shared across instances.
- */
-const submissions = new Map<string, number[]>();
-
-/** Drops timestamps that have aged out, and any IP left with none. */
-function sweep(now: number): void {
-  for (const [ip, times] of submissions) {
-    const fresh = times.filter((t) => now - t < RATE_WINDOW_MS);
-    if (fresh.length === 0) submissions.delete(ip);
-    else submissions.set(ip, fresh);
-  }
-}
-
-/** Records a submission and reports whether this IP is now over the limit. */
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  sweep(now);
-
-  const times = submissions.get(ip) ?? [];
-  if (times.length >= RATE_LIMIT) return true;
-
-  submissions.set(ip, [...times, now]);
-  return false;
-}
 
 /**
  * Client IP. `x-forwarded-for` is a comma-separated chain and the first entry
@@ -105,31 +72,33 @@ const accepted = () =>
   );
 
 /**
- * DELIVERY STUB.
+ * Delivers the request, and is the only thing the visitor's success response
+ * depends on.
  *
- * Replace the body with exactly one of the following once credentials exist:
+ * **This function was a stub for three phases.** A submission was validated
+ * and then dropped while the form promised a reply within 24 hours — the one
+ * risk playbook §12 rates Severe, and the reason the site was live but not
+ * launched. S3.3 is the slice that closed it.
  *
- *   Resend:
- *     const resend = new Resend(process.env.RESEND_API_KEY);
- *     await resend.emails.send({ from, to, subject, text });
- *
- *   n8n webhook:
- *     await fetch(process.env.N8N_AUDIT_WEBHOOK_URL!, {
- *       method: "POST",
- *       headers: { "Content-Type": "application/json" },
- *       body: JSON.stringify(payload),
- *     });
- *
- * Kept as its own function so the route's contract (validate -> deliver ->
- * respond) doesn't change when the transport does.
+ * Still its own function, because the route's contract is `validate ->
+ * deliver -> respond` and that shape should not change when the transport
+ * does. S3.4 adds the archive write behind the email, in this order and not
+ * the reverse: see D1 in the phase spec, and `supabase/README.md` for the
+ * free-tier pausing behaviour that forced it.
  */
 async function deliverAuditRequest(payload: AuditPayload): Promise<void> {
-  /* Until a transport is wired, the console is the sink.
-     Nothing identifying goes in here. Name, email and phone must never reach
-     a log line: Vercel logs are retained, searchable and shared with anyone
-     holding project access, and there is no lawful basis recorded for that. */
-  console.info("[audit] request accepted", {
+  await deliver(payload, ENVIRONMENT);
+
+  /* The trace that survives. Nothing identifying goes in here — name, email
+     and phone must never reach a log line, because Vercel logs are retained,
+     searchable and readable by anyone holding project access, and there is no
+     lawful basis recorded for keeping them there. `/privacy` states this to
+     visitors, and it is the one sentence on that page this slice narrowed
+     rather than replaced: the three fields are still absent from the logs,
+     they are now in an email instead. */
+  console.info("[audit] request delivered", {
     receivedAt: new Date().toISOString(),
+    environment: ENVIRONMENT,
     intent: payload.intent,
     hasWebsite: Boolean(payload.website),
     briefLength: payload.brief.length,
@@ -141,17 +110,6 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { success: false, message: "Μη έγκυρο αίτημα." },
       { status: 403 },
-    );
-  }
-
-  if (isRateLimited(clientIp(request))) {
-    return NextResponse.json(
-      {
-        success: false,
-        message:
-          "Έχετε στείλει πολλά αιτήματα. Δοκιμάστε ξανά σε λίγη ώρα ή καλέστε μας απευθείας.",
-      },
-      { status: 429 },
     );
   }
 
@@ -185,12 +143,35 @@ export async function POST(request: Request) {
     );
   }
 
+  /* Rate limited **after** validation, which is the point of the move. The
+     old in-memory counter ran before the body was even parsed, so a mistyped
+     email spent one of the caller's five slots — a Backlog row since S0.6,
+     and a genuinely user-hostile one, because the person most likely to
+     submit twice is the person who got it wrong the first time. */
+  if (await isRateLimited(clientIp(request), ENVIRONMENT)) {
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Έχετε στείλει πολλά αιτήματα. Δοκιμάστε ξανά σε λίγη ώρα ή καλέστε μας απευθείας.",
+      },
+      { status: 429 },
+    );
+  }
+
   try {
     await deliverAuditRequest(result.data);
   } catch (error) {
     /* The visitor filled the form correctly — this failure is ours, so it
-       must not be reported as a validation problem. */
-    console.error("[audit] delivery failed", error);
+       must not be reported as a validation problem.
+
+       The error object is never logged. A mail API's 4xx can echo the
+       recipient and the message body it rejected, which would put the whole
+       payload in a log line from code that looks careful; `lib/logging.ts`
+       makes that unexpressible rather than merely discouraged. */
+    if (error instanceof LeadPathError) error.log();
+    else logLeadFailure("mail", classify(error));
+
     return NextResponse.json(
       {
         success: false,
@@ -199,6 +180,24 @@ export async function POST(request: Request) {
       },
       { status: 502 },
     );
+  }
+
+  /* The archive, and its failure is deliberately not the visitor's problem.
+     D1: the email above is the delivery, this is the copy. The free tier
+     pauses a project after a week without traffic, so this is the part of the
+     path most likely to be unavailable — and a lead that reached a human is
+     not going to be reported as a failure because its archive copy did not
+     get written. Logged, without the payload, and the visitor is told yes.
+
+     The try/catch lives here rather than inside `archiveLead` on purpose. A
+     function that swallows its own errors reads as one that cannot fail; the
+     non-fatality is a property of this call site and belongs where a reader
+     is looking at the response being returned two lines later. */
+  try {
+    await archiveLead(result.data, ENVIRONMENT);
+  } catch (error) {
+    if (error instanceof LeadPathError) error.log();
+    else logLeadFailure("archive", classify(error));
   }
 
   return accepted();

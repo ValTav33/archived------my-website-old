@@ -1,9 +1,9 @@
-"use client";
-
 import { ArrowRight, Phone } from "lucide-react";
 import PipelineSimulator from "@/components/hero/PipelineSimulator";
+import Badge from "@/components/ui/Badge";
+import ScrollLink from "@/components/ui/ScrollLink";
+import StatusDot from "@/components/ui/StatusDot";
 import { SITE } from "@/lib/site";
-import { scrollToId } from "@/lib/utils";
 
 /* What the client walks away with, not what the build lacks. Each of these
    is demonstrable today — see playbook §11.5. */
@@ -46,16 +46,13 @@ export default function HeroSection() {
           <div className="lg:col-span-7">
             {/* ---- Live availability pill ---- */}
             <div className={RISE} style={delay(0)}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-xs text-zinc-400">
+              <Badge variant="status">
                 {/* The single chromatic element in the layout: a live dot. */}
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
-                </span>
-                Διαθέσιμοι για νέα projects
+                <StatusDot />
+                {SITE.availability}
                 <span className="text-ink-ghost">•</span>
                 <span className="text-ink-faint">Θεσσαλονίκη &amp; Remote</span>
-              </span>
+              </Badge>
             </div>
 
             {/* ---- Headline: solid white, no gradient mask ---- */}
@@ -82,31 +79,30 @@ export default function HeroSection() {
               style={delay(240)}
             >
               {/* Primary: solid white, arrow revealed on hover. */}
-              <button
-                type="button"
-                onClick={() => scrollToId("audit")}
+              <ScrollLink
+                to="audit"
                 className="btn-primary group gap-1 px-6 py-3.5 text-sm"
               >
                 Ζητήστε Δωρεάν Audit
                 <span className="flex w-0 items-center overflow-hidden opacity-0 transition-all duration-300 group-hover:w-5 group-hover:opacity-100">
                   <ArrowRight className="h-4 w-4" strokeWidth={2} />
                 </span>
-              </button>
+              </ScrollLink>
 
               {/* Secondary: matte glass card with the direct line + hours. */}
               <a
                 href={`tel:${SITE.phoneTel}`}
-                className="btn-secondary group gap-3 px-5 py-2.5 hover:border-white/[0.15]"
+                className="btn-secondary group gap-3 px-5 py-2.5 hover:border-hairline-strong"
               >
                 <Phone
                   className="h-4 w-4 shrink-0 text-ink-faint transition-colors duration-200 group-hover:text-zinc-300"
                   strokeWidth={1.8}
                 />
                 <span className="flex flex-col text-left">
-                  <span className="font-mono text-[13.5px] text-white tabular-nums">
+                  <span className="font-mono text-sm text-white tabular-nums">
                     Κλήση: {SITE.phoneDisplay}
                   </span>
-                  <span className="font-mono text-[11px] text-ink-faint">
+                  <span className="font-mono text-mono-xs text-ink-faint">
                     {SITE.hoursShort}
                   </span>
                 </span>
@@ -115,7 +111,7 @@ export default function HeroSection() {
 
             {/* ---- Micro-trust footer ---- */}
             <ul
-              className={`${RISE} mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11.5px] uppercase tracking-[0.1em] text-ink-faint`}
+              className={`${RISE} mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-mono-xs uppercase tracking-[0.1em] text-ink-faint`}
               style={delay(320)}
             >
               {TRUST_POINTS.map((point, index) => (

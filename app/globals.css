@@ -95,11 +95,6 @@
     background-color: var(--obsidian);
   }
 
-  /* Standard translucent panel: hairline border, barely-there fill. */
-  .panel {
-    @apply rounded-xl border border-white/[0.07] bg-white/[0.02];
-  }
-
   /* Primary action: high-contrast solid white. */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-white font-medium text-black transition-colors duration-200 hover:bg-zinc-200;
@@ -107,7 +102,7 @@
 
   /* Secondary action: matte obsidian glass. */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] font-medium text-white transition-colors duration-200 hover:bg-white/[0.07];
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white/[0.03] font-medium text-white transition-colors duration-200 hover:bg-white/[0.07];
   }
 }
 

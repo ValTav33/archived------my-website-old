@@ -1,13 +1,26 @@
+import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import { FOOTER_LINKS, NAV_LINKS, navHref } from "@/lib/nav";
+import { CTA_LINK, FOOTER_LINKS, NAV_LINKS, isExternal } from "@/lib/nav";
 import { SITE } from "@/lib/site";
+import Badge from "@/components/ui/Badge";
+import Eyebrow from "@/components/ui/Eyebrow";
+import StatusDot from "@/components/ui/StatusDot";
 
-/* Capability tracks, phrased for humans rather than for the schema. */
+/**
+ * Capability tracks, phrased for humans rather than for the schema.
+ *
+ * The first two now have pages behind them, so they link. The last two do
+ * not, and stay plain text — S2.12's rule is the same one the Phase 1
+ * comment here stated: a link to nowhere is worse than no link.
+ */
 const CORE_TRACKS = [
-  "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
-  "AI εξυπηρέτηση πελατών & φωνητικοί agents",
-  "Αυτοματισμοί leads & εμπλουτισμός δεδομένων",
-  "Custom dashboards για πελάτες",
+  {
+    label: "Κατασκευή ιστοσελίδων & web εφαρμογών (Next.js)",
+    href: "/websites",
+  },
+  { label: "AI εξυπηρέτηση πελατών & φωνητικοί agents", href: "/automations" },
+  { label: "Αυτοματισμοί leads & εμπλουτισμός δεδομένων", href: "/automations" },
+  { label: "Dashboards διαχείρισης για πελάτες", href: undefined },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -30,47 +43,53 @@ const YEAR = new Date().getFullYear();
  */
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.07]">
+    <footer className="border-t border-hairline">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* ---------------- Col 1 · Identity & coordinates -------------- */}
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[13.5px] font-bold uppercase tracking-[0.18em] text-white">
+              <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
                 {SITE.brand}
               </span>
             </div>
 
-            <p className="mt-4 font-mono text-[11.5px] text-ink-faint tabular-nums">
+            <p className="mt-4 font-mono text-mono-xs text-ink-faint tabular-nums">
               {SITE.geoStamp}
             </p>
-            <p className="mt-1 text-[12.5px] text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-400">
               {SITE.locationLabel}
             </p>
 
             {/* Status pill — the single chromatic element in the footer. The
                 dot signals availability for work, which is a fact we control,
                 not uptime, which we owe nobody. */}
-            <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-[10.5px] tracking-wider text-zinc-400">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-pulse-slow rounded-full bg-live" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
-              </span>
-              Διαθέσιμοι για νέα projects
-            </span>
+            <Badge variant="status" className="mt-5 tracking-wider">
+              <StatusDot />
+              {SITE.availability}
+            </Badge>
           </div>
 
           {/* -------------------- Col 2 · Core tracks --------------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <Eyebrow as="h3" variant="label">
               Υπηρεσίες
-            </h3>
-            {/* Plain text, not links: there are no dedicated service pages
-                yet, and a link to nowhere is worse than no link. */}
+            </Eyebrow>
             <ul className="mt-4 space-y-2.5">
               {CORE_TRACKS.map((track) => (
-                <li key={track} className="text-[12.5px] leading-relaxed text-zinc-400">
-                  {track}
+                <li key={track.label}>
+                  {track.href ? (
+                    <Link
+                      href={track.href}
+                      className="flex min-h-tap items-center text-xs leading-relaxed text-zinc-400 transition-colors duration-200 hover:text-white"
+                    >
+                      {track.label}
+                    </Link>
+                  ) : (
+                    <span className="flex min-h-tap items-center text-xs leading-relaxed text-zinc-400">
+                      {track.label}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -78,36 +97,51 @@ export default function Footer() {
 
           {/* --------------------- Col 3 · Navigation --------------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <Eyebrow as="h3" variant="label">
               Πλοήγηση
-            </h3>
-            <ul className="mt-4 space-y-2.5">
-              {[...NAV_LINKS, ...FOOTER_LINKS].map((link) => (
-                <li key={link.id}>
-                  <a
-                    href={navHref(link)}
-                    className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
+            </Eyebrow>
+            <ul className="mt-4">
+              {/* The CTA is spliced in explicitly: dropping "Επικοινωνία"
+                  from NAV_LINKS removed the footer's only path to the form,
+                  and a footer that cannot reach the conversion block is a
+                  dead end at the exact moment someone has finished reading. */}
+              {[{ href: "/", label: "Αρχική" }, ...NAV_LINKS, CTA_LINK, ...FOOTER_LINKS].map(
+                (item) => (
+                  <li key={item.href}>
+                    {isExternal(item.href) ? (
+                      <a
+                        href={item.href}
+                        className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </li>
+                ),
+              )}
             </ul>
           </div>
 
           {/* ------------------ Col 4 · Social & protocols ---------------- */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-ghost">
+            <Eyebrow as="h3" variant="label">
               Επικοινωνία
-            </h3>
-            <ul className="mt-4 space-y-2.5">
+            </Eyebrow>
+            <ul className="mt-4">
               {SOCIAL_LINKS.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[12.5px] text-zinc-400 transition-colors duration-200 hover:text-white"
+                    className="flex min-h-tap w-full items-center text-xs text-zinc-400 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -115,9 +149,13 @@ export default function Footer() {
               ))}
             </ul>
 
+            {/* `#main-content` rather than `#hero`: the footer renders on
+                every route and `#hero` exists on exactly one of them, so this
+                was a dead click on ten pages. The layout's `main` landmark is
+                the one anchor guaranteed to be on the current page. */}
             <a
-              href="#"
-              className="group mt-5 inline-flex items-center gap-1.5 font-mono text-[11.5px] text-ink-faint transition-colors duration-200 hover:text-white"
+              href="#main-content"
+              className="group mt-5 inline-flex min-h-tap items-center gap-1.5 font-mono text-mono-xs text-ink-faint transition-colors duration-200 hover:text-white"
             >
               Επιστροφή στην αρχή
               <ArrowUp
@@ -129,11 +167,11 @@ export default function Footer() {
         </div>
 
         {/* ---------------------------- Sub-bar --------------------------- */}
-        <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[11px] text-ink-ghost">
+        <div className="mt-12 flex flex-col gap-2 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-mono text-mono-xs text-ink-ghost">
             © {YEAR}. Κατασκευασμένο με Next.js, Tailwind &amp; TypeScript.
           </p>
-          <p className="font-mono text-[11px] text-ink-ghost">
+          <p className="font-mono text-mono-xs text-ink-ghost">
             Ο κώδικας παραδίδεται δικός σας — χωρίς εξάρτηση από πλατφόρμα.
           </p>
         </div>
