@@ -9,11 +9,11 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3 — Backend & Go-Live · **the launch phase**
+**Current phase:** 3 — Backend & Go-Live ✅ **COMPLETE — THE SITE IS LAUNCHED**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.8 · 2026-09-14 · exit gate measured on the deployment · **only the merge is left**
-**Blocked on:** **V4 — the merges, and only those.** Everything measurable is measured, on the deployment: a real submission reached the inbox and the database, the Vercel runtime log is PII-free, and Accessibility and Best Practices are 100 on all three audited routes. `main` is still `8749c7f`, three phases behind, which is why production still serves the lead-discarding form. **A session cannot do this step:** the local squash merge was refused by the permission classifier as *Merge Without Review*, which is the playbook's §5 rule enforced by tooling, and `gh` is not installed. **V1 should happen before the merge, not after** — Val reads `/privacy` on the preview, because that page now describes real data processing. V3 is downgraded: protected previews turned out to be measurable anyway.
+**Last slice:** S3.8 · 2026-09-14 · closeout · **merged and live on `b76e3f5`**
+**Blocked on:** nothing. **Phase 4 is next.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -43,7 +43,7 @@
 
 ---
 
-## Phase 3 — Backend & Go-Live 🚧 IN PROGRESS · **the launch phase**
+## Phase 3 — Backend & Go-Live ✅ COMPLETE · **LAUNCHED 2026-09-14**
 
 Wire the form to email and Supabase, revise `/privacy` in the same commit as
 every slice that changes what happens to a submission, decide analytics, and
@@ -63,7 +63,7 @@ of this file once they are settled.
 - [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
 - [x] **S3.6** Daily retention + keepalive cron · 2026-09-14 · **D3 = 24 months**
 - [x] **S3.7** Analytics · 2026-09-14 · **D4 = yes**
-- [~] **S3.8** Closeout and go-live · **partial** — playbook and handover done; the gate measurement and the PR need V3/V6/V7/V19
+- [x] **S3.8** Closeout and go-live · 2026-09-14 · **merged as `#1`, production on `b76e3f5`**
 
 **S3.1.** `lib/env.ts` is the only reader of a Phase 3 secret, and
 `.env.example` documents all five. Two rules, pulling opposite ways on
@@ -620,6 +620,57 @@ jar had come back empty because curl writes the bypass cookie with a
 only by asserting on `finalDisplayedUrl`. **Any future deployment audit must
 check the URL Lighthouse actually measured**; a login page scores well enough
 to look like a real result.
+
+### LAUNCHED — measured on `tavlikossystems.com`
+
+**2026-09-14.** Val merged PR `#1` as one squash commit, `b76e3f5`. Its tree is
+**byte-identical** to `phase/3-backend`, the branch verified on the preview, so
+production serves exactly what was tested rather than something assembled at
+merge time.
+
+**Production is serving the new code, confirmed by SHA and not by eye.**
+Deployment `dpl_Gg9aLJk7dnqF9VSsNA6Dzj8CebRZ`, `githubCommitSha`
+`b76e3f5df06cc…`, built in 24 seconds. This check exists because **three
+earlier production deploys served stale code** while commits sat unpushed.
+
+| Check | Result |
+|---|---|
+| All eleven routes, plus `/sitemap.xml` and `/robots.txt` | **200** |
+| `/work/roz-inn` — a real entry with no case study | **404**, as designed |
+| `robots.txt` | `Allow: /` · `Disallow: /api/` · `Host` · `Sitemap` |
+| Homepage robots meta | `index, follow` — the preview's `noindex` correctly did not follow it to production |
+| Sitemap | 11 `<loc>` entries |
+| **A real submission on the live domain** | **200**, **one row**, `environment` = **`production`** |
+| Greek and normalisation | «Νίκος Αντωνίου» intact; `example-praxi.gr` → `https://example-praxi.gr/` |
+| **Production runtime log for it** | `receivedAt`, `environment`, `intent`, `hasWebsite`, `briefLength` — **and nothing else** |
+| Honeypot · sub-2.5 s · wrong origin · bad email · cron without key · `GET` | 200 no row · 200 no row · **403** · **422** · **401** · **405** |
+
+**Lighthouse mobile on the live domain** — no protection in the way, so this is
+the first clean production measurement since Phase 0:
+
+| | `/` | `/websites` | `/contact` |
+|---|---|---|---|
+| Performance | 92 | 94 | 94 |
+| **Accessibility** | **100** | **100** | **100** |
+| **Best Practices** | **100** | **100** | **100** |
+| **SEO** | **100** | **100** | **100** |
+| LCP | 3.1 s | 2.7 s | 2.8 s |
+| CLS | 0 | 0 | 0 |
+
+**Three categories at 100 on all three routes — a first for this project.**
+Best Practices had been stuck at 96 since Phase 0 on the favicon 404, which
+Phase 2 fixed; this is the run that proves it on production rather than on
+localhost.
+
+**Performance 92 / 94 / 94 against the Phase 3+ budget of 95 — short, and
+recorded as short.** The only weighted failures on any of the three pages are
+`first-contentful-paint`, `largest-contentful-paint` and `speed-index`: pure
+load speed, nothing structural, nothing introduced by this phase. Phase 4 owns
+performance and its gate is Perf ≥ 95 with budgets in CI. The Backlog row
+carries these numbers now instead of Phase 2's localhost ones.
+
+The launch test row was deleted. **Both tables are empty, so every row from
+here is a real enquiry.**
 
 ### Still outstanding
 

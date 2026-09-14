@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after the exit gate was measured on the deployment.
+**Last synced:** 2026-09-14, after launch. **Nothing on this list is blocking.**
 
 ---
 
@@ -547,4 +547,8 @@ line.
 | — | Supabase **project** created | 2026-09-14 — `tavlikos-systems-website`, `eu-central-1`, free tier, €0/month; migration applied and verified. The **credentials** are still V6 |
 | V8 | Analytics: yes or no | 2026-09-14 — **yes**, Vercel Analytics, installed in S3.7. Measured: Performance unchanged at 93, Best Practices 100 → 96 **locally only**, from the insights-script 404 that the platform serves |
 | V11 | Should `/privacy` say the form delivers nowhere? | 2026-09-14 — **moot.** S3.3 made the form deliver, so there is no gap to disclose. The page now describes what actually happens, five revisions deep |
+| V4 | Merge the PRs | 2026-09-14 — merged as one squash commit `b76e3f5`, PR `#1`. Production verified by SHA |
+| V5 | Check the deployed SHA after merge | 2026-09-14 — production serves `b76e3f5`, tree byte-identical to the verified branch |
+| V19 | `CRON_SECRET` | 2026-09-14 — set in Vercel; the cron route answers 401 without it on production |
+| V3 | Vercel Deployment Protection | 2026-09-14 — **not needed.** Protected previews turned out to be measurable via the connector's bypass cookie. Setting left on |
 | — | D3 — lead retention period | 2026-09-14 — **24 months**, enforced by the S3.6 job, interpolated into `/privacy` from the code |
