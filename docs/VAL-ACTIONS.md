@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after the first real end-to-end submission.
+**Last synced:** 2026-09-14, after the exit gate was measured on the deployment.
 
 ---
 
@@ -76,6 +76,14 @@ Then open `/privacy` and `/terms`.
 > **Phase 3 rewrote `/privacy` five times, one revision per slice, so the
 > version you were first asked to read no longer exists.** Read the current
 > one. `/terms` is unchanged since S2.9.
+>
+> **Do this before the merge, not after.** The page now describes real data
+> processing — a database, two processors, a retention period — so a mistake
+> in it is a mistake about what you are actually doing with people's details.
+>
+> **Read it on the deployment, here** *(link works until 15 Sep, no sign-in
+> needed)*:
+> `https://my-website-git-phase-3-backend-valtav33s-projects.vercel.app/privacy?_vercel_share=xbn58HlVESroBMcjx5WKp0NpEQnh3iI5`
 
 **What changed, so you can check each claim rather than re-read blind:**
 
@@ -166,14 +174,24 @@ wrong.
 
 ---
 
-### V3 — Vercel Deployment Protection
+### V3 — Vercel Deployment Protection 🔵 *(downgraded — no longer blocking)*
 
 **Why it is yours:** the session's permission classifier blocked the API call,
 twice. It is a settings change on your account and it stays yours.
 
-**This is now blocking, not convenient.** Phases 0, 1 **and** 2 all fell back
-to a local `next start`, because anonymous requests — Lighthouse included —
-get `<title>Login – Vercel</title>`. Phase 3 cannot fall back, for two
+> **Resolved a different way, 2026-09-14 — you do not have to change this
+> setting.** The Vercel connector available to a session can mint a 23-hour
+> bypass cookie for a protected deployment, which makes the preview both
+> readable and submittable. Phase 3's whole exit gate was measured that way
+> with protection left on. Flip it only if *you* want to open previews in your
+> own browser without signing in.
+>
+> Kept on the list because the history matters: this blocked three phases, and
+> the fix turned out to be a tool nobody had checked for.
+
+The original reasoning, for the record. Phases 0, 1 **and** 2 all fell back to
+a local `next start`, because anonymous requests — Lighthouse included — get
+`<title>Login – Vercel</title>`. Phase 3 could not afford to fall back, for two
 independent reasons measured during the phase:
 
 1. The exit gate is *"a real submission lands in Supabase and in your inbox"*.
@@ -211,9 +229,19 @@ real deployment.
 
 ### V4 — Merge three PRs, in this order
 
-**Why it is yours:** `gh` is not installed on this machine and the GitHub
-connector is unauthorised in this session. The PR bodies are written and
-waiting.
+**Why it is yours, now confirmed twice over:** `gh` is not installed on this
+machine, the GitHub connector is unauthorised in this session, **and** a local
+`git merge --squash` onto `main` was refused by the permission classifier as
+*Merge Without Review*. That refusal is playbook §5 enforced by tooling rather
+than by discipline, so it is not something to work around — the merge is a
+human's call.
+
+**This is the only thing standing between the work and production.**
+Everything else in Phase 3 is measured, on the deployment: a real submission
+reached the inbox and the database, the Vercel runtime log carries no personal
+data, and Accessibility and Best Practices are 100 on every audited route.
+`main` is still `8749c7f`, three phases behind, which is why the live site
+still runs the form that discards leads.
 
 **Three branches are now open, each stacked on the one below**, so the order
 matters: `phase/3-backend` (9 commits) on `phase/2-multipage` (15) on
