@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { looksAutomated, validateAuditPayload, type AuditPayload } from "@/lib/audit";
 import { ENVIRONMENT } from "@/lib/env";
+import { archiveLead } from "@/lib/leads";
 import { LeadPathError, classify, logLeadFailure } from "@/lib/logging";
 import { deliver } from "@/lib/notify";
 import { SITE_URL } from "@/lib/site";
@@ -212,6 +213,24 @@ export async function POST(request: Request) {
       },
       { status: 502 },
     );
+  }
+
+  /* The archive, and its failure is deliberately not the visitor's problem.
+     D1: the email above is the delivery, this is the copy. The free tier
+     pauses a project after a week without traffic, so this is the part of the
+     path most likely to be unavailable — and a lead that reached a human is
+     not going to be reported as a failure because its archive copy did not
+     get written. Logged, without the payload, and the visitor is told yes.
+
+     The try/catch lives here rather than inside `archiveLead` on purpose. A
+     function that swallows its own errors reads as one that cannot fail; the
+     non-fatality is a property of this call site and belongs where a reader
+     is looking at the response being returned two lines later. */
+  try {
+    await archiveLead(result.data, ENVIRONMENT);
+  } catch (error) {
+    if (error instanceof LeadPathError) error.log();
+    else logLeadFailure("archive", classify(error));
   }
 
   return accepted();

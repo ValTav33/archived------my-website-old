@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.3 · 2026-09-14 · email delivery — **the stub is gone**
+**Last slice:** S3.4 · 2026-09-14 · lead persistence
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -59,7 +59,7 @@ of this file once they are settled.
 - [x] **S3.1** The env contract · 2026-09-14
 - [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **applied and verified**
 - [x] **S3.3** Email delivery + `/privacy` revision · 2026-09-14 · **← the launch gate** · code complete, **no inbox test yet (V7)**
-- [ ] **S3.4** Lead persistence + `/privacy` revision · needs V6
+- [x] **S3.4** Lead persistence + `/privacy` revision · 2026-09-14
 - [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
 - [ ] **S3.6** Daily retention + keepalive cron · needs V6, D3
 - [ ] **S3.7** Analytics · gated on D4 / V8
@@ -253,6 +253,52 @@ says what deletion actually means. One sentence was **narrowed rather than
 deleted**: name, email and phone are still absent from the server logs, they
 are in the email instead, and the page says exactly that. No database yet, so
 «δεν αποθηκεύονται σε βάση δεδομένων» stays true for one more slice.
+
+**S3.4.** `archiveLead` in `lib/leads.ts` writes the row over PostgREST (D2 —
+no SDK for one insert and one count), called **after** the email and with its
+failure caught at the route's call site rather than swallowed inside the
+function. `Prefer: return=minimal` is there so the response cannot echo the
+row back into reach of a future careless error handler.
+
+*The HTTP contract was verified without touching the real tables' security.* A
+throwaway `public._probe_http_contract` was created with the same column
+shape and a permissive anon policy, the exact request `archiveLead` sends was
+replayed against it, and the table was dropped:
+
+| Check | Result |
+|---|---|
+| Insert with `Prefer: return=minimal` | **201**, `body_bytes=0`, `preference-applied: return=minimal` |
+| A row violating a check constraint | **400**, `23514` — which is what `hintFor(400)` is written for |
+| Greek and `NULL` round-tripped | «Γιώργος Δοκιμαστής» and `brief: null` came back byte-identical |
+| After `drop table` | probe table 404s; `audit_requests` and `audit_rate_limit` still 401, zero policies, zero rows |
+
+*And the failure paths were exercised directly,* by compiling the lead modules
+standalone and calling `archiveLead`:
+
+| Case | Result |
+|---|---|
+| No database configured | `archive` · `not-configured` · hint names `SUPABASE_URL` |
+| Bogus service key against the real project | `archive` · `http-error` · **401** · hint names `SUPABASE_SERVICE_ROLE_KEY` |
+| Unreachable host | `archive` · `network-error` |
+| Every log line, in all three | stage, reason, status, hint — **no payload** |
+
+**Not yet proven:** a successful insert through the route, because that needs
+the service-role key, which no session has or should have. The insert's HTTP
+contract is proven; the key that signs it is V6.
+
+*One thing deliberately left undone.* `/privacy` now says a copy is stored in
+a database in the EU and names Supabase, but **does not state a retention
+period.** That lands in S3.6, in the same commit as the job that enforces it.
+A period this page promises and nothing deletes is the one content error on
+this site with consequences off it, and "the cron lands in twenty minutes" is
+not a basis for writing it down early.
+
+`/privacy` revision 2: «Δεν αποθηκεύονται σε βάση δεδομένων» is gone — the
+sentence the page's own last section promised would change if this ever
+happened. That last section now records that the promise was kept once, in
+the past tense, rather than continuing to promise it in the future. The claim
+that the table is unreachable from a browser is the measured one: eight of
+eight `401 / 42501` with both browser-safe key forms.
 
 ---
 
