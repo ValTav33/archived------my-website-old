@@ -57,7 +57,7 @@ to visitors and are Val's to approve** — see *Decisions changed* at the bottom
 of this file once they are settled.
 
 - [x] **S3.1** The env contract · 2026-09-14
-- [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **SQL unexecuted — see below**
+- [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **applied and verified**
 - [x] **S3.3** Email delivery + `/privacy` revision · 2026-09-14 · **← the launch gate** · code complete, **no inbox test yet (V7)**
 - [ ] **S3.4** Lead persistence + `/privacy` revision · needs V6
 - [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
@@ -119,17 +119,57 @@ open would publish a deletion endpoint.
 plus `lib/leads.ts` for the row contract and `supabase/README.md` for the
 access model, the region and the pausing constraint.
 
-**The verification is incomplete and this is the honest record of it.** The
-spec's verify step is *"the SQL applies cleanly to a fresh database"*. It has
-not been applied to any database. There is no Supabase project for this site
-yet (V6), no local Postgres on this machine and no Docker to start one, and
-applying it to one of the five unrelated projects in the organisation would
-pollute somebody else's schema to test ours. So the SQL has been **reviewed**
-line by line — `gen_random_uuid()` is built in from PG13 and Supabase runs 17;
-`bigint generated always as identity`, the `~` regex check, `revoke all on
-<table>` and the `anon`/`authenticated` roles are all valid on Supabase — but
-reviewed is not verified, and the exit gate's RLS row stays unchecked until it
-runs. **First action once V6 exists**, before S3.4 writes a line against it.
+**Verified against a real database.** *This paragraph replaces the one
+committed with S3.2, which recorded the migration as reviewed-but-unexecuted
+because no project existed. Val approved creating it, so the verification the
+slice was missing is now done and recorded here rather than left as a stale
+caveat.*
+
+The project is **`tavlikos-systems-website`, `eu-central-1` (Frankfurt), free
+tier, €0/month** — created in Val's own organisation, which already held five
+projects, all of them paused, which is the D1 finding in the first place. The
+ref and keys are deliberately **not** in this repository: Val pastes
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `AUDIT_IP_SALT` into
+`.env.local` and Vercel himself (V6), and no session has or needs the
+service-role key.
+
+Migration applied cleanly. Both tables report `rls_enabled: true`, zero
+policies exist in `public`, and every check constraint is present in the
+catalogue as written.
+
+*Seven constraint probes, each asserting a refusal rather than a success,* run
+inside a transaction that was rolled back so nothing was left behind:
+
+| Probe | Result |
+|---|---|
+| `ip_hash` = `212.205.14.7` — a raw IP | **rejected** |
+| `ip_hash` = an **uppercase** sha256 digest | **rejected** |
+| `ip_hash` = a well-formed lowercase digest | accepted |
+| `environment` = `staging` | **rejected** |
+| `name` = one character | **rejected** |
+| `brief` = 2001 characters | **rejected** |
+| A legitimate row with `NULL` website and brief | accepted |
+
+The first one is the property worth having: a raw IP address in that column is
+not discouraged by a comment, it is refused by the database.
+
+*Access verified from outside, with both browser-safe key forms* — the legacy
+`anon` JWT and the modern `sb_publishable_…` key — against the live REST
+endpoint. `SELECT`, `INSERT` and `DELETE` on both tables, with both keys:
+**eight of eight return `401` / `42501 permission denied`.** A request with no
+key at all is refused earlier still.
+
+Worth being precise about *which* mechanism answered, because the two were
+claimed as independent: the hard `42501` comes from the **`revoke`**. RLS with
+zero policies is the second, unexercised layer underneath — if the grants were
+ever restored it would still match no rows. Two failures now stand between a
+browser and a row.
+
+Supabase's own security advisor reports exactly one finding, `INFO`-level
+`rls_enabled_no_policy`, on both tables. **That is the design, not a defect.**
+A future session should not "fix" it by writing a policy: the service role
+bypasses RLS and is the only intended writer, and any policy added here widens
+access to personal data for no caller that exists.
 
 Three properties worth stating, because each replaces a comment with an
 enforced constraint:
