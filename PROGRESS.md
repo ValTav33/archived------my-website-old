@@ -9,11 +9,11 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 2 — Multipage & SEO
-**Branch:** `phase/2-multipage` — **stacked on `phase/1-homepage`, not on `main`**
-**Spec:** `docs/phases/PHASE-2-MULTIPAGE-SEO.md`
-**Last slice:** S2.12 · 2026-09-13 · **all 12 slices done**
-**Blocked on:** nothing automatable. All 12 slices done, every measurable gate met. **Val owns what is left:** read `/privacy` and `/terms` (D3), the phone pass, the keyboard pass, Vercel Deployment Protection, and both PRs — Phase 1's and then this one. **Two things Val owns:** Phase 1's PR (below), and Vercel Deployment Protection, which S2.12 needs.
+**Current phase:** 3 — Backend & Go-Live · **the launch phase**
+**Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
+**Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
+**Last slice:** S3.1 · 2026-09-14 · the env contract
+**Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -27,12 +27,88 @@
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
 
-> **The site is live but NOT launched.** `deliverAuditRequest` is still a stub:
-> a submitted form is validated and then discarded, while the visitor is told
-> they will hear back within 24 hours. Phase 3 wires delivery and is the real
-> launch gate, and Playbook §12 rates the stub Severe. Phase 1 is deliberately
-> front end only — see *Backend is out of scope* in the phase spec, which
-> records Val's decision verbatim. **Do not "helpfully" wire a transport.**
+> **The site is live but NOT launched, and `deliverAuditRequest` is still a
+> stub as of S3.1.** A submitted form is validated and then discarded while
+> the visitor is told they will hear back within 24 hours. Playbook §12 rates
+> that Severe. **S3.3 is the slice that closes it** — and the moment S3.3
+> merges without a Resend key, the form stops promising 24 hours and starts
+> telling visitors to call instead. That is the honest failure, deliberately
+> chosen over a fallback that makes a missing transport look like a working
+> one, but it means the key has to exist before this branch reaches
+> production. See D5 in the phase spec.
+
+---
+
+## Phase 3 — Backend & Go-Live 🚧 IN PROGRESS · **the launch phase**
+
+Wire the form to email and Supabase, revise `/privacy` in the same commit as
+every slice that changes what happens to a submission, decide analytics, and
+ship. Playbook §3's exit gate: *a real submission lands in Supabase and in
+your inbox, **and** `/privacy` describes what now happens to it.*
+Spec: `docs/phases/PHASE-3-BACKEND-GOLIVE.md`.
+
+**D1–D5 recorded in the spec before any slice ran**, per the Phase 2
+precedent. **D3 (retention period) and D4 (analytics yes/no) are commitments
+to visitors and are Val's to approve** — see *Decisions changed* at the bottom
+of this file once they are settled.
+
+- [x] **S3.1** The env contract · 2026-09-14
+- [ ] **S3.2** The `audit_requests` schema, as a committed migration
+- [ ] **S3.3** Email delivery + `/privacy` revision · **← the launch gate** · needs V7
+- [ ] **S3.4** Lead persistence + `/privacy` revision · needs V6
+- [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
+- [ ] **S3.6** Daily retention + keepalive cron · needs V6, D3
+- [ ] **S3.7** Analytics · gated on D4 / V8
+- [ ] **S3.8** Closeout and go-live
+
+**S3.1.** `lib/env.ts` is the only reader of a Phase 3 secret, and
+`.env.example` documents all five. Two rules, pulling opposite ways on
+purpose: **missing is not fatal** — the site still builds and deploys with no
+secrets at all, and the subsystem behind an absent value turns itself off —
+while **malformed is fatal**, naming the variable, because `lib/site.ts`
+already carries the scar of an empty-valued Vercel entry killing a production
+build on a bare `TypeError: Invalid URL`.
+
+*The stated principle is **reject only what is provably wrong; never require a
+format**.* So the checks refuse an empty string, whitespace inside a
+credential, a non-URL, `http`, and a Supabase **publishable** key handed over
+where the service-role key belongs — but they do not assert that a Resend key
+starts with `re_` or that a Supabase host ends in `.supabase.co`, because a
+provider renaming its own prefix should not break a deploy holding a good
+credential.
+
+The publishable-key check is the one worth the code. That key sits next to the
+right one in the dashboard, it is the one every tutorial pastes, and with RLS
+enabled and zero policies it fails as *silence* — a permission error at insert
+time, long after the configuration was declared fine. Both shapes are
+detected: the current `sb_publishable_…` prefix, and the legacy JWT whose
+payload carries `"role":"anon"`.
+
+*Two defects the verification found, neither visible by reading the file.*
+Twenty-one env permutations were compiled and run against the module, and the
+table is why:
+
+1. **The sender validator rejected the exact value `.env.example` tells Val to
+   use.** One regex tried to accept both `name@domain` and
+   `Name <name@domain>` and accepted only the first, so
+   `Tavlikos Systems <info@tavlikossystems.com>` threw. A validator that
+   refuses its own documented value is worse than no validator. Split into two
+   checks.
+2. **The whitespace guard does not do what its comment claimed.** It was
+   documented as catching a key pasted with its trailing newline; `optional`
+   trims first, so the newline never reaches it. The trim is the better
+   behaviour — the credential is right and only the copy was untidy — so the
+   comment was corrected rather than the code.
+
+`AUDIT_IP_SALT` is required as soon as `SUPABASE_URL` is set, rather than
+being its own capability. The alternative is a rate-limit table full of
+unsalted hashes of IPv4 addresses — four billion candidates, reversible in
+seconds, which is a stored IP address with extra steps. One missing variable
+that stops the build beats a privacy claim the table quietly contradicts.
+
+`CRON_SECRET` absent means the maintenance route refuses **every** request.
+That route deletes rows; "the secret is not set yet" is exactly when failing
+open would publish a deletion endpoint.
 
 ---
 
