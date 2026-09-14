@@ -91,8 +91,22 @@ export const SITE = {
      solo-operator objection is the one that kills deals silently. Naming one
      real person is the maximally §2.1-compliant move: the guardrail forbids
      claiming MORE people, never stating the actual one. Phase 2's `/about`
-     route and its `Person` schema read this. */
-  person: "Βαλσάμης Ταυλίκος",
+     route and its `Person` schema read this.
+
+     **Ταβλίκος, with a beta.** It shipped as «Ταυλίκος» from Phase 0 until
+     Val caught it on the live site on 2026-09-14 — his own surname,
+     misspelled in the `Person` JSON-LD node and in the visible copy of `/`,
+     `/about` and `/privacy`. One constant is why the correction is one line
+     instead of a sweep, which is the whole argument for the single-source
+     rule; it is also why the error was uniform enough to survive four
+     phases of review. Do not "fix" this back.
+
+     *Corrected while verifying:* a first draft of this comment claimed the
+     name was also burnt into the generated OG cards. It is not — those
+     render the page title and eyebrow, not the person. The card was opened
+     and looked at rather than assumed, which is the same method that caught
+     the Greek all-caps tonos bug in S2.5. */
+  person: "Βαλσάμης Ταβλίκος",
   siteName: "Tavlikos Systems",
   /** Name used in structured data. Not a registered entity — see playbook §2.2. */
   legalName: "Tavlikos Systems",
