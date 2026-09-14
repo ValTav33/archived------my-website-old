@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import JsonLd from "@/components/seo/JsonLd";
@@ -130,6 +131,23 @@ export default function RootLayout({
         <Footer />
 
         <JsonLd />
+
+        {/* Vercel Analytics — §2.5, and D4 in the Phase 3 spec, approved by
+            Val. Cookieless and identifying no visitor, which is why
+            `/privacy` can name it and still say there is no consent banner
+            and nothing stored in the browser.
+
+            Deliberately bare. No custom events, no goals, no second provider:
+            the cadence in §13 asks for the top entry page once a week, and
+            that is what this answers. Anything more is a tracking decision,
+            and tracking decisions are Val's.
+
+            **It reports nothing locally.** The component injects a script from
+            `/_vercel/insights/script.js`, a path only the platform serves, so
+            a local `next start` gets a 404 for it and no data goes anywhere.
+            That matters for measurement, not for behaviour — see the
+            Lighthouse numbers recorded for S3.7. */}
+        <Analytics />
       </body>
     </html>
   );

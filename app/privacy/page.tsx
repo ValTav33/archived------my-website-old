@@ -73,10 +73,21 @@ export const metadata = routeMetadata("/privacy");
  * is a conversation. Claiming the mailbox is swept too would be the easy
  * sentence and an undefendable one.
  *
+ * *S3.7, this revision* — **analytics** (D4, approved by Val). «Δεν υπάρχουν
+ * analytics» is gone; the section is renamed from «Cookies και
+ * παρακολούθηση» to «Cookies και μέτρηση», because *measurement* is what it
+ * now describes and *tracking* is what the page is still entitled to deny.
+ * The sentence that matters most is the one saying the numbers are not joined
+ * to the form: nothing in the code can connect a page view to a submission,
+ * and a visitor is owed that in plain words rather than left to infer it.
+ * «Τι στοιχεία συλλέγουμε» now points at that section instead of implying the
+ * form is the only thing happening.
+ *
  * Still true at this revision, and checked against the code rather than
- * assumed: no cookies, no `localStorage`, no analytics, no third-party
- * scripts, and zero requests to `fonts.gstatic` or `fonts.googleapis` because
- * `next/font` self-hosts both faces.
+ * assumed: no cookies, no `localStorage`, and zero requests to
+ * `fonts.gstatic` or `fonts.googleapis` because `next/font` self-hosts both
+ * faces. The one third-party script is the analytics script named above,
+ * served from the host's own domain.
  *
  * §8.6 is absolute here: no ΑΦΜ, no myDATA, no τιμολόγιο, no
  * registered-entity language. **Val re-reads this page before the Phase 3 PR
@@ -95,7 +106,8 @@ const SECTIONS: readonly LegalSection[] = [
   {
     heading: "Τι στοιχεία συλλέγουμε",
     body: [
-      "Μόνο όσα συμπληρώνετε μόνοι σας στη φόρμα αιτήματος. Δεν υπάρχει άλλος τρόπος να δώσετε στοιχεία σε αυτόν τον ιστότοπο.",
+      "Προσωπικά στοιχεία: μόνο όσα συμπληρώνετε μόνοι σας στη φόρμα αιτήματος. Δεν υπάρχει άλλος τρόπος να μας δώσετε στοιχεία σε αυτόν τον ιστότοπο.",
+      "Ξεχωριστά από αυτά, μετράμε πόσο διαβάζεται κάθε σελίδα, χωρίς να ξέρουμε ποιος τη διαβάζει. Τι ακριβώς μετράμε, στο «Cookies και μέτρηση» παρακάτω.",
     ],
     list: [
       "Ονοματεπώνυμο",
@@ -132,9 +144,12 @@ const SECTIONS: readonly LegalSection[] = [
     ],
   },
   {
-    heading: "Cookies και παρακολούθηση",
+    heading: "Cookies και μέτρηση",
     body: [
-      "Αυτός ο ιστότοπος δεν χρησιμοποιεί cookies. Δεν υπάρχουν analytics, δεν υπάρχουν pixels, δεν υπάρχουν trackers και δεν αποθηκεύεται τίποτα στον browser σας. Γι' αυτό δεν θα δείτε μπάνερ συγκατάθεσης — δεν υπάρχει κάτι για το οποίο να συναινέσετε.",
+      "Αυτός ο ιστότοπος δεν χρησιμοποιεί cookies και δεν αποθηκεύει τίποτα στον browser σας. Δεν υπάρχουν διαφημιστικά pixels και δεν υπάρχουν trackers που σας ακολουθούν σε άλλους ιστότοπους.",
+      "Μετράμε όμως τις επισκέψεις, με το Vercel Analytics: πόσες φορές ανοίχτηκε κάθε σελίδα, από ποια χώρα, από τι τύπο συσκευής, και από πού ήρθε ο επισκέπτης. Δεν χρησιμοποιεί cookies, δεν σας αναγνωρίζει ως πρόσωπο και δεν σας συνδέει με κάποιο μόνιμο αναγνωριστικό. Το χρησιμοποιούμε για ένα πράγμα: να ξέρουμε ποιες σελίδες διαβάζονται.",
+      "Αυτά τα νούμερα δεν συνδέονται με τη φόρμα. Δεν ξέρουμε — και δεν μπορούμε να δούμε — ποιες σελίδες διάβασε κάποιος που έστειλε αίτημα.",
+      "Γι' αυτό δεν θα δείτε μπάνερ συγκατάθεσης: δεν αποθηκεύουμε τίποτα στον browser σας για το οποίο να χρειάζεται να συναινέσετε.",
       "Οι γραμματοσειρές σερβίρονται από τον ίδιο τον ιστότοπο, όχι από την Google, οπότε η επίσκεψή σας εδώ δεν ενημερώνει κανέναν άλλον ότι ήρθατε.",
     ],
   },
@@ -144,7 +159,8 @@ const SECTIONS: readonly LegalSection[] = [
       "Ο ιστότοπος φιλοξενείται στη Vercel. Όπως κάθε πάροχος φιλοξενίας, η Vercel βλέπει τα τεχνικά στοιχεία κάθε αιτήματος — διεύθυνση IP, πρόγραμμα περιήγησης, σελίδα — για να μπορέσει να σας σερβίρει τη σελίδα.",
       "Το email με το αίτημά σας στέλνεται μέσω της υπηρεσίας Resend, η οποία το παραδίδει στο γραμματοκιβώτιό μας. Για να το κάνει, το περιεχόμενο του μηνύματος — δηλαδή τα στοιχεία που συμπληρώσατε — περνά από τα συστήματά της.",
       "Το αντίγραφο του αιτήματος αποθηκεύεται στη Supabase, στην περιοχή της Φρανκφούρτης. Ο πίνακας δεν διαβάζεται από τις σελίδες του ιστότοπου και δεν είναι προσβάσιμος από κανέναν browser: γράφει σε αυτόν μόνο ο διακομιστής μας, και τον διαβάζουμε μόνο εμείς.",
-      "Κανένας άλλος. Δεν υπάρχει CRM, δεν υπάρχει εργαλείο email marketing και δεν υπάρχει πλατφόρμα analytics συνδεδεμένη με αυτόν τον ιστότοπο.",
+      "Η μέτρηση επισκέψεων γίνεται επίσης από τη Vercel, με το δικό της εργαλείο — δεν προστίθεται τρίτη εταιρεία για αυτό.",
+      "Κανένας άλλος. Δεν υπάρχει CRM, δεν υπάρχει εργαλείο email marketing και δεν υπάρχει διαφημιστικό δίκτυο συνδεδεμένο με αυτόν τον ιστότοπο.",
     ],
   },
   {

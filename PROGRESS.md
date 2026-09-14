@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.6 · 2026-09-14 · the retention and keepalive cron
+**Last slice:** S3.7 · 2026-09-14 · analytics
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -62,7 +62,7 @@ of this file once they are settled.
 - [x] **S3.4** Lead persistence + `/privacy` revision · 2026-09-14
 - [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
 - [x] **S3.6** Daily retention + keepalive cron · 2026-09-14 · **D3 = 24 months**
-- [ ] **S3.7** Analytics · gated on D4 / V8
+- [x] **S3.7** Analytics · 2026-09-14 · **D4 = yes**
 - [ ] **S3.8** Closeout and go-live
 
 **S3.1.** `lib/env.ts` is the only reader of a Phase 3 secret, and
@@ -425,6 +425,62 @@ present; «δεν αποθηκεύεται σε βάση», «δεν καταγ�
 *not* automated: the database copy is deleted on a schedule, the email in the
 mailbox is not, because a mailbox is a conversation. Claiming the mailbox is
 swept too would have been the easier sentence and an undefendable one.
+
+**S3.7.** `@vercel/analytics@2.0.1` in the root layout, bare — no custom
+events, no goals, no second provider. **D4 = yes, Val's decision.** §13's
+weekly cadence has asked for "skim Vercel Analytics for the top entry page"
+since the playbook was written, against a tool that was never installed; it is
+installed now.
+
+*Lighthouse mobile on `/`, before and after, both numbers written down as the
+spec required:*
+
+| | Before | After |
+|---|---|---|
+| Performance | 93 | **93** |
+| Accessibility | 100 | **100** |
+| Best Practices | 100 | **96** |
+| SEO | 100 | **100** |
+| LCP | 3.2 s | 3.2 s |
+| TBT | 10 ms | 0 ms |
+| CLS | 0 | 0 |
+| Requests | 20 | 21 |
+
+**Performance did not move.** The script is deferred and client-injected, so
+it is not in the initial HTML and does not touch LCP — which is the question
+D4 was worried about, answered with a measurement rather than a reassurance.
+
+**Best Practices fell 100 → 96, and the cause is local-only.** Exactly one
+failed request and exactly one console error, both the same thing:
+
+```
+404  http://localhost:3111/_vercel/insights/script.js
+```
+
+That path is served by the platform and by nothing else, so a local
+`next start` cannot resolve it. **This makes a deployment measurement
+mandatory rather than preferable:** Phase 3's budget requires Best Practices
+= 100, and localhost now *cannot* produce that number no matter how correct
+the site is. Together with the exit gate's "a real submission lands in an
+inbox", that is the second independent reason V3 (Deployment Protection) is
+blocking this phase rather than convenient.
+
+*Performance is still 93 against the Phase 3+ budget of 95.* Unchanged by this
+slice, pre-existing since Phase 2, and already a Phase 4 Backlog row with LCP
+3.2 s attached. Recorded again here so the closeout does not have to
+rediscover whether analytics caused it. It did not.
+
+`/privacy` revision 5, and the most careful one. «Δεν υπάρχουν analytics» is
+gone. The heading changed from «Cookies και παρακολούθηση» to «Cookies και
+μέτρηση» — *measurement* is what the section now describes, and *tracking* is
+what the page is still entitled to deny. The sentence that matters most is the
+new one saying the numbers are **not joined to the form**: nothing in the code
+can connect a page view to a submission, and a visitor is owed that in plain
+words rather than left to infer it. «Τι στοιχεία συλλέγουμε» now points at
+that section instead of implying the form is the only thing happening, and the
+processor list says the measurement is Vercel's own tool rather than a third
+company. Verified against the rendered page: four new claims present, three
+retired claims absent.
 
 ---
 
