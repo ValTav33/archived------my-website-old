@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after Phase 3 slices S3.1–S3.7.
+**Last synced:** 2026-09-14, after the first real end-to-end submission.
 
 ---
 
@@ -281,7 +281,7 @@ anything — a Lighthouse number from a stale build is worse than no number.
 
 ## 🔴🟠 Phase 3 — the launch blockers
 
-### V6 — Supabase credentials 🔴
+### ~~V6 — Supabase credentials~~ ✅ *cleared 2026-09-14*
 
 **The project now exists.** You approved creating it, so a session did:
 **`tavlikos-systems-website`, `eu-central-1` (Frankfurt), free tier,
@@ -316,7 +316,7 @@ deployment produces one row.
 
 ---
 
-### V7 — The Resend key 🔴 · **this is the launch gate**
+### ~~V7 — The Resend key~~ ✅ *cleared 2026-09-14 — a real submission was delivered and archived locally*
 
 **Why it is yours:** an account and an API key.
 
@@ -345,7 +345,7 @@ six fields and Greek intact, and you can hit reply and reach the visitor
 
 ---
 
-### V19 — `CRON_SECRET` 🟠
+### V19 — `CRON_SECRET` 🟠 *(generated locally; still needs setting in Vercel)*
 
 **Why it is yours:** a generated secret, same reason as the rest.
 
@@ -371,10 +371,22 @@ successful run.
 
 ---
 
-### V20 — Verify the Resend sending domain 🟠 *(recommended, not blocking)*
+### V20 — Verify the Resend sending domain 🟠 *(upgraded: do this soon)*
 
-Three DNS records on `tavlikossystems.com`. Not on the launch path — that was
-deliberate, so DNS could not hold up the phase — but worth doing soon:
+Three DNS records on `tavlikossystems.com`. **Measured 2026-09-14:** sending
+from `info@tavlikossystems.com` returns
+`403 — The tavlikossystems.com domain is not verified`, so until this is done
+every notification goes out from Resend's sandbox address. That is deliverable
+but spam-prone, which is why this moved up the list.
+
+Your DNS is on **Cloudflare**, so it is three records in a panel you already
+use. Resend scopes its records to a `send.` subdomain plus a
+`resend._domainkey` TXT, so it should not collide with the root `MX` records
+Cloudflare Email Routing uses for `info@tavlikossystems.com` — confirm that on
+Resend's domain page as you add them rather than taking my word for it.
+
+Still not on the launch path — that was deliberate, so DNS could not hold up
+the phase — but worth doing soon:
 
 - Notifications would come **from** `info@tavlikossystems.com` instead of
   Resend's sandbox sender, which is better for deliverability and stops your

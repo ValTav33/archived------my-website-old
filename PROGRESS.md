@@ -13,7 +13,7 @@
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
 **Last slice:** S3.7 · 2026-09-14 · analytics · **S3.8 half done — the gate needs a deployment**
-**Blocked on:** **V3, V6, V7 and V19 in `docs/VAL-ACTIONS.md`** — Deployment Protection, the three Supabase secrets, the Resend key, and `CRON_SECRET`. All seven code slices are done and every failure path is measured; what cannot be measured locally is the success path. **Two independent reasons the gate now needs a deployment:** the exit gate's first line is a real submission landing in an inbox, and since S3.7 localhost *cannot* produce Best Practices = 100 — the analytics script 404s on a path only the platform serves.
+**Blocked on:** **V3 in `docs/VAL-ACTIONS.md`** — Deployment Protection — plus copying the five env values into Vercel for Production and Preview. **V6 and V7 are done:** Val supplied both keys on 2026-09-14 and the success path is measured locally — one real submission delivered and archived, the limiter surviving a process restart, the cron deleting exactly the expired rows. What is left is the same evidence *on a deployment*, and Lighthouse, which localhost can no longer produce a Best Practices 100 for since S3.7. **V20 (verify the sending domain) is now worth doing sooner:** mail goes out from Resend's sandbox address until then, which invites spam-foldering.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -482,7 +482,60 @@ processor list says the measurement is Vercel's own tool rather than a third
 company. Verified against the rendered page: four new claims present, three
 retired claims absent.
 
-### Phase 3 exit gate — what is measured, and what is not
+### Phase 3 exit gate — the success path, measured
+
+**2026-09-14. Val supplied the Supabase service-role key and a Resend key, so
+the success path is no longer theoretical.** Run against the real database and
+the real mail provider, from a local `next start`.
+
+**One real submission, end to end:**
+
+| Check | Result |
+|---|---|
+| `POST /api/audit` with a realistic Greek payload | **HTTP 200** |
+| Mail provider accepted the notification | yes — the route only returns 200 if it did |
+| Rows written to `audit_requests` | **exactly 1** |
+| All six fields intact, Greek unmangled | «Δημήτρης Παπαδόπουλος», «Χάνω εργατοώρες σε χειροκίνητες εργασίες & data entry» — byte-perfect |
+| `website` normalised by the validator | `klinikithess.gr` → `https://klinikithess.gr/` |
+| `environment` stamped | `development`, correctly |
+| **Log swept for name, email, phone, domain, brief text and the caller's IP** | **0 occurrences of all seven** |
+
+The trace line the log *does* carry is the whole of it: `receivedAt`,
+`environment`, `intent`, `hasWebsite: true`, `briefLength: 139`.
+
+**The rate limiter, with a deliberately bogus mail key so nothing was
+emailed:**
+
+| Check | Result |
+|---|---|
+| Submissions 1–5 from one caller | 502 each (bogus key), each recording a slot |
+| Submission 6 | **429** with the Greek message |
+| Submission 7, **after killing the process and starting a fresh one** | **429** — the property the in-memory counter never had |
+| A different caller on that same fresh instance | 502, i.e. **not** limited |
+| Rows the counter stored for the over-limit caller | **exactly 5** — the refusal path does not keep inserting, so the window drains |
+| Every `ip_hash` in the table | 64-char digest; `looks_like_an_ip` false on every row |
+
+**The maintenance job, against seeded rows either side of both clocks:**
+
+| Check | Result |
+|---|---|
+| No `Authorization` header | **401** |
+| Wrong secret | **401** |
+| The real secret | **200** · `{"leads":1,"rateLimit":1,"retentionMonths":24}` |
+| What it deleted | the seeded 25-month-old lead and the 2-hour-old counter row — and **nothing else** |
+| The real submission's row | **survived** |
+| Run again immediately | `{"leads":0,"rateLimit":0}` — idempotent |
+
+Test data was deleted afterwards; both tables are empty, so the first
+production row will be a real lead.
+
+**One line still unconfirmed:** whether the notification *landed in Val's
+inbox* rather than merely being accepted by the provider. Sending from the
+sandbox address (`onboarding@resend.dev`) until V20 verifies the domain makes
+spam-foldering a real possibility, which is the strongest argument for doing
+V20 sooner rather than later.
+
+### What still needs a deployment
 
 Locally measurable rows, all green:
 
@@ -502,10 +555,10 @@ Rows that **cannot** be measured from here, and why:
 
 | Row | Needs |
 |---|---|
-| A real submission lands in Val's inbox, six fields, Greek intact | V7 — the Resend key |
-| The same submission is one row in `audit_requests` | V6 — the three secrets |
-| Runtime logs for that submission contain no PII, **read from the deployment** | V3 + V6 + V7 |
-| Sixth submission → 429, and the counter survives a redeploy | V6, and two deployments |
+| ~~The same submission is one row in `audit_requests`~~ | **done locally, 2026-09-14** |
+| ~~Sixth submission → 429, and the counter survives a restart~~ | **done locally, 2026-09-14** |
+| A real submission lands in Val's **inbox** — accepted by the provider, arrival unconfirmed | Val to check, incl. spam |
+| The same, **from the deployed URL**, with its runtime logs read | V3 |
 | Lighthouse: Perf ≥ 95 · A11y 100 · **BP 100** · SEO 100 | V3 — and BP 100 is now *impossible* on localhost (S3.7) |
 | Real phone pass, keyboard pass, Val re-reads `/privacy` | V1, V2 |
 
