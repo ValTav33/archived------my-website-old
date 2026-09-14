@@ -107,6 +107,20 @@ export const SITE = {
      and looked at rather than assumed, which is the same method that caught
      the Greek all-caps tonos bug in S2.5. */
   person: "Βαλσάμης Ταβλίκος",
+  /**
+   * The same name in the accusative, because **Greek inflects and one
+   * constant cannot serve both cases.**
+   *
+   * S5 shipped «Με τον ${person}» into a build and it rendered «Με τον
+   * Βαλσάμης Ταβλίκος» — nominative in a slot that demands accusative, wrong
+   * in a way no English-speaking reviewer would catch and every Greek
+   * visitor would. The alternative was rephrasing every sentence to dodge the
+   * case, which is writing around the language instead of in it.
+   *
+   * Use `person` after «ο», as a title or a label; use this after «με τον»,
+   * «για τον», «στον».
+   */
+  personAccusative: "Βαλσάμη Ταβλίκο",
   siteName: "Tavlikos Systems",
   /** Name used in structured data. Not a registered entity — see playbook §2.2. */
   legalName: "Tavlikos Systems",
@@ -132,7 +146,7 @@ export const SITE = {
      nobody. Printed beside a `StatusDot` in the hero, the footer and the
      about section; the day this stops being true it has to stop being true
      in one place, not three. */
-  availability: "Διαθέσιμοι για νέα projects",
+  availability: "Διαθέσιμοι για νέα έργα",
 
   social: {
     /* Share/QR tracking params (stkn, mibextid, utm_source) stripped — they

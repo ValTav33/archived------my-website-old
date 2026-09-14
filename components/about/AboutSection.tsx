@@ -27,18 +27,34 @@ import { PORTRAIT, SITE } from "@/lib/site";
  */
 
 const PARAGRAPHS = [
-  /* The heading asks who. This answers it, in the first line, with a name —
-     §2.1's guardrail bans claiming more people than exist, not stating the
-     one who does. A prospect who reads this and then meets Val meets exactly
-     who the page said. */
-  `Το ${SITE.brand} είναι ο ${SITE.person}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα, remote. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
-  "Κατασκευάζουμε δύο πράγματα. Ιστοσελίδες και web εφαρμογές που φορτώνουν γρήγορα, και αυτοματισμούς που αναλαμβάνουν δουλειά ρουτίνας που σήμερα γίνεται με το χέρι.",
-  /* S2 stripped the false half of this paragraph; S5 rewrites the section. */
-  "Κάθε έργο ξεκινά με γραπτή συμφωνία για το τι παραδίδεται και ποιος διαχειρίζεται τι.",
-  /* The "what we do not do" line. Every clause here is a promise NOT to do
+  /* **The heading asks «Με ποιον θα δουλέψετε». This answers it in three
+     words**, which is the whole fix S5 made.
+
+     It used to open «Το {brand} είναι ο {person}» — Val's objection, and he
+     was right twice over: it equates a company with a human being, which is
+     not a sentence that means anything, and it answers a question nobody
+     asked. Naming him is still required (§2.1 bans claiming more people than
+     exist, never stating the one who does); answering the actual question is
+     what changed.
+
+     «εξ αποστάσεως» rather than «remote» — plain Greek where plain Greek
+     exists, §2.4. No premises noun anywhere in here: §2.1 bans «το γραφείο
+     μας» and «έδρα» is the same claim in a more formal register. */
+  `Με τον ${SITE.personAccusative}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα εξ αποστάσεως. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
+  "Κατασκευάζουμε δύο πράγματα: ιστοσελίδες και web εφαρμογές φτιαγμένες από την αρχή για τη δική σας δουλειά, και αυτοματισμούς που αναλαμβάνουν τη ρουτίνα η οποία σήμερα τρώει ώρες με το χέρι.",
+  /* Replaces the ownership promise S2 removed. The anxiety is the same one —
+     "what do I actually end up with" — answered from what holds in every
+     package instead of from one that does not. */
+  "Κάθε έργο ξεκινά με γραπτή συμφωνία: τι μπαίνει, τι δεν μπαίνει, και ποιος κρατά τι στο τέλος. Τα πακέτα διαφέρουν· αυτό που δεν αλλάζει είναι ότι το ξέρετε πριν συμφωνήσετε, όχι μετά.",
+  /* The "what we do not do" line. Every clause is a promise NOT to do
      something, which is the only kind of claim that costs the writer
-     something — and the only kind §8 lets us make without evidence. */
-  "Δεν δουλεύουμε με έτοιμα templates, δεν αφήνουμε εκπλήξεις για το τέλος και δεν υποσχόμαστε θέσεις στη Google.",
+     something — and the only kind §8 lets us make without evidence.
+
+     These three are deliberately three of the four refusals `/about`
+     expands, and «εκπλήξεις στο τέλος» is deliberately the one left out:
+     the paragraph above already makes that point on this page, and D1 says a
+     homepage section states while the deeper page explains. */
+  "Δεν δουλεύουμε με έτοιμα templates, δεν υποσχόμαστε θέσεις στη Google, και δεν αναλαμβάνουμε δουλειά που δεν μπορούμε να κάνουμε καλά.",
 ] as const;
 
 export default function AboutSection() {

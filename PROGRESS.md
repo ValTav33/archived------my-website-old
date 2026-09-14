@@ -12,7 +12,7 @@
 **Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
 **Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
 **Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S3 · 2026-09-14 · technology names removed
+**Last slice:** S5 · 2026-09-14 · the homepage about copy
 **Blocked on:** Val's approval on two pieces of copy — the FAQ set (S4) and the `/about` draft (S5). Everything else in the phase can proceed without him. **Phase 4 follows this, not Phase 3.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -59,7 +59,7 @@ rejected paragraph would drag ten design commits with it.
 - [x] **S2** Accounts and ownership · 2026-09-14 · **14 files, not 8**
 - [x] **S3** Remove the technology names · 2026-09-14 · **18 files** · closes V10
 - [ ] **S4** The FAQ · **copy needs Val's approval**
-- [ ] **S5** `/about` · **draft needs Val's approval**
+- [x] **S5** The homepage about copy · 2026-09-14 · Val: «άλλαξέ το τελείως»
 - [ ] **S6** `/pricing`
 - [ ] **S7** Closeout
 
@@ -187,6 +187,48 @@ Greek SMB owner may genuinely recognise, so rewriting it is a content decision
 rather than a sweep — and it is the first thing a lead interacts with. Backlog
 row carries the caveat that the list is both a server-side whitelist and a
 stored value.
+
+**S5.** Val read the draft and rejected the opening outright: *«Το Tavlikos
+Systems είναι ο Βαλσάμης Ταβλίκος» δεν βγάζει καν νόημα.* He was right twice
+over — it equates a company with a human being, which is not a sentence that
+means anything, and it answers a question nobody asked.
+
+**The section's heading is «Με ποιον θα δουλέψετε.» The first line now
+answers it: «Με τον Βαλσάμη Ταβλίκο.»** That is the whole fix, and it took
+rejecting the sentence rather than polishing it.
+
+Also in this rewrite: «εξ αποστάσεως» replaces «remote», the second paragraph
+says what the work *solves* instead of what it *is*, and the third — the one
+S2 left as a stub after removing the ownership promise — now answers the same
+anxiety from what holds in every package: *τι μπαίνει, τι δεν μπαίνει, και
+ποιος κρατά τι στο τέλος.* The refusal line is deliberately **three** of the
+four refusals `/about` expands; «εκπλήξεις στο τέλος» is left out because the
+paragraph above already makes that point on this page.
+
+**No premises noun anywhere in it.** §2.1 bans «το γραφείο μας»; «έδρα» is
+the same claim in a more formal register, and it was considered and rejected
+while drafting.
+
+*A Greek-language defect that shipped into a build and was caught by reading
+the rendered page.* «Με τον ${SITE.person}» rendered as **«Με τον Βαλσάμης
+Ταβλίκος»** — nominative in a slot that demands accusative. Wrong in a way no
+English-speaking reviewer would notice and every Greek visitor would, and the
+second time this project has been bitten by Greek inflection after the
+all-caps tonos bug in S2.5.
+
+**The fix is a second constant, not a rephrase.** `SITE.personAccusative`
+exists now, because Greek inflects and one constant cannot serve both cases —
+`person` after «ο» or as a title, `personAccusative` after «με τον», «για
+τον», «στον». Rewording every sentence to dodge the case would be writing
+around the language instead of in it.
+
+Swept while there: `SITE.availability` read «Διαθέσιμοι για νέα projects» and
+now reads «…νέα έργα». Zero occurrences of `projects` anywhere on the site.
+
+*Sentence-overlap measurement between `/` and `/about`* — the Phase 2 D1
+property — **one common sentence, and it is the footer's**, which renders on
+all eleven routes and is chrome rather than section content. Zero overlap in
+the copy the two pages actually own.
 
 **A process failure worth recording, since §7 exists to catch exactly this.**
 S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
