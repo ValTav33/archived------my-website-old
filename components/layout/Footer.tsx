@@ -172,7 +172,7 @@ export default function Footer() {
             © {YEAR}. Κατασκευασμένο με Next.js, Tailwind &amp; TypeScript.
           </p>
           <p className="font-mono text-mono-xs text-ink-ghost">
-            Ο κώδικας παραδίδεται δικός σας — χωρίς εξάρτηση από πλατφόρμα.
+            Γραπτό εύρος πριν την κατασκευή — χωρίς εκπλήξεις στην παράδοση.
           </p>
         </div>
       </div>

@@ -33,11 +33,12 @@ const PARAGRAPHS = [
      who the page said. */
   `Το ${SITE.brand} είναι ο ${SITE.person}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα, remote. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
   "Κατασκευάζουμε δύο πράγματα. Γρήγορα site και web εφαρμογές σε Next.js, και αυτοματισμούς που αναλαμβάνουν δουλειά ρουτίνας που σήμερα γίνεται με το χέρι.",
-  "Κάθε έργο παραδίδεται με τον κώδικα δικό σας και τεκμηριωμένη εγκατάσταση. Δεν κλειδώνετε ούτε σε πλατφόρμα ούτε σε προμηθευτή.",
+  /* S2 stripped the false half of this paragraph; S5 rewrites the section. */
+  "Κάθε έργο ξεκινά με γραπτή συμφωνία για το τι παραδίδεται και ποιος διαχειρίζεται τι.",
   /* The "what we do not do" line. Every clause here is a promise NOT to do
      something, which is the only kind of claim that costs the writer
      something — and the only kind §8 lets us make without evidence. */
-  "Δεν δουλεύουμε με έτοιμα templates, δεν κρατάμε τον κώδικά σας όμηρο και δεν υποσχόμαστε θέσεις στη Google.",
+  "Δεν δουλεύουμε με έτοιμα templates, δεν αφήνουμε εκπλήξεις για το τέλος και δεν υποσχόμαστε θέσεις στη Google.",
 ] as const;
 
 export default function AboutSection() {

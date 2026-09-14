@@ -44,7 +44,12 @@ const ROUTE = getRoute("/about");
 /** Why each refusal is a refusal. The homepage states them; this explains them. */
 const REFUSALS = [
   "Όχι έτοιμα templates: ένα template σας δίνει το site κάποιου άλλου με το λογότυπό σας πάνω, και κάθε αλλαγή παλεύει με ό,τι υπήρχε από πριν.",
-  "Όχι όμηρος ο κώδικας: το repository είναι στο όνομά σας από την πρώτη μέρα, όχι σε ένα δικό μας που σας δίνει πρόσβαση.",
+  /* S3.5 S2 replaced the code-ownership refusal that stood here. It promised
+     the repository was in the client's name from day one, which is not true
+     of every package (D2). The anxiety it addressed is real, so it is
+     answered from what *is* true in all of them: nothing about the handover
+     is discovered at the end. */
+  "Όχι εκπλήξεις στο τέλος: τι παραδίδεται, πού ζει το έργο και ποιος κρατά τους λογαριασμούς συμφωνούνται γραπτά πριν ξεκινήσουμε.",
   "Όχι υποσχέσεις για θέσεις στη Google: κανείς δεν ελέγχει την κατάταξη. Ελέγχουμε το πόσο γρήγορα φορτώνει, το πώς διαβάζεται και το τι βρίσκει ένας crawler.",
   "Όχι δουλειά που δεν μπορούμε να κάνουμε καλά: αν αυτό που ζητάτε δεν είναι για εμάς, θα σας το πούμε στην πρώτη κλήση και όχι στην τρίτη εβδομάδα.",
 ] as const;

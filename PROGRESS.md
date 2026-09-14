@@ -12,7 +12,7 @@
 **Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
 **Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
 **Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S1 · 2026-09-14 · the surname
+**Last slice:** S2 · 2026-09-14 · accounts and ownership
 **Blocked on:** Val's approval on two pieces of copy — the FAQ set (S4) and the `/about` draft (S5). Everything else in the phase can proceed without him. **Phase 4 follows this, not Phase 3.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -56,7 +56,7 @@ reviewer cannot tell a scroll-reveal regression from a sentence change, and a
 rejected paragraph would drag ten design commits with it.
 
 - [x] **S1** The surname · 2026-09-14
-- [ ] **S2** Accounts and ownership · 8 files
+- [x] **S2** Accounts and ownership · 2026-09-14 · **14 files, not 8**
 - [ ] **S3** Remove the technology names · 11 files · **closes V10**
 - [ ] **S4** The FAQ · **copy needs Val's approval**
 - [ ] **S5** `/about` · **draft needs Val's approval**
@@ -91,6 +91,46 @@ correction rather than quietly dropping the claim.
 *Noticed while looking at that card, logged rather than fixed:* it prints
 «ΠΟΙΟΙ ΕΙΜΑΣΤΕ» as an eyebrow directly above the title «Ποιοι είμαστε» — the
 same words twice. Backlog, Phase 4, one shared template across eleven routes.
+
+**S2.** Three claims lived tangled together and all three are resolved per
+D1 and D2:
+
+| Claim | Outcome |
+|---|---|
+| domain/hosting end up in the client's name | **replaced by the choice** — hold them yourself or we hold them, decided on how much time you want to spend administering them |
+| the code and repository are the client's | **removed** |
+| «δεν κρατάμε τον κώδικά σας όμηρο», zero lock-in | **removed** — it only meant something beside the claim above |
+
+**My survey undercounted this badly, and the number is the finding.** The spec
+scoped 8 files. It is **14**, because the initial grep searched «δικό σας»,
+«repository» and «όμηρο» but not the nominative «δικός σας» — and that
+inflection is where the claim actually lived:
+
+- **`HeroSection`** — `TRUST_POINTS[0]` read «Ο κώδικας παραδίδεται δικός σας». **In the hero, on the homepage, first screen of every visit.**
+- **`Footer`** — on all eleven routes, hence six hits in a nine-route sample before the fix
+- **`/websites` `<h1>`** — «…με κώδικα που μένει δικός σας», the page's main heading
+- `DirectContactCard` — listed as one of four guarantees beside the form
+- `lib/routes.ts` — the `/process` and `/terms` meta descriptions
+
+A grep is only as good as the inflection you guess. The lesson for later
+content sweeps in Greek: **search the stem, not a form** — `κώδικ`, not
+`κώδικα δικό σας`. That single change is what surfaced all six.
+
+*What replaced the hero line matters more than that it was removed.* «Γραπτό
+εύρος πριν την κατασκευή» is demonstrable in the same breath, because process
+step 02 already says exactly that — §11.5 requires every trust point to be
+demonstrable today, and a hero bullet is the worst place to keep one that is
+not.
+
+`/terms` got the D2 treatment and **still answers its own heading**, verified
+by reading the rendered section: this site's own code is ours, delivery and
+ownership are agreed in writing per project because packages differ, and
+content the client supplies stays theirs.
+
+**Verified on rendered HTML across all eleven routes**, ten probes covering
+every inflection of the claim — `repository`, `όμηρο`, `στο όνομά σας`,
+`κλείδωμα`, `παραδίδεται δικός σας` and the rest: **zero occurrences of all
+ten**. The new phrasings are present where intended.
 
 **A process failure worth recording, since §7 exists to catch exactly this.**
 S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
