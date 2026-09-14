@@ -1,6 +1,7 @@
 import LegalDocument, {
   type LegalSection,
 } from "@/components/legal/LegalDocument";
+import { RETENTION_MONTHS } from "@/lib/maintenance";
 import { routeMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -61,6 +62,17 @@ export const metadata = routeMetadata("/privacy");
  * character digest, and the salt is required configuration precisely so the
  * digest cannot be brute-forced back into an address.
  *
+ * *S3.6, this revision* — **the retention period, stated at last, in the same
+ * commit as the job that enforces it.** `RETENTION_MONTHS` is interpolated
+ * rather than typed as a word, so the page and the deletion cannot disagree
+ * about the number: changing one changes both, and there is no version of
+ * this file where the policy says 24 and the cron says something else.
+ *
+ * The page is also careful about what is *not* automated. The database copy is
+ * deleted on a schedule; the email in the mailbox is not, because a mailbox
+ * is a conversation. Claiming the mailbox is swept too would be the easy
+ * sentence and an undefendable one.
+ *
  * Still true at this revision, and checked against the code rather than
  * assumed: no cookies, no `localStorage`, no analytics, no third-party
  * scripts, and zero requests to `fonts.gstatic` or `fonts.googleapis` because
@@ -101,6 +113,14 @@ const SECTIONS: readonly LegalSection[] = [
       "Κρατάμε και ένα αντίγραφο σε βάση δεδομένων, ώστε ένα αίτημα να μη χαθεί αν χαθεί ή διαγραφεί ένα email. Η βάση βρίσκεται σε διακομιστές εντός Ευρωπαϊκής Ένωσης, στη Φρανκφούρτη.",
       "Το email με το αίτημά σας μένει επίσης στο γραμματοκιβώτιό μας, όσο χρειάζεται για να απαντήσουμε και για να υπάρχει ιστορικό της συνομιλίας μας.",
       "Δεν στέλνουμε ενημερωτικά email. Αν δεν έχετε στείλει αίτημα, δεν έχουμε κανένα στοιχείο σας.",
+    ],
+  },
+  {
+    heading: "Πόσο καιρό τα κρατάμε",
+    body: [
+      `Το αντίγραφο στη βάση διαγράφεται αυτόματα ${RETENTION_MONTHS} μήνες μετά την υποβολή. Δεν είναι υπόσχεση που τηρούμε με το χέρι: μια προγραμματισμένη εργασία τρέχει κάθε μέρα και σβήνει ό,τι έχει περάσει το όριο.`,
+      "Ο αριθμός που αντικαθιστά τη διεύθυνση IP σβήνεται πολύ πιο γρήγορα — μία ώρα.",
+      "Το email στο γραμματοκιβώτιό μας δεν σβήνεται αυτόματα, γιατί είναι η συνομιλία μας μαζί σας. Αν θέλετε να φύγει, ζητήστε το και φεύγει.",
     ],
   },
   {

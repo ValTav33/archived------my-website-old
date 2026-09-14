@@ -25,7 +25,8 @@ import { LeadPathError } from "@/lib/logging";
 
 /** Five submissions per hour. Unchanged from S0.6. */
 export const RATE_LIMIT = 5;
-const RATE_WINDOW_MS = 60 * 60 * 1000;
+/** Exported so the maintenance job prunes on exactly this clock. */
+export const RATE_WINDOW_MS = 60 * 60 * 1000;
 
 /** A slow database must not hold a serverless invocation open. */
 const TIMEOUT_MS = 5_000;

@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.5 · 2026-09-14 · the shared rate limiter
+**Last slice:** S3.6 · 2026-09-14 · the retention and keepalive cron
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -61,7 +61,7 @@ of this file once they are settled.
 - [x] **S3.3** Email delivery + `/privacy` revision · 2026-09-14 · **← the launch gate** · code complete, **no inbox test yet (V7)**
 - [x] **S3.4** Lead persistence + `/privacy` revision · 2026-09-14
 - [x] **S3.5** The shared rate limiter · 2026-09-14 · **closes three Backlog rows**
-- [ ] **S3.6** Daily retention + keepalive cron · needs V6, D3
+- [x] **S3.6** Daily retention + keepalive cron · 2026-09-14 · **D3 = 24 months**
 - [ ] **S3.7** Analytics · gated on D4 / V8
 - [ ] **S3.8** Closeout and go-live
 
@@ -365,6 +365,66 @@ replaces, so the page states it rather than simplifying: the IP is no longer
 kept in server memory — it is not kept at all. What is kept is a keyed digest
 of it, in a separate table with nothing linking it to the submission, for at
 most an hour.
+
+**S3.6.** `lib/maintenance.ts`, `app/api/cron/maintenance/route.ts` and
+`vercel.json` — one job at 04:00 UTC daily (07:00 Athens; the Hobby plan's
+cron ceiling is one run a day).
+
+**D3 is settled at 24 months, Val's decision**, and `RETENTION_MONTHS` is
+**interpolated into `/privacy`** rather than typed there as a word. There is
+no version of this repository where the policy says one number and the
+deletion uses another.
+
+*Two purposes, one mechanism, deliberately.* The job enforces retention, and
+it is also what stops the free-tier project pausing — the constraint behind
+D1. Because one call does both, the keepalive cannot be deleted without the
+retention promise on `/privacy` visibly breaking at the same time. Stated
+precisely, because the distinction matters: Supabase's inactivity detection is
+about **project activity**, not specifically writes, so what keeps the project
+awake is that this runs daily and makes authenticated calls. The deletions are
+what make the retention claim true.
+
+*The DELETE contract and its boundary, measured against the live database* on
+a throwaway table seeded either side of a 24-month line, then dropped:
+
+| Check | Result |
+|---|---|
+| `DELETE …?created_at=lt.<cutoff>` with `Prefer: return=minimal,count=exact` | **204**, zero-byte body, `preference-applied: return=minimal, count=exact` |
+| The affected count | `content-range: */3` — read from **after** the slash |
+| A second run with nothing expired | `*/0` → `0`, not an error |
+| Rows one day inside the boundary | **kept** |
+| Rows at 25 months and 24 months + 1 second | **deleted** |
+
+The count is reported as `null` rather than `0` when the header is missing.
+Reporting a confident zero for "could not tell" is how a retention job gets
+believed while doing nothing.
+
+*Authentication, measured in both configurations:*
+
+| Caller | No `CRON_SECRET` set | Secret set |
+|---|---|---|
+| No `Authorization` header | **401** | **401** |
+| `Bearer` + wrong secret | **401** | **401** |
+| `Basic` instead of `Bearer` | **401** | **401** |
+| The correct secret, one character short | **401** | **401** |
+| **The correct secret** | **401** | 502 · `maintenance / not-configured`, no database yet |
+
+**The first column is the property worth having.** With no secret configured
+the route refuses *everything, including the correct secret* — it deletes
+rows, and "the secret has not been set yet" is precisely the moment when
+failing open would publish a public deletion endpoint on a site holding other
+people's personal data. The token comparison is constant-time over SHA-256
+digests of both sides, so a length mismatch neither throws nor leaks the
+expected length.
+
+`/privacy` revision 4: a new «Πόσο καιρό τα κρατάμε» section. Verified against
+the **rendered** page rather than the source — «24 μήνες μετά την υποβολή»,
+«Πόσο καιρό τα κρατάμε», Supabase, Resend, Φρανκφούρτη and «μία ώρα» all
+present; «δεν αποθηκεύεται σε βάση», «δεν καταγράφονται πουθενά» and «μνήμη
+του διακομιστή» all **absent**. The section is also careful about what is
+*not* automated: the database copy is deleted on a schedule, the email in the
+mailbox is not, because a mailbox is a conversation. Claiming the mailbox is
+swept too would have been the easier sentence and an undefendable one.
 
 ---
 
