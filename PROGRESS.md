@@ -529,11 +529,17 @@ emailed:**
 Test data was deleted afterwards; both tables are empty, so the first
 production row will be a real lead.
 
-**One line still unconfirmed:** whether the notification *landed in Val's
-inbox* rather than merely being accepted by the provider. Sending from the
-sandbox address (`onboarding@resend.dev`) until V20 verifies the domain makes
-spam-foldering a real possibility, which is the strongest argument for doing
-V20 sooner rather than later.
+**Confirmed by Val, 2026-09-14: the email arrived.** That closes the last
+line of the exit gate that could be closed from here. Playbook §12's Severe
+risk — *"site launches with a form that discards leads"* — is now closed by
+demonstration rather than by code review, which is what §12 said the gate had
+to be.
+
+Mail still goes out from the sandbox address `onboarding@resend.dev` until
+V20 verifies the domain. It is deliverable, as just proven, but a lead
+notification that looks like it came from a stranger's domain is one spam
+filter away from being missed, and the whole point of this phase is that a
+lead cannot be missed.
 
 ### What still needs a deployment
 
@@ -557,7 +563,7 @@ Rows that **cannot** be measured from here, and why:
 |---|---|
 | ~~The same submission is one row in `audit_requests`~~ | **done locally, 2026-09-14** |
 | ~~Sixth submission → 429, and the counter survives a restart~~ | **done locally, 2026-09-14** |
-| A real submission lands in Val's **inbox** — accepted by the provider, arrival unconfirmed | Val to check, incl. spam |
+| ~~A real submission lands in Val's inbox~~ | **confirmed by Val, 2026-09-14** |
 | The same, **from the deployed URL**, with its runtime logs read | V3 |
 | Lighthouse: Perf ≥ 95 · A11y 100 · **BP 100** · SEO 100 | V3 — and BP 100 is now *impossible* on localhost (S3.7) |
 | Real phone pass, keyboard pass, Val re-reads `/privacy` | V1, V2 |
