@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { looksAutomated, validateAuditPayload, type AuditPayload } from "@/lib/audit";
+import { ENVIRONMENT } from "@/lib/env";
+import { LeadPathError, classify, logLeadFailure } from "@/lib/logging";
+import { deliver } from "@/lib/notify";
 import { SITE_URL } from "@/lib/site";
 
-/* Uses the Node runtime because the delivery integrations wired in below
-   (Nodemailer / Resend SDK / signed webhook push) expect Node APIs. */
+/* Node runtime. `lib/env.ts` decodes a JWT payload with `Buffer` to catch a
+   publishable key pasted where the service-role key belongs, and S3.5's IP
+   hash uses `node:crypto`. Neither exists on the edge runtime. */
 export const runtime = "nodejs";
 
 /* ------------------------------------------------------------------ */
@@ -105,31 +109,33 @@ const accepted = () =>
   );
 
 /**
- * DELIVERY STUB.
+ * Delivers the request, and is the only thing the visitor's success response
+ * depends on.
  *
- * Replace the body with exactly one of the following once credentials exist:
+ * **This function was a stub for three phases.** A submission was validated
+ * and then dropped while the form promised a reply within 24 hours — the one
+ * risk playbook §12 rates Severe, and the reason the site was live but not
+ * launched. S3.3 is the slice that closed it.
  *
- *   Resend:
- *     const resend = new Resend(process.env.RESEND_API_KEY);
- *     await resend.emails.send({ from, to, subject, text });
- *
- *   n8n webhook:
- *     await fetch(process.env.N8N_AUDIT_WEBHOOK_URL!, {
- *       method: "POST",
- *       headers: { "Content-Type": "application/json" },
- *       body: JSON.stringify(payload),
- *     });
- *
- * Kept as its own function so the route's contract (validate -> deliver ->
- * respond) doesn't change when the transport does.
+ * Still its own function, because the route's contract is `validate ->
+ * deliver -> respond` and that shape should not change when the transport
+ * does. S3.4 adds the archive write behind the email, in this order and not
+ * the reverse: see D1 in the phase spec, and `supabase/README.md` for the
+ * free-tier pausing behaviour that forced it.
  */
 async function deliverAuditRequest(payload: AuditPayload): Promise<void> {
-  /* Until a transport is wired, the console is the sink.
-     Nothing identifying goes in here. Name, email and phone must never reach
-     a log line: Vercel logs are retained, searchable and shared with anyone
-     holding project access, and there is no lawful basis recorded for that. */
-  console.info("[audit] request accepted", {
+  await deliver(payload, ENVIRONMENT);
+
+  /* The trace that survives. Nothing identifying goes in here — name, email
+     and phone must never reach a log line, because Vercel logs are retained,
+     searchable and readable by anyone holding project access, and there is no
+     lawful basis recorded for keeping them there. `/privacy` states this to
+     visitors, and it is the one sentence on that page this slice narrowed
+     rather than replaced: the three fields are still absent from the logs,
+     they are now in an email instead. */
+  console.info("[audit] request delivered", {
     receivedAt: new Date().toISOString(),
+    environment: ENVIRONMENT,
     intent: payload.intent,
     hasWebsite: Boolean(payload.website),
     briefLength: payload.brief.length,
@@ -189,8 +195,15 @@ export async function POST(request: Request) {
     await deliverAuditRequest(result.data);
   } catch (error) {
     /* The visitor filled the form correctly — this failure is ours, so it
-       must not be reported as a validation problem. */
-    console.error("[audit] delivery failed", error);
+       must not be reported as a validation problem.
+
+       The error object is never logged. A mail API's 4xx can echo the
+       recipient and the message body it rejected, which would put the whole
+       payload in a log line from code that looks careful; `lib/logging.ts`
+       makes that unexpressible rather than merely discouraged. */
+    if (error instanceof LeadPathError) error.log();
+    else logLeadFailure("mail", classify(error));
+
     return NextResponse.json(
       {
         success: false,

@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.2 · 2026-09-14 · the leads schema, as a committed migration
+**Last slice:** S3.3 · 2026-09-14 · email delivery — **the stub is gone**
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -27,15 +27,19 @@
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
 
-> **The site is live but NOT launched, and `deliverAuditRequest` is still a
-> stub as of S3.1.** A submitted form is validated and then discarded while
-> the visitor is told they will hear back within 24 hours. Playbook §12 rates
-> that Severe. **S3.3 is the slice that closes it** — and the moment S3.3
-> merges without a Resend key, the form stops promising 24 hours and starts
-> telling visitors to call instead. That is the honest failure, deliberately
-> chosen over a fallback that makes a missing transport look like a working
-> one, but it means the key has to exist before this branch reaches
-> production. See D5 in the phase spec.
+> **`deliverAuditRequest` is no longer a stub.** S3.3 wired it to a real mail
+> transport, so the form no longer validates a submission and discards it —
+> the risk playbook §12 rates Severe is closed *in code*. What is not yet
+> proven is the thing the exit gate asks for: **no submission has ever landed
+> in an inbox**, because there is no Resend key (V7).
+>
+> **A consequence to understand before this branch reaches production.** With
+> no key configured, a correctly filled form now returns 502 and tells the
+> visitor to call instead of promising 24 hours. That is deliberate — it is
+> the honest failure, chosen over a fallback that makes a missing transport
+> look like a working one (D5) — but it means the key has to exist *before*
+> the merge, not after. Today's silent false success is worse; a loud honest
+> failure on the live site is still not something to ship on purpose.
 
 ---
 
@@ -54,7 +58,7 @@ of this file once they are settled.
 
 - [x] **S3.1** The env contract · 2026-09-14
 - [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **SQL unexecuted — see below**
-- [ ] **S3.3** Email delivery + `/privacy` revision · **← the launch gate** · needs V7
+- [x] **S3.3** Email delivery + `/privacy` revision · 2026-09-14 · **← the launch gate** · code complete, **no inbox test yet (V7)**
 - [ ] **S3.4** Lead persistence + `/privacy` revision · needs V6
 - [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
 - [ ] **S3.6** Daily retention + keepalive cron · needs V6, D3
@@ -154,6 +158,61 @@ the database, so nothing proves a column exists. What it proves is that a
 field added to the form cannot reach an insert without this file failing to
 compile — "you will be stopped and told to write a migration", not "the
 migration was written".
+
+**S3.3 — the slice three phases were waiting for.** `lib/notify.ts` sends the
+request as plain-text email through Resend; `deliverAuditRequest` calls it;
+`lib/logging.ts` is the failure logger; `/privacy` revised in the same commit.
+
+**What is proven, measured on a local `next start` with ten probes:**
+
+| Case | Result |
+|---|---|
+| Valid submission, **no** mail key | 502 · «Η αποστολή απέτυχε προσωρινά…» |
+| Valid submission, **invalid** mail key | 502 · provider answered 401, logged as `status: 401` with an authored hint |
+| Honeypot filled | 200, nothing sent |
+| Submitted in 40 ms | 200, nothing sent |
+| No `elapsedMs` at all | 200, nothing sent |
+| Bad email | 422 with the per-field Greek message |
+| Wrong `Origin` / no `Origin` | 403 |
+| Malformed JSON | 400 |
+| `GET` | 405 with `Allow: POST` |
+| **Server log swept for the probe's name, email and phone** | **zero occurrences** |
+
+**What is not proven:** that an email arrives. That needs V7's key, and it is
+the exit gate's first line.
+
+*The design decision worth recording.* `lib/logging.ts` does not scrub error
+objects — **it makes logging one impossible.** `console.error("…", error)` on
+a mail or PostgREST failure can echo the recipient and the rejected body into
+a log line from code that looks careful, so no caller may pass an error
+object: callers pass a stage, a reason from a fixed union, an HTTP status, and
+a `hint` written in this repository. The cost is provider detail, and it is
+smaller than it looks — for this API the status *is* the diagnosis (401 bad
+key, 403 unverified sender, 422 rejected field), so that mapping lives on our
+side of the boundary.
+
+*A caught self-inflicted error, worth the line because it is the exact class
+§8 exists to prevent.* The notification's closing line first read
+«κλήση 15 λεπτών + γραπτή σύνοψη εντός 24 ωρών» — a **retyped paraphrase** of
+the promise, under a comment claiming it was the shared constant. S1.7's exit
+condition was that every surface interpolate `AUDIT_DELIVERABLE` character for
+character. Now it does, so the notification quotes back the clock the visitor
+actually read.
+
+Two smaller decisions: the email carries `reply_to` set to the visitor's
+address, so answering a lead is one tap rather than a copy-paste; and
+`AUDIT_NOTIFY_TO` was added to the env contract because Resend refuses to
+deliver anywhere except the account's own address until a sending domain is
+verified — a hardcoded `SITE.email` would have failed with a 403 on the single
+submission the exit gate cares about.
+
+`/privacy` revision 1 of this phase: the request now arrives **as an email**
+and is kept in a mailbox, Resend is named as a processor, and the deletion
+sentence — which said a deletion request usually has nothing to delete — now
+says what deletion actually means. One sentence was **narrowed rather than
+deleted**: name, email and phone are still absent from the server logs, they
+are in the email instead, and the page says exactly that. No database yet, so
+«δεν αποθηκεύονται σε βάση δεδομένων» stays true for one more slice.
 
 ---
 

@@ -131,11 +131,21 @@ export type MailConfig = {
   apiKey: string;
   /**
    * Envelope sender. Until the sending domain is verified in the mail
-   * provider, this has to be the provider's own sandbox address — which can
-   * only send to the account holder, and the account holder is the only
-   * recipient this phase has.
+   * provider, this has to be the provider's own sandbox address.
    */
   from: string;
+  /**
+   * Recipient override, or `null` to use `SITE.email`.
+   *
+   * This exists because of a restriction that would otherwise be discovered
+   * at the launch gate: with no verified sending domain, the provider will
+   * only deliver to **the address the provider account was opened with**.
+   * That is very likely a personal mailbox rather than
+   * `info@tavlikossystems.com`, so a hardcoded `SITE.email` would fail with a
+   * 403 on the one submission the exit gate cares about. Set this to the
+   * account address until the domain is verified, then delete it.
+   */
+  notifyTo: string | null;
 };
 
 /** The provider's sandbox sender, usable with no DNS records at all. */
@@ -181,7 +191,17 @@ function readMail(): MailConfig | null {
     );
   }
 
-  return Object.freeze({ apiKey, from });
+  const notifyTo = optional("AUDIT_NOTIFY_TO") ?? null;
+
+  if (notifyTo !== null && !isSenderAddress(notifyTo)) {
+    fail(
+      "AUDIT_NOTIFY_TO",
+      `is not an email address: ${JSON.stringify(notifyTo)}. Leave it unset ` +
+        "to notify SITE.email.",
+    );
+  }
+
+  return Object.freeze({ apiKey, from, notifyTo });
 }
 
 /**
