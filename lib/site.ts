@@ -389,4 +389,9 @@ export const AUDIT_DELIVERABLE =
  *
  * Phase 1's FAQ answers «Πόσο θα πάρει;» with this same constant.
  */
+/* **Reads as a complete clause, qualifier included.** S3.5 S6 appended
+   «, ανάλογα με το εύρος» after interpolating this and shipped
+   «…ανάλογα με το εύρος, ανάλογα με το εύρος» into a build — caught by
+   looking at a screenshot of the page, not by reading the code. Interpolate
+   it and stop; do not add a qualifier of your own. */
 export const TIMELINE_RANGE = "3 ημέρες έως 2 μήνες, ανάλογα με το εύρος";

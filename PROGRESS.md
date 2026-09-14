@@ -9,11 +9,11 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
+**Current phase:** 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge (V21)
 **Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
 **Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S4 · 2026-09-14 · the FAQ set, and `/pricing` ahead of it
-**Blocked on:** nothing. Only the closeout (S7) and the PR remain. **Phase 4 follows — the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
+**Last slice:** S7 · 2026-09-14 · closeout · **all seven slices done**
+**Blocked on:** **V21 — the merge**, which a session cannot do (see V4's history). One branch, no stack, no rebase. **Phase 4 is next: the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -43,7 +43,7 @@
 
 ---
 
-## Phase 3.5 — Content Truth Pass 🚧 IN PROGRESS
+## Phase 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge
 
 Five corrections Val gave on 2026-09-14 after reading the live site. All five
 are **truth** problems, not polish, which is why they run before Phase 4 even
@@ -61,7 +61,7 @@ rejected paragraph would drag ten design commits with it.
 - [x] **S4** The FAQ · 2026-09-14 · five entries, homepage shows three
 - [x] **S5** The homepage about copy · 2026-09-14 · Val: «άλλαξέ το τελείως»
 - [x] **S6** `/pricing` · 2026-09-14 · **built before S4**, see below
-- [ ] **S7** Closeout
+- [x] **S7** Closeout · 2026-09-14
 
 **D1–D5 recorded in the spec before any slice ran.** The two with teeth: **D2**
 takes code-ownership claims out entirely — Val's rule was *don't mention it
@@ -290,6 +290,82 @@ visible order matches the array, both deleted questions are absent from the
 rendered page, and the homepage renders three disclosures. `SITE` dropped out
 of `lib/faq.ts`'s imports — the Thessaloniki answer was the only one quoting
 the hours.
+
+### Phase 3.5 exit gate — measured on the preview deployment
+
+Deployment `dpl_9hB9beMttF9TYquF9AioHLMWWL7Z`, built from `7dc1dd4`, read
+through the connector's bypass cookie with Deployment Protection left on.
+
+| Gate row | Result |
+|---|---|
+| «Ταυλίκος» in source or any rendered route | **zero** — the only hit is the code comment documenting the error |
+| Claims that accounts, code or repositories transfer | **zero**, across eleven routes, ten inflections |
+| `/terms` answers its own «Σε ποιον ανήκει ο κώδικας» heading | yes, and accurately for every package |
+| Technology names in visitor copy | **zero**, ten routes, eighteen probes |
+| `SERVICE_CATALOG` free of undelivered capability | yes — **V10 closed** |
+| Every JSON-LD string visible on its page | **4/4** `knowsAbout`, **5/5** FAQ answers |
+| FAQ set | five entries, homepage shows a strict prefix of three |
+| `/pricing` | 200 · in the sitemap · linked from footer and FAQ · **zero figures** |
+| Verbatim sentence overlap `/` vs `/about` | **one**, and it is the footer's — chrome, not content |
+| One `h1`, no heading skips | **12/12 routes** |
+| `TODO` / `FIXME` / `Placeholder` | nothing |
+| `tsc` · `lint` · `build` | clean |
+| Tap targets ≥ 44×44 at 375px on `/pricing` | **30 interactive elements, zero under** |
+
+**Lighthouse mobile on the preview:**
+
+| | `/` | `/faq` | `/pricing` |
+|---|---|---|---|
+| **Accessibility** | **100** | **100** | **100** |
+| **Best Practices** | **100** | **100** | **100** |
+| Performance | 89 | 92 | 99 |
+| SEO | 58 | 58 | 58 |
+
+SEO 58 is the deliberate preview `noindex`, same as Phase 3. Performance on a
+preview runs below production — production measured 92 on `/` two hours
+earlier — and Phase 4 owns it either way.
+
+### Three defects this phase introduced and caught
+
+**1. An accessibility regression, and the comment claiming to prevent it was
+the tell.** S4 put a link inside the FAQ disclosure panel with a comment
+saying it was *"unreachable by pointer and by tab while collapsed"*. That is
+false: `aria-hidden` plus `height: 0` hides a link and leaves it **focusable**.
+axe reports it as `aria-hidden-focus`, weight 7, and **Accessibility fell from
+100 to 96 on the homepage** — a keyboard user could tab to a link a screen
+reader had been told does not exist, which is worse than either fault alone.
+**The slice built the exact keyboard trap its comment claimed to prevent.**
+
+Fixed with `inert` on the panel rather than `tabIndex={-1}` on the link, so
+the whole subtree leaves the tab order and stays out for anything focusable
+added there later. **Verified behaviourally, not by score:** five panels
+inert when closed, one link inside a closed panel, and it **cannot take
+focus**. Open, the same link measures 126×44 and focuses normally.
+
+**2. A duplicated clause, caught by looking at a screenshot.** `/pricing`
+shipped «…ανάλογα με το εύρος, **ανάλογα με το εύρος**», because
+`TIMELINE_RANGE` already ends with that qualifier and S6 appended it again.
+`tsc`, `lint` and `build` were all clean; only the rendered page showed it.
+The constant now carries a comment saying it reads as a complete clause.
+
+**3. The same word echoing, found while checking for the second.** Three
+ledes read «…ανάλογα με το εύρος — εύρος, όχι υπόσχεση.» Pre-existing since
+Phase 2, and fixed here rather than logged, because a phase whose purpose is
+better Greek should not leave that behind: «— όχι υπόσχεση ημερομηνίας.»
+
+**A pattern across all three phases now.** S2.5's Greek all-caps tonos, S5's
+nominative-for-accusative, and both of the above were found by **looking at
+the output** — a rendered page, a generated card, a screenshot. None was
+catchable by reading the source, and the type checker was clean for every one
+of them.
+
+### Playbook edits this phase earned
+
+§2.2 gains three rows — the `/pricing` page, no promise of account or code
+transfer, and no technology names in visitor copy. §2.3's route tree gains
+`/pricing`. §14 gains five decision rows. `docs/VAL-ACTIONS.md`: **V10 to
+Done** (closed by S3, and it was in two places), V4 archived, and **V21 added
+— the merge**.
 
 **A process failure worth recording, since §7 exists to catch exactly this.**
 S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
