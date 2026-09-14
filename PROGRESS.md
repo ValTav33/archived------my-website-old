@@ -9,11 +9,11 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3 — Backend & Go-Live ✅ **COMPLETE — THE SITE IS LAUNCHED**
-**Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
-**Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.8 · 2026-09-14 · closeout · **merged and live on `b76e3f5`**
-**Blocked on:** nothing. **Phase 4 is next.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
+**Current phase:** 3.5 — Content Truth Pass 🚧 · *Phase 3 is complete and **the site is launched***
+**Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
+**Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
+**Last slice:** S1 · 2026-09-14 · the surname
+**Blocked on:** Val's approval on two pieces of copy — the FAQ set (S4) and the `/about` draft (S5). Everything else in the phase can proceed without him. **Phase 4 follows this, not Phase 3.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
 > the branch is pushed; what remains is the phone pass, the keyboard pass and
@@ -40,6 +40,71 @@
 > look like a working one (D5) — but it means the key has to exist *before*
 > the merge, not after. Today's silent false success is worse; a loud honest
 > failure on the live site is still not something to ship on purpose.
+
+---
+
+## Phase 3.5 — Content Truth Pass 🚧 IN PROGRESS
+
+Five corrections Val gave on 2026-09-14 after reading the live site. All five
+are **truth** problems, not polish, which is why they run before Phase 4 even
+though the homepage's appearance is what he actually complained about.
+Spec: `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`.
+
+**Its own phase rather than Phase 4's first slices — Val's call.** Phase 4's
+gate is a performance measurement; mixing copy rewrites into that PR means a
+reviewer cannot tell a scroll-reveal regression from a sentence change, and a
+rejected paragraph would drag ten design commits with it.
+
+- [x] **S1** The surname · 2026-09-14
+- [ ] **S2** Accounts and ownership · 8 files
+- [ ] **S3** Remove the technology names · 11 files · **closes V10**
+- [ ] **S4** The FAQ · **copy needs Val's approval**
+- [ ] **S5** `/about` · **draft needs Val's approval**
+- [ ] **S6** `/pricing`
+- [ ] **S7** Closeout
+
+**D1–D5 recorded in the spec before any slice ran.** The two with teeth: **D2**
+takes code-ownership claims out entirely — Val's rule was *don't mention it
+unless every developer does it*, and they do not, so by his own rule it goes —
+and **D4** ships `/pricing` as a real page carrying the model with no numbers
+rather than the bare «σύντομα» he asked for, because Phase 0's whole objective
+was deleting placeholder text. D4 is flagged in the spec as an interpretation
+he can overrule.
+
+**S1.** `SITE.person` → «Βαλσάμης Ταβλίκος». **One line**, because Phase 0 put
+identity in a single constant — and that is also why a misspelling of Val's
+own surname survived four phases of review: it was wrong *uniformly*, so
+nothing ever looked inconsistent against anything else.
+
+Verified on rendered HTML rather than in source, across nine routes: zero
+occurrences of the old spelling anywhere, and the correct one appears 3× on
+`/`, 4× on `/about`, 3× on `/privacy`. The `Person` JSON-LD node reads
+«Βαλσάμης Ταβλίκος» and still references `#business`.
+
+*One claim of mine corrected during verification.* The code comment I wrote
+said the name was also burnt into the generated OG cards. **It is not** —
+they render the page's eyebrow and title, not the person. I generated the
+`/about` card and looked at it instead of assuming, the same method that
+caught the Greek all-caps tonos bug in S2.5, and the comment now records the
+correction rather than quietly dropping the claim.
+
+*Noticed while looking at that card, logged rather than fixed:* it prints
+«ΠΟΙΟΙ ΕΙΜΑΣΤΕ» as an eyebrow directly above the title «Ποιοι είμαστε» — the
+same words twice. Backlog, Phase 4, one shared template across eleven routes.
+
+**A process failure worth recording, since §7 exists to catch exactly this.**
+S1's code commit shipped **without** its `PROGRESS.md` entry: the scripted
+edit failed on a stale anchor, the assertion fired, and the commit went
+through anyway. §7.1 says the tracker moves in the same commit as the slice,
+and it did not. The cause was the next finding.
+
+**The Phase 3 closeout was stranded.** Commit `7107756`, which carries the
+entire launch verification and the Lighthouse numbers, was made *after* Val
+merged, so it landed on `phase/3-backend` and never reached `main` — and this
+branch, cut from `main`, did not have it. That is why S1's anchors did not
+match. Recovered by cherry-picking it onto this branch. **The lesson is
+sequencing:** a closeout commit belongs before the merge, or it has to be
+carried forward deliberately.
 
 ---
 
