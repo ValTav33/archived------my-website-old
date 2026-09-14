@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-13, at the Phase 2 closeout.
+**Last synced:** 2026-09-14, after Phase 3 slices S3.1–S3.7.
 
 ---
 
@@ -73,18 +73,37 @@ npm run dev
 
 Then open `/privacy` and `/terms`.
 
-**What to look for, specifically:**
+> **Phase 3 rewrote `/privacy` five times, one revision per slice, so the
+> version you were first asked to read no longer exists.** Read the current
+> one. `/terms` is unchanged since S2.9.
 
-- The privacy page says submissions are **not stored**, that name, email and
-  phone are **never logged**, that there are **no cookies, no analytics and no
-  trackers**, and that **Vercel is the only other party**. All four are true
-  today. All four stop being true in Phase 3.
-- It does **not** announce that the form currently delivers nowhere. That was
-  a judgment call, not an oversight: your Phase 1 decision was to keep the
-  24-hour promise as written and treat the stub as temporary, and a privacy
-  policy is about processing rather than about advertising a known functional
-  gap. **If you want it stated outright while the stub stands, say so — it is
-  one paragraph.**
+**What changed, so you can check each claim rather than re-read blind:**
+
+| Now says | Added by |
+|---|---|
+| The request arrives **as an email** and is kept in a mailbox; **Resend** is a processor | S3.3 |
+| A copy is **stored in a database**, in the EU (Frankfurt); **Supabase** is a processor | S3.4 |
+| The **IP is not kept** — a keyed digest of it is, for one hour, in a separate table | S3.5 |
+| The database copy is **deleted after 24 months**, by a job that runs daily | S3.6 |
+| **Visits are measured** with Vercel Analytics, and the numbers are **not joined to the form** | S3.7 |
+
+Four claims from the version you were first shown are **gone**, because they
+became false: «δεν αποθηκεύονται σε βάση δεδομένων», «δεν καταγράφονται
+πουθενά», «Δεν υπάρχουν analytics», and Vercel as the only other party. Their
+absence from the rendered HTML was verified, not assumed.
+
+**Two judgment calls in there worth your explicit yes or no:**
+
+1. **24 months** is the retention you approved, and the page states it as a
+   number interpolated from the code, so the page and the deletion cannot
+   disagree. If you want 12, say so — it is one constant.
+2. **The mailbox is not swept automatically, and the page says so.** The
+   database copy expires; the email in your inbox does not, because an inbox
+   is a conversation. Claiming otherwise would have been the easier sentence
+   and an undefendable one.
+
+**Also still worth checking:**
+
 - The terms deliberately contain **no** forum-selection clause naming courts,
   **no** refund or cancellation schedule, and **no** limitation-of-liability
   boilerplate. None of those are written down anywhere in this repo, and
@@ -152,12 +171,18 @@ wrong.
 **Why it is yours:** the session's permission classifier blocked the API call,
 twice. It is a settings change on your account and it stays yours.
 
-**Why it matters more each phase:** Phases 0, 1 **and** 2 all failed to audit
-their preview URL, because anonymous requests — Lighthouse included — get
-`<title>Login – Vercel</title>`. All three fell back to a local
-`next start`. At eleven routes, "every route returns 200 with a unique title"
-is a claim about a deployment, and the deployment is the thing that has never
-been checked.
+**This is now blocking, not convenient.** Phases 0, 1 **and** 2 all fell back
+to a local `next start`, because anonymous requests — Lighthouse included —
+get `<title>Login – Vercel</title>`. Phase 3 cannot fall back, for two
+independent reasons measured during the phase:
+
+1. The exit gate is *"a real submission lands in Supabase and in your inbox"*.
+   That is a claim about a deployment; localhost cannot make it.
+2. **Since S3.7, localhost cannot produce Best Practices = 100 at all.** The
+   analytics component loads `/_vercel/insights/script.js`, a path only the
+   platform serves, so a local run logs one console error and scores 96
+   against a budget of 100. Measured before and after: the 404 is the entire
+   difference.
 
 **Current setting, read from the API:** project `my-website`,
 `ssoProtection: { enabled: true, deploymentType: "all_except_custom_domains" }`.
@@ -184,14 +209,15 @@ real deployment.
 
 ---
 
-### V4 — Merge both PRs, in this order
+### V4 — Merge three PRs, in this order
 
 **Why it is yours:** `gh` is not installed on this machine and the GitHub
 connector is unauthorised in this session. The PR bodies are written and
 waiting.
 
-Two branches are open and **Phase 2 is stacked on Phase 1**, so the order
-matters.
+**Three branches are now open, each stacked on the one below**, so the order
+matters: `phase/3-backend` (9 commits) on `phase/2-multipage` (15) on
+`phase/1-homepage` (13) on `main`.
 
 **1. Phase 1 — Homepage Restructure.** Branch `phase/1-homepage`, 13 commits,
 pushed. PR body: the template at the end of
@@ -211,14 +237,28 @@ nothing to resolve. *(An earlier note of mine said the rebase had to happen
 before the first Phase 2 slice. That was overcautious and is corrected here
 and in the Phase 2 spec.)*
 
-**3. Phase 2 — Multipage & SEO.** Branch `phase/2-multipage`, 13 commits.
+**3. Phase 2 — Multipage & SEO.** Branch `phase/2-multipage`, 15 commits.
 PR body: the template at the end of `docs/phases/PHASE-2-MULTIPAGE-SEO.md`.
 Squash merge, delete the branch.
+
+**4. Rebase Phase 3 onto the new `main`:**
+
+```bash
+git rebase --onto main phase/2-multipage phase/3-backend
+```
+
+Same reasoning, one link further down the chain.
+
+**5. Phase 3 — Backend & Go-Live.** Branch `phase/3-backend`, 9 commits.
+PR body: the template at the end of
+`docs/phases/PHASE-3-BACKEND-GOLIVE.md`. **Do not merge this one until V6 and
+V7 are done** — merging it with no Resend key turns the form's 24-hour promise
+into "call us instead" on the live site.
 
 **Review the Vercel preview URL before merging each one** — playbook §5 says
 that is the entire point of branching, and V3 is what makes it possible.
 
-**Done when:** both are merged and `main` contains Phases 1 and 2.
+**Done when:** all three are merged and `main` contains Phases 1, 2 and 3.
 
 ---
 
@@ -239,31 +279,116 @@ anything — a Lighthouse number from a stale build is worse than no number.
 
 ---
 
-## 🟠 Before launch (Phase 3)
+## 🔴🟠 Phase 3 — the launch blockers
 
-### V6 — Supabase project and credentials
+### V6 — Supabase credentials 🔴
 
-Phase 3 wires the form to Supabase and moves the rate limiter there. Needs a
-project, its URL and keys, in `.env.local` and in the Vercel project for
-**every** environment. Note the Vercel lesson already in the decision log: an
-entry whose key exists with an **empty value** killed a production build on a
-bare `TypeError: Invalid URL`, which is why `lib/site.ts` now validates rather
-than checking presence.
+**The project now exists.** You approved creating it, so a session did:
+**`tavlikos-systems-website`, `eu-central-1` (Frankfurt), free tier,
+€0/month**, in your own organisation. Migration `0001` is applied and
+verified — both tables, RLS on with zero policies, every check constraint in
+the catalogue, and `SELECT`/`INSERT`/`DELETE` refused from outside with both
+browser-safe key forms, eight attempts out of eight.
 
-### V7 — Email transport, and a decision on which
+**What is left is yours, because it is a secret no session should hold.** Three
+values, in `.env.local` **and** in Vercel for **Production and Preview** both:
 
-`deliverAuditRequest` in `app/api/audit/route.ts` is a stub with both options
-written out in its comment: **Resend** (an API key) or an **n8n webhook** (a
-URL). Pick one and supply the credential. This is the actual launch gate —
-playbook §12 rates a form that discards leads as Severe, and a real end-to-end
-submission is Phase 3's exit condition.
+| Variable | Where it comes from |
+|---|---|
+| `SUPABASE_URL` | Project Settings → API → Project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Project Settings → API Keys → **`service_role`** |
+| `AUDIT_IP_SALT` | `openssl rand -hex 32` |
 
-### V8 — Analytics: yes or no
+**Three things the code will catch for you, so you do not have to be careful:**
 
-Playbook §2.5 names Vercel Analytics as cookieless and needing no consent
-banner. **It is not installed** — no analytics package is in `package.json`,
-which is why `/privacy` can currently say there is no tracking at all. If you
-want it, Phase 3 installs it **and** revises `/privacy` in the same slice.
+- Pasting the **publishable/anon** key into `SUPABASE_SERVICE_ROLE_KEY` is
+  rejected at config time with a message saying so. That key sits next to the
+  right one in the dashboard, and with RLS on it would otherwise fail as
+  *silence* — every submission delivered and archived nowhere.
+- An **empty value** is treated as absent rather than as configured. That is
+  the exact failure that killed a production build once already.
+- A missing `AUDIT_IP_SALT` **stops the build** rather than quietly weakening
+  the rate limiter. `/privacy` promises your visitors' IPs are not stored; the
+  salt is what makes the stored digest irreversible.
+
+**Done when:** all three are set in both environments and a submission on the
+deployment produces one row.
+
+---
+
+### V7 — The Resend key 🔴 · **this is the launch gate**
+
+**Why it is yours:** an account and an API key.
+
+**What changed:** `deliverAuditRequest` is no longer a stub — S3.3 wired it to
+Resend. Every failure path is measured (no key → 502, bad key → 502 logging
+status 401, honeypot and timing paths → 200 with nothing sent). **The one
+thing never tested is a successful send,** because that needs the key, and it
+is the first line of this phase's exit gate.
+
+**Understand this before the merge:** with no key configured, a correctly
+filled form now returns 502 and tells the visitor to **call instead** of
+promising 24 hours. That is deliberate — the honest failure, chosen over a
+fallback that makes a missing transport look like it worked — but it means the
+key has to be in place *before* this branch reaches production, not after.
+
+**Two values:**
+
+| Variable | Notes |
+|---|---|
+| `RESEND_API_KEY` | resend.com → API Keys → Create. Sending permission is enough. |
+| `AUDIT_NOTIFY_TO` | **Set this, at least at first.** Until a sending domain is verified, Resend delivers only to the address the Resend account was opened with. Aimed at `info@tavlikossystems.com` it comes back 403 — on the single submission the gate cares about. Put the account address here and delete the line once the domain is verified. |
+
+**Done when:** a submission on the deployment arrives in your inbox with all
+six fields and Greek intact, and you can hit reply and reach the visitor
+(`reply_to` is set to their address).
+
+---
+
+### V19 — `CRON_SECRET` 🟠
+
+**Why it is yours:** a generated secret, same reason as the rest.
+
+S3.6 added a daily job at 04:00 UTC that deletes expired leads and keeps the
+free-tier project from pausing. Vercel sends `Authorization: Bearer
+$CRON_SECRET` on scheduled invocations.
+
+```bash
+openssl rand -hex 32
+```
+
+**With no value set, that route refuses every request, including one carrying
+the correct secret** — verified in both configurations. It deletes rows, and
+"the secret is not set yet" is precisely when failing open would publish a
+public deletion endpoint on a site holding other people's personal data.
+
+**The consequence of leaving it unset is not cosmetic.** Nothing prunes, so
+`/privacy`'s 24-month promise is unenforced, and nothing keeps the project
+awake, so the archive stops accepting writes after about a week of quiet.
+
+**Done when:** set in Vercel for Production, and the Cron tab shows a
+successful run.
+
+---
+
+### V20 — Verify the Resend sending domain 🟠 *(recommended, not blocking)*
+
+Three DNS records on `tavlikossystems.com`. Not on the launch path — that was
+deliberate, so DNS could not hold up the phase — but worth doing soon:
+
+- Notifications would come **from** `info@tavlikossystems.com` instead of
+  Resend's sandbox sender, which is better for deliverability and stops your
+  own lead notifications looking like someone else's mail.
+- `AUDIT_NOTIFY_TO` (V7) can then be deleted, and notifications go to the real
+  business mailbox rather than wherever the Resend account was opened.
+- It is also the prerequisite for ever sending the **visitor** a confirmation
+  email, which this phase records as a deliberate non-goal rather than an
+  omission.
+
+**Done when:** the domain shows verified in Resend and `AUDIT_MAIL_FROM` is
+set to `Tavlikos Systems <info@tavlikossystems.com>`.
+
+---
 
 ### V9 — The BTL agreement, one glance
 
@@ -295,13 +420,6 @@ tweak.
 it. **Recommendation:** remove it until there is a delivered example. It is the
 only line in the catalog with nothing behind it, and it sits in markup where a
 visitor cannot see it and cannot contradict it.
-
-### V11 — Should `/privacy` say the form delivers nowhere? 🟠
-
-Covered in V1. Listed separately because it is a decision rather than a review
-step. **Recommendation:** leave it as written, and let Phase 3 close the gap
-rather than documenting it — but it is your call, and it is one paragraph
-either way.
 
 ### V12 — `.claude/launch.json` is committed 🔵
 
@@ -386,3 +504,7 @@ line.
 | — | Vercel deploy failure | 2026-09-11 — `NEXT_PUBLIC_SITE_URL` existed with an empty value; fixed in Vercel and the guard now validates |
 | — | Phase order — Phase 1 before Phase 3 | 2026-09-11 — closed, do not re-raise |
 | — | D1, D2, D3 approved | 2026-09-12 — before any Phase 2 slice ran |
+| — | Supabase **project** created | 2026-09-14 — `tavlikos-systems-website`, `eu-central-1`, free tier, €0/month; migration applied and verified. The **credentials** are still V6 |
+| V8 | Analytics: yes or no | 2026-09-14 — **yes**, Vercel Analytics, installed in S3.7. Measured: Performance unchanged at 93, Best Practices 100 → 96 **locally only**, from the insights-script 404 that the platform serves |
+| V11 | Should `/privacy` say the form delivers nowhere? | 2026-09-14 — **moot.** S3.3 made the form deliver, so there is no gap to disclose. The page now describes what actually happens, five revisions deep |
+| — | D3 — lead retention period | 2026-09-14 — **24 months**, enforced by the S3.6 job, interpolated into `/privacy` from the code |
