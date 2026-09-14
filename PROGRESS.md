@@ -12,7 +12,7 @@
 **Current phase:** 3 — Backend & Go-Live · **the launch phase**
 **Branch:** `phase/3-backend` — **stacked on `phase/2-multipage`, which is stacked on `phase/1-homepage`**
 **Spec:** `docs/phases/PHASE-3-BACKEND-GOLIVE.md`
-**Last slice:** S3.1 · 2026-09-14 · the env contract
+**Last slice:** S3.2 · 2026-09-14 · the leads schema, as a committed migration
 **Blocked on:** **V6 and V7 in `docs/VAL-ACTIONS.md`** — a Supabase project and a Resend key. S3.1 and S3.2 need neither and are being built now; S3.3 onward cannot be verified end to end without them, and S3.3 is the launch gate. **V3 (Vercel Deployment Protection) is now blocking rather than convenient:** this phase's exit gate is a claim about a deployment, and localhost cannot make it for the fourth phase running.
 
 > **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
@@ -53,7 +53,7 @@ to visitors and are Val's to approve** — see *Decisions changed* at the bottom
 of this file once they are settled.
 
 - [x] **S3.1** The env contract · 2026-09-14
-- [ ] **S3.2** The `audit_requests` schema, as a committed migration
+- [x] **S3.2** The `audit_requests` schema, as a committed migration · 2026-09-14 · **SQL unexecuted — see below**
 - [ ] **S3.3** Email delivery + `/privacy` revision · **← the launch gate** · needs V7
 - [ ] **S3.4** Lead persistence + `/privacy` revision · needs V6
 - [ ] **S3.5** The shared rate limiter · closes three Backlog rows · needs V6
@@ -109,6 +109,51 @@ that stops the build beats a privacy claim the table quietly contradicts.
 `CRON_SECRET` absent means the maintenance route refuses **every** request.
 That route deletes rows; "the secret is not set yet" is exactly when failing
 open would publish a deletion endpoint.
+
+**S3.2.** `supabase/migrations/0001_audit_requests.sql` — two tables,
+`audit_requests` (the archive) and `audit_rate_limit` (the shared counter) —
+plus `lib/leads.ts` for the row contract and `supabase/README.md` for the
+access model, the region and the pausing constraint.
+
+**The verification is incomplete and this is the honest record of it.** The
+spec's verify step is *"the SQL applies cleanly to a fresh database"*. It has
+not been applied to any database. There is no Supabase project for this site
+yet (V6), no local Postgres on this machine and no Docker to start one, and
+applying it to one of the five unrelated projects in the organisation would
+pollute somebody else's schema to test ours. So the SQL has been **reviewed**
+line by line — `gen_random_uuid()` is built in from PG13 and Supabase runs 17;
+`bigint generated always as identity`, the `~` regex check, `revoke all on
+<table>` and the `anon`/`authenticated` roles are all valid on Supabase — but
+reviewed is not verified, and the exit gate's RLS row stays unchecked until it
+runs. **First action once V6 exists**, before S3.4 writes a line against it.
+
+Three properties worth stating, because each replaces a comment with an
+enforced constraint:
+
+- **RLS enabled, zero policies, on both tables.** `anon` and `authenticated`
+  therefore match no rows for any operation; the service role bypasses RLS and
+  is the only way in. The `revoke` beside it is belt and braces — two
+  independent failures now stand between a browser and a row instead of one.
+- **`ip_hash text not null check (ip_hash ~ '^[0-9a-f]{64}$')`.** There is no
+  IP column, and the hash column *refuses* anything that is not a 64-character
+  hex digest. Storing a raw IP address here is not discouraged by a comment,
+  it is rejected by the database.
+- **Length bounds mirror `lib/audit.ts` exactly.** The tradeoff is real: a
+  constraint stricter than the app can refuse a row the app was willing to
+  write. Under D1 that costs an archive copy and never a lead, because the
+  email is already delivered by the time the insert runs.
+
+**Deliberately not idempotent** — no `if not exists` anywhere. Re-running on a
+migrated database should fail loudly rather than succeed while doing nothing;
+"it ran fine" is the most expensive thing to be wrong about when the next
+migration assumes state.
+
+`lib/leads.ts` derives the insert shape from `AuditPayload` with a mapped type,
+and its comment says plainly what that does **not** buy: TypeScript cannot see
+the database, so nothing proves a column exists. What it proves is that a
+field added to the form cannot reach an insert without this file failing to
+compile — "you will be stopped and told to write a migration", not "the
+migration was written".
 
 ---
 
