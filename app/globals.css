@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes dust-drift {
+  0% {
+    transform: translate3d(0, 14px, 0);
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(6px, -34px, 0);
+    opacity: 0;
+  }
+}
+
 @layer base {
   :root {
     /* Mirrors of the Tailwind tokens, for surfaces that can't use utilities
@@ -296,6 +311,42 @@
   /* Secondary action: matte obsidian glass. */
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white/[0.03] font-medium text-white transition-colors duration-200 hover:bg-white/[0.07];
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------------------------
+     DUST — the particle field, hero only.
+
+     Val asked for "obsidian with white particles". The usual implementation
+     is a canvas and a `requestAnimationFrame` loop, which is the most common
+     dark-tech cliché of the last five years AND a permanent main-thread cost
+     on a phone, against a phase gate of Performance >= 95.
+
+     This is neither: a handful of absolutely positioned dots drifting on a
+     pure CSS keyframe. `transform` and `opacity` only, so it runs on the
+     compositor and never touches layout or the main thread. Sparse and slow
+     on purpose — read as dust in a dark room, not as a screensaver.
+
+     Hidden outright under reduced motion rather than left to the global rule,
+     which collapses durations to 0.01ms and would freeze the dots mid-drift
+     as a static speckle. Absent is the correct reduced-motion state for
+     something that exists only to move.
+     ------------------------------------------------------------------ */
+  .dust span {
+    position: absolute;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.55);
+    animation-name: dust-drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dust {
+      display: none;
+    }
   }
 }
 

@@ -12,7 +12,7 @@
 **Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
-**Last slice:** S4.2 + S4.4 · 2026-09-15 · the offer in front, and the conversion block on the light band
+**Last slice:** S4.5a · 2026-09-15 · the hero — simulator in view on a phone, centred, and the dust
 **Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -131,6 +131,62 @@ decisions rather than token ones, and the gate for them is S4.6:
 - `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
   yet emitted: Tailwind removes `@layer components` rules nothing references.
   They appear when S4.3 and S4.4 use them.
+
+### S4.5a — the hero, and the dust · 2026-09-15 ✅
+
+**The simulator is in view on a phone.** It used to start at **777px on an
+812px screen** — a 35px sliver of the only element on this site that
+demonstrates rather than describes. It now starts at 624px with **188px
+visible without scrolling**.
+
+The fix needed no `order-*` class. The hero is three grid children instead of
+two: proposition, simulator, trust list. On a phone that stacks in source
+order and lifts the simulator above the trust points; at `lg` the twelve-column
+grid auto-places them back into 7 + 5 with the trust list returning underneath
+the actions. The old layout, unchanged, on desktop.
+
+**Centred on a phone, left from `lg`** — D6, and the Apple measurement behind
+it: their headings are left-aligned 33 times and centred 7. The big moments
+only, never the body.
+
+**The trust points stopped being 12px uppercase monospace** and are 15px
+sentence case. They are a conversion claim, not a system label.
+
+**Dust, and not a canvas.** Eighteen dots on a pure CSS keyframe —
+`transform`/`opacity` only, so it runs on the compositor and never touches the
+main thread. The usual implementation is a canvas and a `requestAnimationFrame`
+loop, which is both the most common dark-tech cliché of the last five years and
+a permanent phone cost against a Performance ≥ 95 gate. The positions are a
+fixed table rather than `Math.random()`: a random field differs between server
+render and hydration, and one you cannot reproduce is one you cannot tune.
+`aria-hidden`, `pointer-events-none`, and **hidden outright** under reduced
+motion rather than left to the global rule, which would freeze it mid-drift as
+a static speckle.
+
+### Cumulative, against the S4.0 baseline
+
+| | Baseline | Now |
+|---|---|---|
+| Monospace share | **56%** | **32%** |
+| Text at the 12px floor | **55%** | **30%** |
+| Text nodes | 108 | 91 |
+| Simulator visible on a phone | 35px | **188px** |
+| Page height | 10,406px | 9,626px |
+| AA failures | 0 | **0** across 114 elements |
+
+**The type gates are ≤ 20% and are not met yet.** What is left is almost
+entirely the `[ 0N // ΕΤΙΚΕΤΑ ]` section eyebrows and the simulator's terminal
+text. The simulator's is legitimate — it is a terminal. The eyebrows are the
+remaining lever, and removing them is a **visual identity decision**, so it is
+asked rather than taken: §2.4 removed `SYS.ENG` and `LATENCY: NORMAL` as
+jargon, and the numbered bracket is arguably the same register in a different
+costume — but it is also a large part of what the site currently looks like.
+
+**Not done in this slice**, and still open in the spec: scroll reveals through
+the page, and the animated schematics that stand in for the photography Val
+declined. Both are motion, and **motion is the one thing this environment
+cannot verify at all** — the pane runs no animation frames — so they are worth
+their own slice and their own phone pass.
 
 ### S4.2 + S4.4 — the offer, and the light band · 2026-09-15 ✅
 
