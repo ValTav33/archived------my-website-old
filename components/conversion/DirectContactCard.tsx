@@ -69,7 +69,7 @@ export default function DirectContactCard({
             >
               {SITE.phoneDisplay}
             </a>
-            <p className="mt-1 font-mono text-mono-xs text-ink-faint">
+            <p className="mt-1 text-sm text-ink-faint">
               {`Τηλεφωνική εξυπηρέτηση: ${SITE.hoursLong}`}
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function DirectContactCard({
         {GUARANTEES.map((guarantee) => (
           <li
             key={guarantee}
-            className="flex items-baseline gap-2.5 font-mono text-mono-xs leading-relaxed text-zinc-400"
+            className="flex items-baseline gap-2.5 text-sm leading-relaxed text-ink-muted"
           >
             <span aria-hidden className="shrink-0 text-decor">
               •

@@ -37,7 +37,7 @@ export default function ContactPage() {
           claim buried below the form. */}
       <SectionHeader
         titleAs="h1"
-        eyebrow="[ // ΕΠΙΚΟΙΝΩΝΙΑ ]"
+        eyebrow="ΕΠΙΚΟΙΝΩΝΙΑ"
         title="Πείτε μας τι θέλετε να φτιάξετε."
         lede={`Στείλτε το αίτημα και παίρνετε ${AUDIT_DELIVERABLE}. Αν προτιμάτε να μιλήσουμε κατευθείαν, τα στοιχεία είναι παρακάτω.`}
       />

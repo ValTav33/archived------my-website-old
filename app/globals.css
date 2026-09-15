@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes flow-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flow-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes dust-drift {
   0% {
     transform: translate3d(0, 14px, 0);
@@ -315,6 +337,49 @@
 }
 
 @layer components {
+  /* The entrance. `idle` — the server render — is deliberately unstyled, so
+     a block is visible whether or not the script ever runs. Only `armed` puts
+     it out of sight, and only the client does that, and only for blocks that
+     are still below the fold. See `Reveal`. */
+  .reveal {
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+
+  .reveal[data-reveal="armed"] {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+
+  /* The card schematic. Driven by the `Reveal` above it rather than by its
+     own observer: one boundary per card, not two. Unstyled at rest, so it is
+     fully drawn whenever the script has not armed anything. */
+  [data-reveal="armed"] .flow-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  [data-reveal="armed"] .flow-node {
+    opacity: 0;
+  }
+
+  /* Without `fill-box` a `scale()` on an SVG circle scales about the SVG's
+     own origin, so the dots fly in from the top-left corner instead of
+     growing in place. */
+  .flow-node {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  [data-reveal="shown"] .flow-line {
+    animation: flow-draw 0.9s ease-out both;
+  }
+
+  [data-reveal="shown"] .flow-node {
+    animation: flow-pop 0.35s ease-out both;
+  }
+
   /* ------------------------------------------------------------------
      DUST — the particle field, hero only.
 
@@ -346,6 +411,14 @@
   @media (prefers-reduced-motion: reduce) {
     .dust {
       display: none;
+    }
+
+    /* The right reduced-motion state for a drawing is "already drawn". */
+    [data-reveal] .flow-line,
+    [data-reveal] .flow-node {
+      animation: none;
+      stroke-dashoffset: 0;
+      opacity: 1;
     }
   }
 }

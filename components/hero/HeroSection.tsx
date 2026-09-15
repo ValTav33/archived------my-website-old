@@ -128,7 +128,7 @@ export default function HeroSection() {
                   <span className="font-mono text-sm text-white tabular-nums">
                     Κλήση: {SITE.phoneDisplay}
                   </span>
-                  <span className="font-mono text-mono-xs text-ink-faint">
+                  <span className="text-sm text-ink-faint">
                     {SITE.hoursShort}
                   </span>
                 </span>

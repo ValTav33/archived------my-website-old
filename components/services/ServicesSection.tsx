@@ -1,5 +1,6 @@
 import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
+import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 /**
@@ -43,27 +44,29 @@ export default function ServicesSection() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="services-heading"
-          eyebrow="[ 02 // ΤΙ ΚΑΝΟΥΜΕ ]"
+          eyebrow="ΤΙ ΚΑΝΟΥΜΕ"
           title="Δύο πράγματα, και τα δύο φτιαγμένα για εσάς."
         />
 
-        <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
-          {PILLARS.map((pillar) => (
-            <Card as="li" key={pillar.href} interactive className="p-6 sm:p-8">
-              <h3 className="text-xl font-semibold leading-snug text-white">
-                {pillar.title}
-              </h3>
+        <Reveal>
+          <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
+            {PILLARS.map((pillar) => (
+              <Card as="li" key={pillar.href} interactive className="p-6 sm:p-8">
+                <h3 className="text-xl font-semibold leading-snug text-white">
+                  {pillar.title}
+                </h3>
 
-              <p className="mt-3 max-w-prose text-base leading-relaxed text-ink-muted">
-                {pillar.body}
-              </p>
+                <p className="mt-3 max-w-prose text-base leading-relaxed text-ink-muted">
+                  {pillar.body}
+                </p>
 
-              <ArrowLink href={pillar.href} className="mt-6">
-                {pillar.cta}
-              </ArrowLink>
-            </Card>
-          ))}
-        </ul>
+                <ArrowLink href={pillar.href} className="mt-6">
+                  {pillar.cta}
+                </ArrowLink>
+              </Card>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

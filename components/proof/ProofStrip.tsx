@@ -53,7 +53,7 @@ export default function ProofStrip() {
               <blockquote className="text-sm leading-relaxed text-zinc-300">
                 {TESTIMONIALS[0].quote}
               </blockquote>
-              <figcaption className="mt-4 font-mono text-mono-xs text-ink-faint">
+              <figcaption className="mt-4 text-sm text-ink-faint">
                 — {TESTIMONIALS[0].attribution}
               </figcaption>
             </Card>
@@ -90,7 +90,7 @@ function ProofCard({ item }: { item: ProofItem }) {
         <p className="text-base font-semibold text-white">{item.name}</p>
       )}
 
-      <p className="mt-1 font-mono text-mono-xs text-ink-faint">{item.kind}</p>
+      <p className="mt-1 text-sm text-ink-faint">{item.kind}</p>
 
       <p className="mt-3 text-sm leading-relaxed text-zinc-400">
         {item.summary}

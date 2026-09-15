@@ -82,14 +82,14 @@ export default function WebsitesPage() {
             instead of standing alone as a category name. */}
         <SectionHeader
           titleAs="h1"
-          eyebrow="[ // ΚΑΤΑΣΚΕΥΗ ΙΣΤΟΣΕΛΙΔΩΝ ]"
+          eyebrow="ΚΑΤΑΣΚΕΥΗ ΙΣΤΟΣΕΛΙΔΩΝ"
           title="Κατασκευή ιστοσελίδων στη Θεσσαλονίκη, που φορτώνουν γρήγορα και κάνουν δουλειά."
           lede="Σχεδιάζουμε και κατασκευάζουμε ιστοσελίδες και web εφαρμογές για επιχειρήσεις στη Θεσσαλονίκη και σε όλη την Ελλάδα. Φτιαγμένες από την αρχή για αυτό που κάνει η δική σας, και έτσι φορτώνουν γρήγορα και αλλάζουν εύκολα όταν αλλάζει κάτι."
         />
 
         <ServiceSection
           id="deliverables"
-          eyebrow="[ 01 // ΤΙ ΠΑΙΡΝΕΤΕ ]"
+          eyebrow="ΤΙ ΠΑΙΡΝΕΤΕ"
           title="Τι παραδίδεται, συγκεκριμένα."
         >
           <FeatureGrid items={DELIVERABLES} />
@@ -97,7 +97,7 @@ export default function WebsitesPage() {
 
         <ServiceSection
           id="audience"
-          eyebrow="[ 02 // ΓΙΑ ΠΟΙΟΥΣ ]"
+          eyebrow="ΓΙΑ ΠΟΙΟΥΣ"
           title="Πότε αξίζει να μιλήσουμε."
         >
           <BulletList items={AUDIENCE} className="mt-8 max-w-3xl" />
@@ -114,7 +114,7 @@ export default function WebsitesPage() {
             actually runs for a named client is at `/work`. */}
         <ServiceSection
           id="architectures"
-          eyebrow="[ 03 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          eyebrow="ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ"
           title="Πώς δουλεύει ένα τέτοιο σύστημα."
           lede="Ενδεικτικό — περιγράφει σύστημα που κατασκευάζουμε, όχι δημοσιευμένο έργο πελάτη."
         >
@@ -133,7 +133,7 @@ export default function WebsitesPage() {
             two constants below are interpolated for the same reason. */}
         <ServiceSection
           id="how"
-          eyebrow="[ 04 // ΠΩΣ ΤΡΕΧΕΙ ]"
+          eyebrow="ΠΩΣ ΤΡΕΧΕΙ"
           title="Πώς φτάνουμε από τη συζήτηση στο site."
           lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε το εύρος πριν γραφτεί γραμμή κώδικα, και η κατασκευή παραδίδεται σε στάδια, με preview URL σε κάθε ένα. Ο χρόνος είναι ${TIMELINE_RANGE} — όχι υπόσχεση ημερομηνίας.`}
         >
@@ -145,7 +145,7 @@ export default function WebsitesPage() {
         {/* -------------------------- What you keep -------------------------- */}
         <ServiceSection
           id="ownership"
-          eyebrow="[ 05 // ΤΙ ΣΑΣ ΜΕΝΕΙ ]"
+          eyebrow="ΤΙ ΣΑΣ ΜΕΝΕΙ"
           title="Τι έχετε στο χέρι σας στο τέλος."
           lede="Τεκμηρίωση για το πώς δουλεύει, μια διαδρομή μέσα από το έργο, και γραπτή συμφωνία για το ποιος κρατά τι. Τους λογαριασμούς όπου ζει το site μπορείτε να τους κρατάτε εσείς ή να τους αναλαμβάνουμε εμείς — αποφασίζεται ανάλογα με πόσο θέλετε να ασχολείστε, και συμφωνείται πριν την παράδοση. Η μηνιαία υποστήριξη είναι προαιρετική, όχι προϋπόθεση για να μείνει το site όρθιο."
         >

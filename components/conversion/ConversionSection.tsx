@@ -51,7 +51,7 @@ export default function ConversionSection() {
               as="div"
               id="audit-heading"
               ground="paper"
-              eyebrow="[ 07 // ΔΩΡΕΑΝ AUDIT ]"
+              eyebrow="ΔΩΡΕΑΝ AUDIT"
               title="Δείτε τι θα άλλαζε, πριν αποφασίσετε."
             />
 

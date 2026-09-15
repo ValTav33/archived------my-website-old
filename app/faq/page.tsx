@@ -30,7 +30,7 @@ export default function FaqPage() {
       <PageShell>
         <SectionHeader
           titleAs="h1"
-          eyebrow="[ // ΕΡΩΤΗΣΕΙΣ ]"
+          eyebrow="ΕΡΩΤΗΣΕΙΣ"
           title="Αυτά που ρωτούν όλοι, πριν το ρωτήσετε."
           lede="Οι ερωτήσεις με τη σειρά που τις ακούμε. Η πρώτη είναι αυτή που δεν ρωτά κανείς δυνατά."
         />

@@ -67,14 +67,14 @@ export default async function CaseStudyPage({ params }: Params) {
 
       <ServiceSection
         id="problem"
-        eyebrow="[ 01 // ΤΟ ΖΗΤΟΥΜΕΝΟ ]"
+        eyebrow="ΤΟ ΖΗΤΟΥΜΕΝΟ"
         title="Τι χρειαζόταν."
         lede={study.problem}
       />
 
       <ServiceSection
         id="built"
-        eyebrow="[ 02 // ΤΙ ΚΑΤΑΣΚΕΥΑΣΤΗΚΕ ]"
+        eyebrow="ΤΙ ΚΑΤΑΣΚΕΥΑΣΤΗΚΕ"
         title="Τι κάνει η ροή, με τη σειρά."
       >
         {/* An ordered list because the order is the system: each step consumes
@@ -99,7 +99,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
       <ServiceSection
         id="now"
-        eyebrow="[ 03 // ΠΟΥ ΦΤΑΝΕΙ ]"
+        eyebrow="ΠΟΥ ΦΤΑΝΕΙ"
         title="Τι φτάνει στα χέρια του πελάτη."
         lede={study.now}
       >

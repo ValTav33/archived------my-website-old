@@ -1,5 +1,7 @@
 import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
+import FlowGlyph from "@/components/showcase/FlowGlyph";
+import Reveal from "@/components/ui/Reveal";
 import ScrollLink from "@/components/ui/ScrollLink";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { SHOWCASE } from "@/lib/showcase";
@@ -39,23 +41,28 @@ export default function ShowcaseGrid() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="solutions-heading"
-          eyebrow="[ 03 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          eyebrow="ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ"
           title="Τι μπορεί να αναλάβει ένα σύστημα για εσάς."
           lede="Ενδεικτικά — περιγράφουν συστήματα που κατασκευάζουμε, όχι δημοσιευμένα έργα πελατών."
         />
 
-        <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Reveal>
+          <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
           {SHOWCASE.map((item) => (
             <Card as="li" key={item.id} interactive className="p-6">
-              <h3 className="text-base font-semibold leading-snug text-white">
-                {item.title}
-              </h3>
+                <h3 className="text-base font-semibold leading-snug text-white">
+                  {item.title}
+                </h3>
 
-              {/* The outcome, in the owner's terms. §11.4 — outcome before
-                  mechanism, and the mechanism is one click away. */}
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {item.oneLiner}
-              </p>
+                {/* The outcome, in the owner's terms. §11.4 — outcome before
+                    mechanism, and the mechanism is one click away. */}
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                  {item.oneLiner}
+                </p>
+
+                {/* The shape of the system, and nothing more — §8 lets us
+                    draw how many steps there are, never a result. */}
+                <FlowGlyph hops={item.architecture.length} />
 
               <ArrowLink
                 href={`/${item.pillar}#architectures`}
@@ -64,8 +71,9 @@ export default function ShowcaseGrid() {
                 Πώς δουλεύει
               </ArrowLink>
             </Card>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        </Reveal>
 
         {/* The one mid-page CTA that exists today. It stays, and it matters
             more now than it did: this section sits high on the page, so this

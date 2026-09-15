@@ -35,7 +35,7 @@ export default function LegalDocument({
 }) {
   return (
     <PageShell className="max-w-3xl">
-      <SectionHeader titleAs="h1" eyebrow="[ // ΝΟΜΙΚΑ ]" title={title} lede={lede} />
+      <SectionHeader titleAs="h1" eyebrow="ΝΟΜΙΚΑ" title={title} lede={lede} />
 
       <p className="mt-6 font-mono text-mono-xs text-ink-faint">
         {`Τελευταία ενημέρωση: ${updated}`}

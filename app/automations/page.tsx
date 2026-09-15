@@ -81,14 +81,14 @@ export default function AutomationsPage() {
         {/* ------------------------------ Intent ----------------------------- */}
         <SectionHeader
           titleAs="h1"
-          eyebrow="[ // ΑΥΤΟΜΑΤΙΣΜΟΙ AI ]"
+          eyebrow="ΑΥΤΟΜΑΤΙΣΜΟΙ AI"
           title="Αυτοματισμοί AI για επιχειρήσεις που έχουν βαρεθεί τη χειροκίνητη δουλειά."
           lede="Στήνουμε ροές που τρέχουν μόνες τους: παραλαμβάνουν αιτήματα, απαντούν, συμπληρώνουν στοιχεία και ενημερώνουν τα εργαλεία που ήδη χρησιμοποιείτε. Εσείς βλέπετε το αποτέλεσμα, όχι τη διαδικασία."
         />
 
         <ServiceSection
           id="capabilities"
-          eyebrow="[ 01 // ΤΙ ΑΥΤΟΜΑΤΟΠΟΙΕΙΤΑΙ ]"
+          eyebrow="ΤΙ ΑΥΤΟΜΑΤΟΠΟΙΕΙΤΑΙ"
           title="Τι αναλαμβάνει η ροή."
         >
           <FeatureGrid items={CAPABILITIES} />
@@ -97,7 +97,7 @@ export default function AutomationsPage() {
         {/* ------------------------- What stops being work ------------------- */}
         <ServiceSection
           id="by-hand"
-          eyebrow="[ 02 // ΤΙ ΣΤΑΜΑΤΑΤΕ ΝΑ ΚΑΝΕΤΕ ]"
+          eyebrow="ΤΙ ΣΤΑΜΑΤΑΤΕ ΝΑ ΚΑΝΕΤΕ"
           title="Πότε αξίζει να μιλήσουμε."
         >
           <BulletList items={BY_HAND} className="mt-8 max-w-3xl" />
@@ -110,7 +110,7 @@ export default function AutomationsPage() {
             is that a deeper page expands and the shallower one points. */}
         <ServiceSection
           id="evidence"
-          eyebrow="[ 03 // ΕΝΑ ΠΟΥ ΤΡΕΧΕΙ ]"
+          eyebrow="ΕΝΑ ΠΟΥ ΤΡΕΧΕΙ"
           title="Μια ροή που δουλεύει σήμερα."
         >
           <Card className="mt-8 max-w-3xl p-5">
@@ -130,7 +130,7 @@ export default function AutomationsPage() {
             title and the lede. */}
         <ServiceSection
           id="architectures"
-          eyebrow="[ 04 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          eyebrow="ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ"
           title="Πώς δουλεύουν τέτοια συστήματα."
           lede="Ενδεικτικά — περιγράφουν συστήματα που κατασκευάζουμε, όχι δημοσιευμένα έργα πελατών."
         >
@@ -147,7 +147,7 @@ export default function AutomationsPage() {
             becomes a module. Both constants are interpolated. */}
         <ServiceSection
           id="how"
-          eyebrow="[ 05 // ΠΩΣ ΤΡΕΧΕΙ ]"
+          eyebrow="ΠΩΣ ΤΡΕΧΕΙ"
           title="Πώς φτάνουμε από τη συζήτηση στη ροή."
           lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε ποια διαδικασία αυτοματοποιείται πρώτη, και η κατασκευή παραδίδεται σε στάδια. Ο χρόνος είναι ${TIMELINE_RANGE} — όχι υπόσχεση ημερομηνίας.`}
         >
@@ -159,7 +159,7 @@ export default function AutomationsPage() {
         {/* ----------------------------- Control ----------------------------- */}
         <ServiceSection
           id="control"
-          eyebrow="[ 06 // ΠΟΙΟΣ ΕΧΕΙ ΤΟΝ ΕΛΕΓΧΟ ]"
+          eyebrow="ΠΟΙΟΣ ΕΧΕΙ ΤΟΝ ΕΛΕΓΧΟ"
           title="Σε ποιανού τα χέρια τρέχουν οι ροές."
           lede="Σε λογαριασμούς που συμφωνούνται από την αρχή: δικούς σας, ή διαχειριζόμενους από εμάς αν δεν θέλετε να ασχολείστε. Τα δεδομένα και τα κλειδιά μένουν εκεί, και ξέρετε ανά πάσα στιγμή πού βρίσκονται και ποιος έχει πρόσβαση."
         >

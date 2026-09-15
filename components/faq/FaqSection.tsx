@@ -29,7 +29,7 @@ export default function FaqSection() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="faq-heading"
-          eyebrow="[ 06 // ΕΡΩΤΗΣΕΙΣ ]"
+          eyebrow="ΕΡΩΤΗΣΕΙΣ"
           title="Αυτά που ρωτούν όλοι, πριν το ρωτήσετε."
         />
 

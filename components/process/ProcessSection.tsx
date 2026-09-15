@@ -1,5 +1,6 @@
 import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
+import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { PROCESS } from "@/lib/process";
 
@@ -39,35 +40,37 @@ export default function ProcessSection() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="process-heading"
-          eyebrow="[ 04 // ΔΙΑΔΙΚΑΣΙΑ ]"
+          eyebrow="ΔΙΑΔΙΚΑΣΙΑ"
           title="Τι γίνεται μόλις επικοινωνήσετε."
           lede="Τρία βήματα. Σε κάθε ένα ξέρετε τι παίρνετε και πότε — πριν ξεκινήσει οτιδήποτε."
         />
 
-        <ol className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {PROCESS.map((step) => (
-            <Card as="li" key={step.n} className="flex flex-col p-6">
-              {/* The number is decorative sequencing — the `<ol>` already
-                  tells assistive tech this is step N of three. */}
-              <span
-                aria-hidden
-                className="font-mono text-mono-xs tabular-nums text-ink-ghost"
-              >
-                {step.n}
-              </span>
+        <Reveal>
+          <ol className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {PROCESS.map((step) => (
+              <Card as="li" key={step.n} className="flex flex-col p-6">
+                {/* The number is decorative sequencing — the `<ol>` already
+                    tells assistive tech this is step N of three. */}
+                <span
+                  aria-hidden
+                  className="font-mono text-mono-xs tabular-nums text-ink-ghost"
+                >
+                  {step.n}
+                </span>
 
-              <h3 className="mt-3 text-lg font-semibold leading-snug text-zinc-100">
-                {step.title}
-              </h3>
+                <h3 className="mt-3 text-lg font-semibold leading-snug text-zinc-100">
+                  {step.title}
+                </h3>
 
-              {/* max-w-prose keeps the line near 65–75 characters at the
-                  single-column width, where the card is widest. */}
-              <p className="mt-3 max-w-prose text-sm leading-relaxed text-zinc-400">
-                {step.summary}
-              </p>
-            </Card>
-          ))}
-        </ol>
+                {/* max-w-prose keeps the line near 65–75 characters at the
+                    single-column width, where the card is widest. */}
+                <p className="mt-3 max-w-prose text-sm leading-relaxed text-zinc-400">
+                  {step.summary}
+                </p>
+              </Card>
+            ))}
+          </ol>
+        </Reveal>
 
         {/* What each step needs from the visitor, and what it costs them in
             their own hours, is the half that lives on `/process`. */}

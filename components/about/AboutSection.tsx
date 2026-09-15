@@ -71,7 +71,7 @@ export default function AboutSection() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="about-heading"
-          eyebrow="[ 05 // ΠΟΙΟΙ ΕΙΜΑΣΤΕ ]"
+          eyebrow="ΠΟΙΟΙ ΕΙΜΑΣΤΕ"
           title="Με ποιον θα δουλέψετε."
         />
 

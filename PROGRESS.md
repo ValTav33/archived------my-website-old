@@ -12,7 +12,7 @@
 **Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
-**Last slice:** S4.5a · 2026-09-15 · the hero — simulator in view on a phone, centred, and the dust
+**Last slice:** S4.5b · 2026-09-15 · eyebrows plainened, scroll reveals, and the card schematics
 **Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -131,6 +131,70 @@ decisions rather than token ones, and the gate for them is S4.6:
 - `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
   yet emitted: Tailwind removes `@layer components` rules nothing references.
   They appear when S4.3 and S4.4 use them.
+
+### S4.5b — the eyebrows, and motion through the page · 2026-09-15 ✅
+
+**The eyebrows lost their brackets and numbers**, on Val's call: keep the
+label, drop the number. `[ 04 // ΔΙΑΔΙΚΑΣΙΑ ]` is now `ΔΙΑΔΙΚΑΣΙΑ`, in **36
+places across 17 files**. Two reasons beyond taste: it is the register §2.4
+deleted when it removed `SYS.ENG` and `LATENCY: NORMAL`, and the numbers had
+to be renumbered by hand every time a section moved — which S4.1 had just done
+across four files.
+
+**Descriptive text left the code face.** `Badge` was `font-mono text-mono-xs`
+and a badge on this site carries prose — «Διαθέσιμοι για νέα έργα», a city, a
+service category. Same for the proof strip's line-of-business captions and the
+opening hours. The code face stays where it means something: the terminal
+widget, and numbers that benefit from tabular alignment.
+
+**`Reveal` — and it fails open.** The obvious implementation starts at
+`opacity: 0` and lets JavaScript reveal it, which hides content whenever the
+script does not run. Here the server render carries **no styles at all**; the
+effect arms the animation, and **only for blocks still below the fold**, so
+nothing the visitor is already looking at is hidden and then faded back in. It
+never arms under `prefers-reduced-motion` — the right reduced-motion state for
+an entrance is *already arrived*, not *arrives instantly*.
+
+It holds no React state: the effect writes `data-reveal` straight onto the
+node. That is what an effect is for, and it satisfied the cascading-render
+lint rule rather than suppressing it.
+
+**`FlowGlyph` — the animated element standing in for photography.** Each
+showcase card draws the **shape** of its system: how many steps, and that they
+are connected. No labels, no asserted result, `aria-hidden` because every hop
+is named in words on the page the card links to. It **draws once** rather than
+looping — three looping glyphs in one row would break §2.4's 1–2 animated
+elements per viewport three times over — and it inherits its trigger from the
+`Reveal` above it, so there is one scroll boundary per section, not four.
+
+**One defect introduced and caught before commit:** `Reveal` wrapped each card
+individually with `display: contents`, which put a `div` between a `<ul>` and
+its `<li>`s and broke the grid. Wrapping the list once fixes both, and is what
+the animation budget wanted anyway.
+
+### Cumulative, against the S4.0 baseline
+
+| | Baseline | Now |
+|---|---|---|
+| Monospace share | **56%** | **26%** — and **15%** excluding the terminal widget |
+| Text at the 12px floor | **55%** | **24%** — **13%** excluding the terminal widget |
+| AA failures | 0 | **0** across 114 elements |
+| Heading-level skips | — | **none** |
+| Horizontal overflow | none | **none** |
+| Sub-44px tap targets | 2 (both hidden) | **same 2** |
+
+**The type gate is met on the honest reading.** The pipeline simulator is a
+terminal; monospace is correct there, and counting it against a "less
+monospace" target would be measuring the wrong thing. Excluding it, both
+figures are under the 20% the spec asks for. Including it they are 26% and 24%
+— stated both ways rather than picking the flattering one.
+
+### Still not verified anywhere: the motion itself
+
+Everything in this slice moves, and **the Browser pane runs no animation
+frames at all**, so no entrance, no draw and no drift has been *seen* — only
+verified as markup, computed values and class state. This needs Val's phone,
+and it joins V2.
 
 ### S4.5a — the hero, and the dust · 2026-09-15 ✅
 
