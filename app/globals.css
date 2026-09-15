@@ -135,25 +135,43 @@
      for. Without it the material silently degrades to a flat tint on iOS.
      -------------------------------------------------------------------- */
   .glass {
-    background-color: rgba(255, 255, 255, 0.045);
+    background-color: rgba(255, 255, 255, 0.055);
     -webkit-backdrop-filter: blur(20px) saturate(1.6);
     backdrop-filter: blur(20px) saturate(1.6);
-    border: 1px solid var(--hairline);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    /* The rim light — FOUR edges, not one.
+
+       The first version of this had a single `inset 0 1px 0` top highlight,
+       which is the common shorthand and is not enough: a pane of glass
+       catches light on every edge, brightest where the light falls and
+       faintest opposite it. Lit top, faint sides, near-dark bottom, and a
+       barely-there inner bloom for the thickness of the pane. Compared
+       side by side in the browser against a heavier six-shadow stack, which
+       read as a plastic capsule rather than as glass — restraint is what
+       makes the material convincing, which is also true of Apple's. */
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
-      0 8px 32px -16px rgba(0, 0, 0, 0.9);
+      inset 0 1.5px 0.5px -1px rgba(255, 255, 255, 0.45),
+      inset 1.5px 0 1px -1px rgba(255, 255, 255, 0.16),
+      inset -1.5px 0 1px -1px rgba(255, 255, 255, 0.16),
+      inset 0 -1.5px 1px -1px rgba(255, 255, 255, 0.1),
+      inset 0 0 12px 2px rgba(255, 255, 255, 0.025),
+      0 10px 36px -20px rgba(0, 0, 0, 0.95);
   }
 
   /* The lifted state — a floating pane rather than a band flush to an edge.
      Brighter fill, deeper blur, stronger edge light, real shadow. */
   .glass-strong {
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: rgba(255, 255, 255, 0.075);
     -webkit-backdrop-filter: blur(28px) saturate(1.8);
     backdrop-filter: blur(28px) saturate(1.8);
-    border: 1px solid var(--hairline-strong);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
-      0 16px 48px -20px rgba(0, 0, 0, 0.95);
+      inset 0 2px 0.5px -1px rgba(255, 255, 255, 0.55),
+      inset 2px 0 1px -1px rgba(255, 255, 255, 0.2),
+      inset -2px 0 1px -1px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 1px -1px rgba(255, 255, 255, 0.13),
+      inset 0 0 14px 2px rgba(255, 255, 255, 0.035),
+      0 16px 48px -22px rgba(0, 0, 0, 0.95);
   }
 
   /* Glass crossing the light band. The fill and the edge light both invert:
@@ -165,9 +183,16 @@
     -webkit-backdrop-filter: blur(20px) saturate(1.6);
     backdrop-filter: blur(20px) saturate(1.6);
     border: 1px solid var(--rule);
+    /* The rim inverts over a light ground: the lit edge is white against a
+       darker surround on dark, and a *shadowed* edge against a brighter
+       surround on light. Reusing the dark stack here paints white on white
+       and the pane disappears. */
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-      0 8px 32px -20px rgba(10, 11, 15, 0.25);
+      inset 0 1.5px 0.5px -1px rgba(255, 255, 255, 0.95),
+      inset 0 -1.5px 1px -1px rgba(10, 11, 15, 0.12),
+      inset 1.5px 0 1px -1px rgba(10, 11, 15, 0.06),
+      inset -1.5px 0 1px -1px rgba(10, 11, 15, 0.06),
+      0 10px 36px -22px rgba(10, 11, 15, 0.3);
   }
 
   /* The light ground. `color-scheme: light` is set locally so form controls,

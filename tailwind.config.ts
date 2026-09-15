@@ -173,9 +173,9 @@ const config: Config = {
            front of what is behind it. Paired with `backdrop-filter` in the
            `.glass` classes in globals.css — neither works alone. */
         glass:
-          "inset 0 1px 0 0 rgba(255,255,255,0.10), 0 8px 32px -16px rgba(0,0,0,0.9)",
+          "inset 0 1.5px 0.5px -1px rgba(255,255,255,0.45), inset 1.5px 0 1px -1px rgba(255,255,255,0.16), inset -1.5px 0 1px -1px rgba(255,255,255,0.16), inset 0 -1.5px 1px -1px rgba(255,255,255,0.10), inset 0 0 12px 2px rgba(255,255,255,0.025), 0 10px 36px -20px rgba(0,0,0,0.95)",
         "glass-strong":
-          "inset 0 1px 0 0 rgba(255,255,255,0.16), 0 16px 48px -20px rgba(0,0,0,0.95)",
+          "inset 0 2px 0.5px -1px rgba(255,255,255,0.55), inset 2px 0 1px -1px rgba(255,255,255,0.20), inset -2px 0 1px -1px rgba(255,255,255,0.20), inset 0 -2px 1px -1px rgba(255,255,255,0.13), inset 0 0 14px 2px rgba(255,255,255,0.035), 0 16px 48px -22px rgba(0,0,0,0.95)",
       },
       backgroundImage: {
         /* 32px engineering grid at 3% white. */

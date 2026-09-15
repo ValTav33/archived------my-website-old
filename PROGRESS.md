@@ -94,9 +94,19 @@ No section redesigned; the material the sections are made of was rebuilt.
   dark bands.
 - **Glass primitives added**: `.glass`, `.glass-strong`, `.glass-on-paper`,
   `.surface-paper`, plus `shadow-glass` tokens. The part that was missing is
-  the **inset top edge-light** — without it a blurred translucent surface on
-  near-black is indistinguishable from a flat dark fill. `-webkit-` prefix
-  included, because Safari is the browser on the phones this site is for.
+  the **rim light** — without it a blurred translucent surface on near-black
+  is indistinguishable from a flat dark fill. `-webkit-` prefix included,
+  because Safari is the browser on the phones this site is for.
+- **The rim light was then rebuilt on all four edges**, after Val supplied a
+  21st.dev liquid-glass component. The component itself is not adopted — its
+  effect is `backdrop-filter: url(#svg)`, which `CSS.supports` reports as
+  **false** for the `-webkit-` form and therefore renders nothing in Safari;
+  it is Tailwind v4 syntax against our 3.4.17; it references shadcn tokens
+  this project does not define; and its `MetalButton` ships gold and bronze
+  gradients. Its one good idea — a layered inset rim instead of a single top
+  highlight — is now in `.glass`. Two candidate stacks were compared in the
+  browser: the heavier one read as a plastic capsule, the restrained one as
+  glass. §14, 2026-09-15.
 - `body` set to 17px/1.65 so unclassed text inherits the readable size.
 - Playbook §2.4, §10 and §3's Phase 4 row amended; six entries appended to §14.
 
