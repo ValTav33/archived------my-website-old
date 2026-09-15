@@ -9,39 +9,118 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge (V21)
-**Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
-**Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S7 · 2026-09-14 · closeout · **all seven slices done**
-**Blocked on:** **V21 — the merge**, which a session cannot do (see V4's history). One branch, no stack, no rebase. **Phase 4 is next: the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
-
-> **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
-> the branch is pushed; what remains is the phone pass, the keyboard pass and
-> opening + squash-merging the PR — all Val's. Phase 2 started on a branch
-> stacked on Phase 1 rather than waiting. After Phase 1 merges, rebase:
-> `git rebase --onto main phase/1-homepage phase/2-multipage`. `main` is a
-> direct ancestor of `phase/1-homepage`, so the squash merge leaves `main`
-> with an identical tree and the replay conflicts with nothing, at any point
-> in the phase.
+**Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
+**Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
+**Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
+**Last slice:** S4.0 · 2026-09-15 · the materials — surfaces, type scale, glass, light ground
+**Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
 
-> **`deliverAuditRequest` is no longer a stub.** S3.3 wired it to a real mail
-> transport, so the form no longer validates a submission and discards it —
-> the risk playbook §12 rates Severe is closed *in code*. What is not yet
-> proven is the thing the exit gate asks for: **no submission has ever landed
-> in an inbox**, because there is no Resend key (V7).
->
-> **A consequence to understand before this branch reaches production.** With
-> no key configured, a correctly filled form now returns 502 and tells the
-> visitor to call instead of promising 24 hours. That is deliberate — it is
-> the honest failure, chosen over a fallback that makes a missing transport
-> look like a working one (D5) — but it means the key has to exist *before*
-> the merge, not after. Today's silent false success is worse; a loud honest
-> failure on the live site is still not something to ship on purpose.
-
 ---
+
+## Phase 4 — Conversion & Craft 🟡 IN PROGRESS
+
+**Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md` · **Branch:** `phase/4-conversion` from `75d2f39`
+
+The objective in playbook §3 was rewritten twice on 2026-09-15 and §3's row is
+retitled. The original — scroll reveals, bento hierarchy, CI budgets, gated on
+three Lighthouse numbers — tested nothing Val complained about. The replacement
+is conversion first, craft second. Both rewrites and their reasoning are in
+§14, dated 2026-09-15.
+
+**Approval gate for this phase, per Val:** the session stops at the end of
+every slice and asks before starting the next. No slice begins on assumed
+consent.
+
+### Baseline, measured before S4.0 — mobile homepage
+
+Everything the exit gate compares against. Measured 2026-09-15, not estimated.
+
+| | Before |
+|---|---|
+| Words | 956 |
+| Height | 10,406px — **12.8 phone screens** |
+| Text elements | 108 |
+| …at the 12px floor | **59 (55%)** |
+| …in JetBrains Mono | **61 (56%)** |
+| Images / video | **0 / 0** |
+| Surface ramp vs page | **1.00 → 1.18**; a card at **1.04:1** |
+| Most-used text colour | `ink-ghost` (the *label* token) on 28 elements; `ink-muted`, the body token, on 4 |
+| Ways to act, mobile journey | 2 |
+| Longest stretch with no CTA | **~9,000px** |
+| Raw `text-zinc-*` utilities | **60, across 27 files** — §10.1 drift since Phase 1 |
+
+Largest section: «Ενδεικτικές Αρχιτεκτονικές» at **3.4 phone screens**.
+Smallest: the proof strip, the only credibility on the page, at **0.6**.
+
+### Reference measurements — apple.com, 2026-09-15
+
+Val named Apple as the target, so it was measured rather than recalled. Three
+of the things he asked for turned out not to be things Apple does.
+
+- Adjacent homepage tiles alternate `#000000` ↔ `#F5F5F7` — about **19:1**.
+  Apple does **not** use "similar shades".
+- Body text **17px**; only **5.8%** of text nodes at 12px. Two font weights,
+  three dominant text colours.
+- **220 images and 13 videos** on one product page.
+- The global nav is full-bleed, 48px, **`border-radius: 0`**. The rounded
+  thing is the *button* (`border-radius: 980px`).
+- `scroll-behavior` is **`auto`**, not `smooth`. Ours is `smooth`.
+- **27** `prefers-reduced-motion` rules.
+- Headings left-aligned **33** times, centred **7** — Apple centres the big
+  moments only.
+
+### S4.0 — the materials · 2026-09-15 ✅
+
+No section redesigned; the material the sections are made of was rebuilt.
+
+- **Surface ramp widened** from 1.00 → 1.18 to **1.00 → 1.63** on the same
+  cool-slate axis. The default `Card` surface goes from **1.04:1 to 1.22:1**
+  against the page. Values were solved for a target ratio, not chosen by eye,
+  and the arithmetic is in the config comments.
+- **Ink ramp lifted with it, and for a reason that was measured:**
+  `ink-ghost` fell to **4.07:1** on the new card surface, below AA. Every text
+  token is now solved against `obsidian-700` — the *lightest* surface in the
+  system and therefore the worst case. New §10.9 formalises this.
+- **Type scale raised at the bottom**: `xs` 13→14, `sm` 14→15, `base` 16→**17**
+  (apple.com's body size), `lg` 18→19 to close the gap to `xl`. Everything from
+  `xl` up is Tailwind's default, untouched — the scale was never missing steps,
+  the page just never used them.
+- **Light ground added**: `paper` / `graphite` / `rule`, with its own
+  AA-verified type ramp. Still monochrome — white carries no hue. `paper`
+  against the page is **18.4:1**, versus the ~1.4:1 ceiling of two adjacent
+  dark bands.
+- **Glass primitives added**: `.glass`, `.glass-strong`, `.glass-on-paper`,
+  `.surface-paper`, plus `shadow-glass` tokens. The part that was missing is
+  the **inset top edge-light** — without it a blurred translucent surface on
+  near-black is indistinguishable from a flat dark fill. `-webkit-` prefix
+  included, because Safari is the browser on the phones this site is for.
+- `body` set to 17px/1.65 so unclassed text inherits the readable size.
+- Playbook §2.4, §10 and §3's Phase 4 row amended; six entries appended to §14.
+
+**Verified in the browser, not assumed:** the default card now paints
+`rgb(28,32,42)` at **1.22:1** against the page; `body` computes to 17px;
+`.glass` is emitted with its `backdrop-filter` and edge-light intact. The
+floating glass pill was applied to the live header as a throwaway in-page test
+and photographed before being discarded — the material reads correctly, which
+is what S4.3 will build on.
+
+**Known and expected — S4.0 moved none of these**, because they are component
+decisions rather than token ones, and the gate for them is S4.6:
+
+- 12px text is **still 55%** and monospace **still 56%**. Both come from
+  components reaching for `text-mono-xs` and `font-mono`, not from the scale.
+- The page got **longer**, 10,406 → 10,971px, because the type is bigger. The
+  spec predicted this and sequences S4.1 (the text cut) after S4.0 for exactly
+  that reason.
+- The 60 raw `text-zinc-*` utilities are untouched; `zinc-400` is still doing
+  the job `ink-muted` should. **Backlogged**, not absorbed — it is 27 files and
+  belongs in its own slice.
+- `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
+  yet emitted: Tailwind removes `@layer components` rules nothing references.
+  They appear when S4.3 and S4.4 use them.
 
 ## Phase 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge
 
@@ -2302,6 +2381,18 @@ Workarounds that do prove the real behaviour: force
 by hand before screenshotting. Both were used here.
 
 ### Backlog row raised against a §10 non-negotiable
+
+**Raised in S4.0 · 2026-09-15 — the raw-`zinc` sweep.** `grep` finds **60 raw
+Tailwind palette utilities across 27 files**: 42 `text-zinc-400`, 11
+`text-zinc-300`, 6 `text-zinc-100`, 1 `bg-zinc-200`. `text-zinc-400` is the de
+facto body colour of this site while the `ink` ramp it was built to replace is
+used 49 times in total — §10.1 says tokens only, and this has been drifting
+since Phase 1. It is why S4.0's ink lift did not reach every paragraph: the
+hero's sub-headline and every `SectionHeader` lede are `zinc`, not `ink`.
+**Deliberately not absorbed into a visual slice** — 27 files is its own commit,
+and mixing it into a slice that also moves surfaces makes the diff
+unreviewable. Do it as a standalone `refactor(tokens)` before the Phase 4 PR if
+there is room, otherwise first thing after.
 
 §10.6 says motion degrades and **everything** respects `prefers-reduced-motion`.
 `globals.css` collapses CSS animations and transitions under the media query,

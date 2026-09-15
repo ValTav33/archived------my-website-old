@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after the Phase 3.5 content pass. **Nothing on this list is blocking.**
+**Last synced:** 2026-09-15, at the start of Phase 4. **Nothing on this list is blocking.**
 
 ---
 
@@ -316,31 +316,6 @@ six fields and Greek intact, and you can hit reply and reach the visitor
 
 ---
 
-### V21 — Merge the Phase 3.5 PR 🔴
-
-**Why it is yours:** the same three walls as V4. `gh` is not installed, the
-GitHub connector is unauthorised in this session, and a local merge onto
-`main` is refused by the permission classifier as *Merge Without Review* —
-which is playbook §5 enforced by tooling rather than by discipline.
-
-**One PR, one branch.** `phase/3.5-content`, branched cleanly from `main`, so
-there is no stack and no rebase this time.
-
-```
-https://github.com/ValTav33/my-website/compare/main...phase/3.5-content?expand=1
-```
-
-Title, then paste the body a session hands you, then **Squash and merge**.
-
-**What this changes on the live site:** the surname, every ownership and
-account claim, every technology name, the FAQ set, the homepage's about
-paragraphs, and a new `/pricing` route. No backend behaviour changes at all —
-the form, the database and the cron are untouched by this phase.
-
-**Done when:** `main` carries it and production serves the new SHA.
-
----
-
 ### V19 — `CRON_SECRET` 🟠 *(generated locally; still needs setting in Vercel)*
 
 **Why it is yours:** a generated secret, same reason as the rest.
@@ -504,4 +479,5 @@ line.
 | V5 | Check the deployed SHA after merge | 2026-09-14 — production serves `b76e3f5`, tree byte-identical to the verified branch |
 | V19 | `CRON_SECRET` | 2026-09-14 — set in Vercel; the cron route answers 401 without it on production |
 | V3 | Vercel Deployment Protection | 2026-09-14 — **not needed.** Protected previews turned out to be measurable via the connector's bypass cookie. Setting left on |
+| V21 | Merge the Phase 3.5 PR | 2026-09-15 — merged by Val as `75d2f39`, PR `#2`. `origin/main` now carries the surname fix, the ownership and technology-name sweeps, the new FAQ set and `/pricing`. Phase 4 branched from it cleanly, no stack and no rebase |
 | — | D3 — lead retention period | 2026-09-14 — **24 months**, enforced by the S3.6 job, interpolated into `/privacy` from the code |

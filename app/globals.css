@@ -7,19 +7,31 @@
     /* Mirrors of the Tailwind tokens, for surfaces that can't use utilities
        (SVG, inline gradients, scrollbars). Monochrome by design. */
     --obsidian: #08090d;
-    --surface: #0f1117;
-    --surface-raised: #141721;
+    --surface: #1c202a;
+    --surface-raised: #2a303f;
     --ink: #ffffff;
     --ink-bright: #f8fafc;
-    --ink-muted: #94a3b8;
-    --ink-faint: #8b98ac;
-    --ink-ghost: #788699;
+    --ink-muted: #bbc4d2;
+    --ink-faint: #aab4c2;
+    --ink-ghost: #99a3b2;
     /* Decorative only — fails AA by design. aria-hidden marks, never text. */
     --decor: #475569;
     --hairline: rgba(255, 255, 255, 0.07);
     --hairline-strong: rgba(255, 255, 255, 0.15);
     /* The single chromatic value in the system — status dots only. */
     --live: #10b981;
+
+    /* The light ground and its own type ramp — S4.0. Still monochrome: white
+       carries no hue. Mirrors `paper` / `graphite` / `rule` in the Tailwind
+       config for the same reason every other pair here is mirrored. */
+    --paper: #f5f6f8;
+    --paper-raised: #ffffff;
+    --paper-sunken: #e9ebef;
+    --graphite: #0a0b0f;
+    --graphite-muted: #434b59;
+    --graphite-faint: #545d6d;
+    --rule: rgba(10, 11, 15, 0.1);
+    --rule-strong: rgba(10, 11, 15, 0.22);
 
     color-scheme: dark;
   }
@@ -43,6 +55,10 @@
   body {
     background-color: var(--obsidian);
     color: var(--ink-muted);
+    /* 17px, matching the `base` step. Unclassed text inherits the readable
+       size rather than the browser's 16px default — S4.0. */
+    font-size: 1.0625rem;
+    line-height: 1.65;
     /* Keeps white-on-near-black type crisp rather than bloomed on macOS. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -93,6 +109,85 @@
   /* Flat matte canvas. No radial glows, no colour washes. */
   .surface-obsidian {
     background-color: var(--obsidian);
+  }
+
+  /* --------------------------------------------------------------------
+     GLASS — the signature material, added in S4.0.
+
+     Three parts, and it needs all three or it reads as a grey box:
+
+       1. a translucent fill, so what is behind it still contributes
+       2. `backdrop-filter`, so what is behind it is blurred rather than
+          merely dimmed
+       3. the inset top highlight — the EDGE LIGHT. This is the part that
+          was missing. It is the lit bevel the eye uses to place a pane in
+          front of a background, and without it a blurred translucent
+          surface on a near-black page is indistinguishable from a flat
+          dark fill.
+
+     The fourth requirement is not CSS: glass needs something bright behind
+     it to blur. On an empty black page there is nothing to refract. That is
+     why the light band and the animated elements are load-bearing rather
+     than decorative — see the phase spec.
+
+     `-webkit-` prefix is required: Safari still ships `backdrop-filter`
+     prefixed, and Safari is the browser on the phones this site is built
+     for. Without it the material silently degrades to a flat tint on iOS.
+     -------------------------------------------------------------------- */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.045);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid var(--hairline);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+      0 8px 32px -16px rgba(0, 0, 0, 0.9);
+  }
+
+  /* The lifted state — a floating pane rather than a band flush to an edge.
+     Brighter fill, deeper blur, stronger edge light, real shadow. */
+  .glass-strong {
+    background-color: rgba(255, 255, 255, 0.07);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    backdrop-filter: blur(28px) saturate(1.8);
+    border: 1px solid var(--hairline-strong);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      0 16px 48px -20px rgba(0, 0, 0, 0.95);
+  }
+
+  /* Glass crossing the light band. The fill and the edge light both invert:
+     over `paper`, a white highlight is invisible and a white tint is the
+     background. Without this the header dissolves the moment it reaches the
+     conversion section. */
+  .glass-on-paper {
+    background-color: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid var(--rule);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 8px 32px -20px rgba(10, 11, 15, 0.25);
+  }
+
+  /* The light ground. `color-scheme: light` is set locally so form controls,
+     scrollbars and the focus ring inside this band are drawn by the browser
+     for a light surface rather than inheriting the document's dark scheme —
+     which is what otherwise produces a dark-chrome select on a white card. */
+  .surface-paper {
+    background-color: var(--paper);
+    color: var(--graphite-muted);
+    color-scheme: light;
+  }
+
+  .surface-paper :is(h1, h2, h3, h4) {
+    color: var(--graphite);
+  }
+
+  /* The focus ring is white, which is invisible on `paper`. One override,
+     scoped to the band. */
+  .surface-paper :focus-visible {
+    outline-color: rgba(10, 11, 15, 0.65);
   }
 
   /* Primary action: high-contrast solid white. */
