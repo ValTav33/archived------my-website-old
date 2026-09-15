@@ -181,15 +181,20 @@ card costs 230–280px. That is roughly 2,500px of cards before a single
 paragraph. S4.0's larger type added ~600px on its own, which this slice spent
 its savings absorbing.
 
-Getting from 9,809px to ~5,700px means removing about **4,100px** — two
-sections' worth. The only honest ways there:
+Getting from 9,809px to ~5,700px would have meant removing about **4,100px** —
+two sections' worth.
 
-1. **Drop `process` and `about` from the homepage** (2.4 screens), replacing
-   each with one line and the link that already exists. Both have full pages.
-   This goes further than playbook D1, which says the homepage keeps a
-   *highlight* of each — so it is **Val's decision, not a session's**, and it
-   is asked rather than assumed.
-2. Accept ~10 screens after S4.4 shortens the form block, and move the gate.
+**Asked, and answered: the gate is withdrawn.** Val: *«κρατάμε αυτές που έχει
+και βάζουμε περισσότερες ενότητες στο μέλλον.»* Every section stays and the
+homepage is expected to grow. A cap on total length fights that plan, so the
+exit gate's **Longest stretch with no CTA** row — ~9,000px today, 0 required —
+becomes the load-bearing one, joined by two density rules: every section links
+out or carries a CTA, and no claim renders twice on the page. Playbook §14.
+
+**This re-orders the phase: S4.3, the CTAs, moves ahead of S4.2.** On a page
+that is going to get longer, CTAs only at the top and the bottom get worse
+with every section added, and every future section inherits the sticky bar
+once it exists.
 
 **Not done, deliberately:** no copy was cut for length beyond the relocation.
 §8 and §11 say nothing true is removed to save space, and the remaining words

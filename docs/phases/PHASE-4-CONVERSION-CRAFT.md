@@ -244,8 +244,11 @@ Target order:
   material. Nothing is deleted — it relocates.
 - Process, About and FAQ compress to their highlight and link out, which is
   what playbook D1 (2026-09-13) already requires.
-- Homepage from ~956 words toward **≤ 600** and from 12.8 phone screens to
-  **≤ 7**.
+- ~~Homepage from ~956 words toward ≤ 600 and from 12.8 phone screens to
+  ≤ 7.~~ **Withdrawn 2026-09-15, after S4.1 measured what it would cost** —
+  see §8. Landed at 817 words and 12.1 screens. The cause is mobile card
+  stacking rather than prose, and Val chose to keep every section and add
+  more later.
 - §8 content truth and §11 copy rules unchanged. Nothing true is removed to
   save space; repetition and hedging are.
 
@@ -374,7 +377,9 @@ first, craft second, and keeps the old numbers as a floor.
 
 | | Gate |
 |---|---|
-| Length | **≤ 600 words**, **≤ 7 phone screens** (from 956 / 12.8) |
+| Length | **No cap — withdrawn 2026-09-15.** Val, asked whether to drop sections to reach ≤ 7 phone screens: *«κρατάμε αυτές που έχει και βάζουμε περισσότερες ενότητες στο μέλλον.»* The homepage is meant to grow, so a cap on total length fights the plan for the page. The two rows below replace it, and the **Longest stretch with no CTA** row above becomes the load-bearing one. |
+| Every section earns its place | Each homepage section either links to the page that owns its detail, or carries a CTA. No section is a dead end. |
+| Density | No claim renders twice on the page — playbook D1 applied *within* the homepage, not only across pages |
 | Type | **≤ 20%** of text nodes at the 12px floor (from 55%); **≤ 20%** monospace (from 56%) |
 | Surfaces | Adjacent sections distinct at arm's length on a phone; **one light band** ships; glass reads as glass on ≥ 3 surfaces |
 | Motion | `transform`/`opacity` only; **1–2** animated elements per viewport; **≥ 4** respond to scroll; the hero shows motion on a phone **without scrolling**; all of it degrades under `prefers-reduced-motion` |
