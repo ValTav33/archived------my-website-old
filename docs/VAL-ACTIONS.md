@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-15, at the start of Phase 4. **Nothing on this list is blocking.**
+**Last synced:** 2026-09-15, after Phase 4 was pushed. **V22 is blocking.**
 
 ---
 
@@ -313,6 +313,53 @@ key has to be in place *before* this branch reaches production, not after.
 **Done when:** a submission on the deployment arrives in your inbox with all
 six fields and Greek intact, and you can hit reply and reach the visitor
 (`reply_to` is set to their address).
+
+---
+
+### V22 — Merge the Phase 4 PR, and walk it on your phone first 🔴
+
+**Why it is yours:** the same three walls as V4 and V21 — `gh` is not
+installed, the GitHub connector is unauthorised in this session, and a local
+merge onto `main` is refused by the permission classifier.
+
+**One branch, no stack, no rebase.** `phase/4-conversion`, cut from `main` at
+`75d2f39`, pushed.
+
+```
+https://github.com/ValTav33/my-website/compare/main...phase/4-conversion?expand=1
+```
+
+Title: `Phase 4 — Conversion & Craft`. Paste the body the session handed you,
+then **Squash and merge**.
+
+**Do the phone pass BEFORE the merge, not after — and this time it is not a
+formality.** Everything this phase added moves, and **the Browser pane runs no
+animation frames at all**, so no entrance, no line-draw and no particle drift
+has ever been *seen*. They are verified as markup, computed values and class
+state. That is the strongest claim this session can make about them.
+
+Open the Vercel preview URL on your actual phone and check:
+
+- The **dust** in the hero — sparse and slow, or busy and cheap? It is the
+  first thing to cut if you dislike it, and §2.4 already says it is the first
+  thing to cut if it costs speed.
+- The **header** — full-bleed at the top, a floating pill once you scroll,
+  and **white glass with dark text** as it crosses the light band.
+- The **bottom bar** — appears after the hero, disappears over the form,
+  never covers the submit button, sits above the home indicator.
+- The **form** — tap each field. **It must not zoom.** That was a real defect
+  and the fix is the single most valuable thing in this phase.
+- The **cards** — the little line should draw itself once as each section
+  arrives, then stay still.
+- The **light band** — does one white section in a dark site read as
+  deliberate, or as a mistake? This is the biggest aesthetic bet of the phase
+  and it is reversible.
+
+**Also still V2, and still never observed in any phase:** tab through the page
+and confirm a **visible focus ring** on every stop.
+
+**Done when:** you have walked the preview on a phone, said what looked wrong,
+and `main` carries the merge.
 
 ---
 

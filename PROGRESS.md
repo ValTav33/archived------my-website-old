@@ -13,7 +13,7 @@
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
 **Last slice:** S4.5b · 2026-09-15 · eyebrows plainened, scroll reveals, and the card schematics
-**Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
+**Blocked on:** **V22 — the phone pass and the merge.** `phase/4-conversion` is pushed with eight commits; the PR body is written. Everything this phase added moves, and the Browser pane runs no animation frames, so **none of the motion has ever been seen** — the phone pass is the gate, not a courtesy. Lighthouse still needs the deployment. Phases 0–3.5 are live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
