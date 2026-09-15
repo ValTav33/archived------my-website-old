@@ -30,6 +30,10 @@ export default function Navbar() {
      page is at the top and resolves once content slides underneath. */
   const [scrolled, setScrolled] = useState(false);
 
+  /* True while a `.surface-paper` band is behind the header — see the effect
+     below. Drives the whole header's ground, not just its background. */
+  const [overPaper, setOverPaper] = useState(false);
+
   /**
    * The mobile drawer.
    *
@@ -65,12 +69,50 @@ export default function Navbar() {
     setOpenedOn(null);
   }, []);
 
+  /**
+   * Two facts about where the header is, computed together on every scroll.
+   *
+   * `scrolled` drives the shape. `overPaper` drives the **ground**: S4.4 made
+   * the conversion section a light band, and a translucent dark header over
+   * `paper` composites to about #F6F7F9, on which the white brand mark is
+   * **1.02:1**. White on white. The header has to change ground with the page
+   * beneath it.
+   *
+   * **This was an IntersectionObserver first, and it was replaced.** The
+   * observer was correct — a root shrunk to the top 64px strip, which is
+   * exactly the flat bar's height — but its *updates* could not be verified
+   * here: the Browser pane's document is `visibilityState: "hidden"`, and
+   * delivery ran anywhere from 1.5 to over 5.5 seconds behind the scroll. A
+   * behaviour that cannot be observed is a behaviour that cannot be trusted,
+   * and this one is the difference between a legible header and an invisible
+   * one. Reading two rects inside a listener that already runs costs
+   * essentially nothing, is synchronous, and is verifiable.
+   */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll(); // sync on mount (handles reloads mid-page)
+    const bands = Array.from(
+      document.querySelectorAll<HTMLElement>(".surface-paper"),
+    );
+
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+
+      /* A band is behind the header when it crosses the top 64px strip. */
+      setOverPaper(
+        bands.some((el) => {
+          const r = el.getBoundingClientRect();
+          return r.top < 64 && r.bottom > 0;
+        }),
+      );
+    };
+
+    onScroll(); // sync on mount, which also handles a reload mid-page
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   /* While the drawer is open: freeze background scroll, close on Escape, keep
      Tab inside the panel, and restore focus on the way out. */
@@ -155,6 +197,10 @@ export default function Navbar() {
      state rather than true by luck. */
   const pill = scrolled && !open;
 
+  /* The drawer's panel is dark, so while it is open the header stays dark too
+     — the same reason the pill flattens: one state, not two halves. */
+  const onPaper = overPaper && !open;
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div
@@ -166,11 +212,17 @@ export default function Navbar() {
         <div
           className={cn(
             "mx-auto max-w-7xl transition-[border-radius,background-color,box-shadow,border-color] duration-300 ease-out",
+            onPaper && "nav-on-paper",
             pill
-              ? "glass-strong rounded-full"
+              ? cn(onPaper ? "glass-on-paper" : "glass-strong", "rounded-full")
               : cn(
-                  "glass rounded-none border-x-0 border-t-0",
-                  scrolled ? "border-b-hairline" : "border-b-transparent",
+                  onPaper ? "glass-on-paper" : "glass",
+                  "rounded-none border-x-0 border-t-0",
+                  scrolled
+                    ? onPaper
+                      ? "border-b-rule"
+                      : "border-b-hairline"
+                    : "border-b-transparent",
                 ),
           )}
         >
@@ -186,7 +238,7 @@ export default function Navbar() {
           href="/"
           onClick={dismissDrawer}
           aria-current={pathname === "/" ? "page" : undefined}
-          className="group flex min-h-tap shrink-0 items-center gap-2"
+          className="nav-brand group flex min-h-tap shrink-0 items-center gap-2"
         >
           <span className="font-mono text-sm font-bold uppercase tracking-[0.18em] text-white">
             {SITE.brand}
@@ -213,8 +265,8 @@ export default function Navbar() {
                      under the 44 bar S1.3 drove to zero site-wide. Height
                      alone was never the whole rule. */
                   className={cn(
-                    "inline-flex min-h-tap min-w-tap items-center justify-center text-sm transition-colors duration-200 hover:text-white",
-                    active ? "text-white" : "text-zinc-400",
+                    "nav-link inline-flex min-h-tap min-w-tap items-center justify-center text-sm transition-colors duration-200 hover:text-white",
+                    active ? "text-white" : "text-ink-muted",
                   )}
                 >
                   {item.label}
@@ -227,7 +279,7 @@ export default function Navbar() {
         {/* --------------------- Right-side utilities -------------------- */}
         <div className="flex items-center gap-2">
           {/* Direct phone pill + hover/focus tooltip with office hours. */}
-          <div className="group relative hidden xl:block">
+          <div className={cn("group relative hidden xl:block", onPaper && "invisible")}>
             <Badge
               as="a"
               href={`tel:${SITE.phoneTel}`}
@@ -253,7 +305,10 @@ export default function Navbar() {
             href={CTA_LINK.href}
             onClick={dismissDrawer}
             aria-current={pathname === CTA_LINK.href ? "page" : undefined}
-            className="btn-primary hidden min-h-tap px-4 py-2 text-xs sm:inline-flex"
+            className={cn(
+              "hidden min-h-tap px-4 py-2 text-sm sm:inline-flex",
+              onPaper ? "btn-ink" : "btn-primary",
+            )}
           >
             {CTA_LINK.label}
           </Link>
@@ -265,7 +320,7 @@ export default function Navbar() {
             onClick={() => (open ? closeDrawer(true) : setOpenedOn(pathname))}
             aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
             aria-expanded={open}
-            className="flex h-11 w-11 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-zinc-400 transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
+            className="nav-icon flex h-11 w-11 items-center justify-center rounded-lg border border-hairline bg-white/[0.02] text-ink-muted transition-colors duration-200 hover:border-hairline-strong hover:text-white lg:hidden"
           >
             {open ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.8} />

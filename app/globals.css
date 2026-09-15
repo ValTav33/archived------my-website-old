@@ -199,25 +199,98 @@
      scrollbars and the focus ring inside this band are drawn by the browser
      for a light surface rather than inheriting the document's dark scheme —
      which is what otherwise produces a dark-chrome select on a white card. */
+  /* Two ways onto the light ground, sharing one set of rules.
+
+     `.surface-paper` is a full-bleed band — the conversion section on the
+     homepage. `.paper-card` is a single bright card that can sit on ANY
+     ground, which is what the audit form uses: the form renders on both `/`
+     (inside the band) and `/contact` (on the dark page), and one styling that
+     works in both places beats a `tone` prop and two code paths — §10.5.
+
+     `color-scheme: light` is the part that is easy to forget and impossible
+     to miss once wrong: without it the browser paints `select` dropdowns,
+     autofill and the scrollbar for a dark document, so a white form grows a
+     black native menu the moment someone opens it. */
   .surface-paper {
     background-color: var(--paper);
+  }
+
+  .surface-paper,
+  .paper-card {
     color: var(--graphite-muted);
     color-scheme: light;
   }
 
-  .surface-paper :is(h1, h2, h3, h4) {
+  .paper-card {
+    background-color: var(--paper-raised);
+    border: 1px solid var(--rule);
+  }
+
+  .surface-paper :is(h1, h2, h3, h4),
+  .paper-card :is(h1, h2, h3, h4) {
     color: var(--graphite);
   }
 
-  /* The focus ring is white, which is invisible on `paper`. One override,
-     scoped to the band. */
-  .surface-paper :focus-visible {
-    outline-color: rgba(10, 11, 15, 0.65);
+  /* ------------------------------------------------------------------
+     THE HEADER CROSSING THE LIGHT BAND.
+
+     `.glass` over `paper` composites to about #F6F7F9, on which the white
+     brand mark is **1.07:1** — white on white. Introduced the moment the
+     conversion section became a light band, and caught by measuring the
+     composite rather than by looking at it.
+
+     Done in CSS, in one place, rather than as a `ground` prop threaded
+     through the brand, every nav link, the hamburger and `Badge`. The marker
+     classes exist only for this. Specificity: `.nav-on-paper .nav-brand` is
+     two classes and beats Tailwind's single-class `text-white`.
+     ------------------------------------------------------------------ */
+  /* The descendant selector is load-bearing: `.nav-brand` sits on the link
+     while `text-white` sits on the `span` inside it, so colouring only the
+     link leaves the actual text white — measured at 1.02:1 before this was
+     corrected. */
+  .nav-on-paper .nav-brand,
+  .nav-on-paper .nav-brand * {
+    color: var(--graphite);
+  }
+
+  .nav-on-paper .nav-link {
+    color: var(--graphite-muted);
+  }
+
+  .nav-on-paper .nav-link:hover,
+  .nav-on-paper .nav-link[aria-current="page"] {
+    color: var(--graphite);
+  }
+
+  .nav-on-paper .nav-icon {
+    color: var(--graphite-muted);
+    border-color: var(--rule);
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .nav-on-paper .nav-icon:hover {
+    color: var(--graphite);
+    border-color: var(--rule-strong);
+  }
+
+  /* The site's focus ring is white, which is invisible here. */
+  .surface-paper :focus-visible,
+  .paper-card :focus-visible,
+  .nav-on-paper :focus-visible {
+    outline-color: rgba(10, 11, 15, 0.7);
   }
 
   /* Primary action: high-contrast solid white. */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-white font-medium text-black transition-colors duration-200 hover:bg-zinc-200;
+  }
+
+  /* Primary action ON THE LIGHT GROUND. `btn-primary` is white on black —
+     invisible on a white card, which is the trap a light band sets for a
+     design system built dark-first. Near-black on white is 21:1, the highest
+     contrast available, and it is the button the whole page points at. */
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-graphite font-medium text-white transition-colors duration-200 hover:bg-graphite-muted;
   }
 
   /* Secondary action: matte obsidian glass. */

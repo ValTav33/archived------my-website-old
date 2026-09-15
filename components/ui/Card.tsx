@@ -18,9 +18,23 @@ import { cn } from "@/lib/utils";
  * `--hairline-strong`. There is no third.
  */
 const TONE = {
-  raised: "rounded-xl bg-obsidian-850",
-  sunken: "rounded-lg bg-obsidian-950/70",
-  glass: "rounded-xl bg-white/[0.02]",
+  raised: "rounded-xl border-hairline bg-obsidian-850",
+  sunken: "rounded-lg border-hairline bg-obsidian-950/70",
+  glass: "rounded-xl border-hairline bg-white/[0.02]",
+  /* The light ground. `paper-card` carries the fill, the rule-coloured border
+     and — the part that is easy to forget — `color-scheme: light`, so native
+     controls inside it are painted for a light document. Added in S4.4 for
+     the audit form, which renders on `/` inside the light band and on
+     `/contact` on the dark page, and needs to look right in both. */
+  paper: "rounded-xl paper-card",
+} as const;
+
+/* Hover hairlines differ by ground: white on dark, ink on light. */
+const INTERACTIVE = {
+  raised: "hover:border-hairline-strong",
+  sunken: "hover:border-hairline-strong",
+  glass: "hover:border-hairline-strong",
+  paper: "hover:border-rule-strong",
 } as const;
 
 type CardOwnProps<T extends ElementType> = {
@@ -46,10 +60,9 @@ export default function Card<T extends ElementType = "div">({
   return (
     <Tag
       className={cn(
-        "border border-hairline",
+        "border",
         TONE[tone],
-        interactive &&
-          "transition-colors duration-300 hover:border-hairline-strong",
+        interactive && cn("transition-colors duration-300", INTERACTIVE[tone]),
         className,
       )}
       {...rest}

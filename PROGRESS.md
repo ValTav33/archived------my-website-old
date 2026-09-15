@@ -12,7 +12,7 @@
 **Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
-**Last slice:** S4.3 · 2026-09-15 · somewhere to act, always — sticky mobile CTA, header morphs to a pill
+**Last slice:** S4.2 + S4.4 · 2026-09-15 · the offer in front, and the conversion block on the light band
 **Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -131,6 +131,94 @@ decisions rather than token ones, and the gate for them is S4.6:
 - `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
   yet emitted: Tailwind removes `@layer components` rules nothing references.
   They appear when S4.3 and S4.4 use them.
+
+### S4.2 + S4.4 — the offer, and the light band · 2026-09-15 ✅
+
+**Merged into one slice, deliberately.** Both touch the same region of the
+page. The playbook says one *section* per slice, and committing the conversion
+block twice — once to restyle it, once to rewrite its argument — would produce
+an intermediate state that is neither, and two diffs nobody can review
+separately.
+
+**The light band.** `#audit` is now full-bleed `paper`: **18.4:1** against the
+page, the largest value step available anywhere on this site, and the answer
+to "it's a two-colour thing" that costs no hue at all. Two adjacent dark bands
+top out near 1.4:1. Apple alternates its own tiles at roughly 19:1, measured.
+
+**The offer stopped being a footnote.** The heading was «Ας συζητήσουμε την
+υποδομή της επιχείρησής σας» — a subject line. `AUDIT_DELIVERABLE` is now the
+largest sentence in the section, still interpolated from the one constant so
+it cannot drift from the promise `/process` and `/websites` make. The client
+names come back beside the button, where the doubt is; they had appeared once
+at the top and vanished for eleven screens.
+
+**A real bug fixed, not a preference.** Form fields were `text-sm` — 14px
+before S4.0, 15px after. **Safari on iPhone zooms the whole page when a
+control under 16px takes focus**, so every visitor on the phone this site is
+built for got a lurching viewport on every field, on the one form the business
+depends on. All six controls are now 17px. Verified in the DOM, per control.
+
+Labels were 12px uppercase monospace in the second-dimmest grey on the page —
+the worst available treatment for the one thing a visitor must read to fill a
+form correctly. Now plain, near-black, same size as the input.
+
+**The form presents as four fields, not six.** `name`, `email`, `phone` and
+`intent` are all `not null` in `0001_audit_requests.sql`, so making one
+optional is a migration and this phase changes no backend. The two already
+optional fields fold into a native `<details>`. **Phone stays required on
+purpose** — the deliverable is a phone call.
+
+`DirectContactCard` no longer renders on the homepage. The channel rail lives
+on `/contact`, which owns it (§2.3, D1). A landing page's conversion block
+sells one thing.
+
+**The form is a `paper-card` everywhere, including on `/contact`'s dark page.**
+One styling, no `tone` prop, no second code path — §10.5. `color-scheme: light`
+rides along, so native selects and autofill are painted for a light document
+rather than growing a black native menu on a white card.
+
+### A defect this slice introduced, and caught by measuring
+
+Making the band light put the **dark glass header over white**. The composite
+is about #F6F7F9, on which the white brand mark is **1.02:1** — white on
+white. Not visible in a screenshot; found by compositing the header's fill
+over the band and doing the arithmetic.
+
+The header now changes ground with the page beneath it: `.glass-on-paper`,
+graphite brand, ink CTA. Verified with real input — brand **19.25:1**,
+hamburger **8.6:1**, and back to 17.13:1 over the dark page.
+
+`Eyebrow` and `SectionHeader` gained a `ground` prop for the same reason;
+`ink-ghost` is 1.2:1 on paper. `Card` gained a `paper` tone, and its hover
+hairline now follows the tone rather than always being white.
+
+### The finding that invalidated three hours of my own tests
+
+**`window.scrollTo` changes `scrollY` in the Browser pane but fires ZERO
+scroll events.** Measured directly: two programmatic scrolls, `scrollY` 1500
+then 3000, listener called **0 times**.
+
+Every JS-driven scroll test of a scroll-listener feature in this pane is
+therefore meaningless, and several readings in this slice and the last looked
+like component bugs because of it. `IntersectionObserver` *does* fire, but
+delivery ran 1.5–5.5s behind. **Only the `computer` scroll tool produces real
+scroll events.**
+
+Combined with the two already recorded — transitions never advance because the
+pane runs no animation frames, and `:focus` never matches — this is the third
+member of the same family. **Rule: to test anything scroll-driven, scroll with
+real input and assert on class lists.**
+
+### Numbers
+
+| | Before | Now |
+|---|---|---|
+| Form controls under 16px (iOS zoom) | **6 of 6** | **0 of 6** |
+| Fields shown at rest | 6 | **4** + a disclosure |
+| The offer | 13px, beside the form | **the section's largest sentence** |
+| Light surfaces on the site | 0 | **1** |
+| Header contrast over the band | **1.02:1** | **19.25:1** |
+| AA failures on the band | — | **0** across 19 elements |
 
 ### S4.3 — somewhere to act, always · 2026-09-15 ✅
 

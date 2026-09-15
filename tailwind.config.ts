@@ -84,6 +84,16 @@ const config: Config = {
           line: "#4E5768", // window dots, dashed connectors
           active: "#616B7F", // node ring, running or done
         },
+        /* The second chromatic value, and the last. It has shipped in the form
+           since Phase 0 while §10.2 claimed emerald was the only one; S4.4
+           makes it a token so it is documented rather than spreading as raw
+           `red-500` classes. `ink` is the variant for the light ground —
+           `red-400` on white is 2.1:1 and unreadable. Ratios: 6.04:1 on
+           `paper`, 6.54:1 on `paper-raised`, 5.48:1 on `paper-sunken`. */
+        alert: {
+          DEFAULT: "#F87171", // error text on dark surfaces
+          ink: "#B3261E", // error text on the light ground
+        },
         /* The only chromatic token in the system. Status dots only. */
         live: {
           DEFAULT: "#10B981",

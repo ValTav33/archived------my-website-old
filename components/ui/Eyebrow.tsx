@@ -19,9 +19,18 @@ const VARIANT = {
   label: "uppercase tracking-[0.16em]",
 } as const;
 
+/* Which ground it sits on. `ink-ghost` is 1.2:1 on `paper` — invisible —
+   so a light band needs its own value rather than a className override at
+   every call site. Added in S4.4 with the conversion band. */
+const GROUND = {
+  dark: "text-ink-ghost",
+  paper: "text-graphite-faint",
+} as const;
+
 type EyebrowOwnProps<T extends ElementType> = {
   as?: T;
   variant?: keyof typeof VARIANT;
+  ground?: keyof typeof GROUND;
   className?: string;
 };
 
@@ -31,6 +40,7 @@ type EyebrowProps<T extends ElementType> = EyebrowOwnProps<T> &
 export default function Eyebrow<T extends ElementType = "p">({
   as,
   variant = "bracket",
+  ground = "dark",
   className,
   ...rest
 }: EyebrowProps<T>) {
@@ -39,7 +49,8 @@ export default function Eyebrow<T extends ElementType = "p">({
   return (
     <Tag
       className={cn(
-        "font-mono text-mono-xs text-ink-ghost",
+        "font-mono text-mono-xs",
+        GROUND[ground],
         VARIANT[variant],
         className,
       )}
