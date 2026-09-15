@@ -12,7 +12,7 @@
 **Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
-**Last slice:** S4.1 · 2026-09-15 · the new homepage structure — showcase relocated, offers surfaced
+**Last slice:** S4.3 · 2026-09-15 · somewhere to act, always — sticky mobile CTA, header morphs to a pill
 **Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -131,6 +131,71 @@ decisions rather than token ones, and the gate for them is S4.6:
 - `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
   yet emitted: Tailwind removes `@layer components` rules nothing references.
   They appear when S4.3 and S4.4 use them.
+
+### S4.3 — somewhere to act, always · 2026-09-15 ✅
+
+Brought forward ahead of S4.2 when Val chose to keep every section and add more
+over time: on a page that grows, CTAs only at the top and the bottom get worse
+with every section, and every future section inherits this once it exists.
+
+**`MobileCtaBar`** — a glass pill fixed above the home indicator, carrying the
+audit CTA and a call button. Val chose both actions, and the phone is not
+decoration: the thing being sold *is* a fifteen-minute call. It lives in the
+layout, not on the homepage, so every route has it.
+
+Four rules it obeys, each verified rather than assumed:
+
+- **Never covers what it points at.** Hides while `#audit` is on screen, and
+  does not render on `/contact` at all, where the form is the page.
+- **Never competes with the hero**, which already carries both actions full
+  size. Waits until the hero has left.
+- **Not reachable while hidden** — `inert` + `aria-hidden`, not merely
+  translated away. An off-screen element that still takes Tab is the exact bug
+  S3.5 fixed on the collapsed FAQ panel.
+- **Safe area** via `env(safe-area-inset-bottom)`, `transform`-only motion,
+  and phones only.
+
+**The header now morphs.** Flat and full-bleed at the top of the page;
+**a floating rounded pill** once you are past ~8px of scroll — Val's "circular
+edges", earned as a transition rather than applied as a default, and the same
+family as Apple's local nav. Measured on `/macbook-pro/`, Apple's own global
+nav is `border-radius: 0`; the rounded thing there is the button. Ours already
+were.
+
+**The drawer was the risk and it is untouched.** It is a sibling of `nav`
+inside `header`, and its scrim is anchored at `top-16` — the flat bar's exact
+height. So only the inner bar morphs, and **opening the drawer forces the flat
+shape back regardless of scroll**, which keeps that `top-16` true in every
+state rather than true by luck. Verified end to end: opens, `aria-expanded`
+flips, six links, focus moves inside the panel, background scroll freezes,
+Escape closes it and **focus returns to the hamburger**, scrim `top` = 64px.
+
+### A method note worth keeping — the Browser pane freezes transitions
+
+Three separate readings in this slice looked like bugs and were not. The pane
+reports `visibilityState: "hidden"` and never runs animation frames, so **a CSS
+transition never advances and `getComputedStyle` returns the value it started
+from, forever.** The header read `border-radius: 9999px` while its class list
+said `rounded-none`; the CTA bar read an identity `transform` while its class
+said `translate-y-full`.
+
+`IntersectionObserver` *does* fire here, including on scroll — that was checked
+directly — but delivery is slow enough that a looped test disagrees with
+itself, and `window.scrollTo` with `scroll-behavior: smooth` compounds it.
+
+**So: assert on class lists, not on computed animated values, and set
+`scroll-behavior: auto` for the duration of a positional test.** This is the
+same family as the Phase 1 finding that `:focus` never matches in the pane.
+
+### The gate this closes
+
+| | Before | Now |
+|---|---|---|
+| Ways to act, mobile journey | 2 | **6** — hero (2), mid-page showcase CTA, sticky bar (2), the form |
+| Longest stretch with no CTA in reach | **~9,000px** | **0** — the hero carries its own, the sticky bar covers everything between, the form is its own |
+| AA failures | 0 | **0** across 110 elements with the bar on screen |
+| Tap targets under 44 | 2 (skip link, honeypot — both hidden) | same 2 |
+| Horizontal overflow | none | none |
 
 ### S4.1 — the new homepage structure · 2026-09-15 ✅ *(with one gate missed — read the numbers)*
 

@@ -143,17 +143,41 @@ export default function Navbar() {
      the page and undo the jump the visitor just asked for. */
   const dismissDrawer = useCallback(() => closeDrawer(false), [closeDrawer]);
 
+  /* The header has two shapes: a flat full-bleed bar at the top of the page,
+     and a floating pill once the hero is behind you.
+
+     **The drawer is deliberately outside the morphing element.** It is a
+     sibling of `nav` inside `header`, and its scrim is anchored at `top-16` —
+     the flat bar's exact height. Wrapping the drawer in something that gains
+     padding and a 999px radius would clip the panel and strand the scrim.
+     So only the inner bar changes, and opening the drawer forces the flat
+     shape back regardless of scroll, which keeps that `top-16` true in every
+     state rather than true by luck. */
+  const pill = scrolled && !open;
+
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b bg-obsidian-950/80 backdrop-blur-md transition-colors duration-300",
-        scrolled ? "border-hairline" : "border-transparent",
-      )}
-    >
-      <nav
-        aria-label="Κύρια πλοήγηση"
-        className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8"
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div
+        className={cn(
+          "transition-[padding] duration-300 ease-out",
+          pill ? "px-3 pt-2 sm:px-4 sm:pt-3" : "px-0 pt-0",
+        )}
       >
+        <div
+          className={cn(
+            "mx-auto max-w-7xl transition-[border-radius,background-color,box-shadow,border-color] duration-300 ease-out",
+            pill
+              ? "glass-strong rounded-full"
+              : cn(
+                  "glass rounded-none border-x-0 border-t-0",
+                  scrolled ? "border-b-hairline" : "border-b-transparent",
+                ),
+          )}
+        >
+          <nav
+            aria-label="Κύρια πλοήγηση"
+            className="flex h-16 items-center justify-between gap-4 px-5 sm:px-8"
+          >
         {/* ---------------------------- Brand ---------------------------- */}
         {/* A link, not a button: it navigates, so assistive tech should
             announce it as a link and a middle-click should open a new tab.
@@ -249,8 +273,10 @@ export default function Navbar() {
               <Menu className="h-[18px] w-[18px]" strokeWidth={1.8} />
             )}
           </button>
+            </div>
+          </nav>
         </div>
-      </nav>
+      </div>
 
       {/* --------------------------- Mobile drawer -------------------------- */}
       <AnimatePresence>

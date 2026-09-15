@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import MobileCtaBar from "@/components/conversion/MobileCtaBar";
 import JsonLd from "@/components/seo/JsonLd";
 import { IS_INDEXABLE } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -127,6 +128,13 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+
+        {/* S4.3. Phones only, and it lives in the layout rather than on the
+            homepage because every route should offer a way to act — the
+            homepage is simply where the gap was measured at ~9,000px. It
+            suppresses itself on `/contact` and while the audit form is on
+            screen. */}
+        <MobileCtaBar />
 
         <JsonLd />
 
