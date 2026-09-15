@@ -36,7 +36,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden pb-20 pt-28 sm:pb-28 sm:pt-32 lg:pb-36 lg:pt-40"
+      className="relative overflow-hidden pb-14 pt-24 sm:pb-28 sm:pt-32 lg:pb-36 lg:pt-40"
     >
       {/* 32px engineering grid at 3% white, masked so it dissolves outward.
           This is the only background decoration — no glow blobs, no washes. */}

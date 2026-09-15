@@ -1,144 +1,94 @@
-import ShowcaseCard, {
-  type ShowcaseCase,
-} from "@/components/showcase/ShowcaseCard";
 import ArrowLink from "@/components/ui/ArrowLink";
 import Card from "@/components/ui/Card";
 import ScrollLink from "@/components/ui/ScrollLink";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { getProof } from "@/lib/site";
+import { SHOWCASE } from "@/lib/showcase";
 
-/* ------------------------------------------------------------------ */
-/*  Case data                                                          */
-/* ------------------------------------------------------------------ */
-
-const CASES: readonly ShowcaseCase[] = [
-  {
-    id: "ai-concierge",
-    category: "Αυτοματισμοί AI • Φιλοξενία & Ιατρεία",
-    title: "Αυτόνομο portal εξυπηρέτησης με AI, 24/7",
-    problem:
-      "Χιλιάδες επαναλαμβανόμενες ερωτήσεις επισκεπτών (κρατήσεις, οδηγίες, check-in) δεσμεύουν ώρες καθημερινής ανθρώπινης επικοινωνίας και προκαλούν καθυστερήσεις.",
-    solution:
-      "Ανάπτυξη custom web portal με ενσωματωμένο πολύγλωσσο AI agent, φωνητικό και γραπτό, συνδεδεμένο σε πραγματικό χρόνο με τη βάση γνώσεων και το σύστημα κρατήσεων της επιχείρησης.",
-    metrics: [
-      "Άμεση απόκριση, χωρίς αναμονή",
-      "Αυτόνομη λειτουργία 24/7",
-      "Check-in χωρίς ανθρώπινη παρέμβαση",
-    ],
-    architecture: [
-      "Φωνή ή κείμενο πελάτη",
-      "Κατανόηση αιτήματος",
-      "Έλεγχος στα δεδομένα σας",
-      "Καταγραφή",
-      "Άμεση απάντηση",
-    ],
-  },
-  {
-    id: "client-portal",
-    category: "Κατασκευή web εφαρμογών • Ιατρικά & Συμβουλευτική",
-    title: "Web εφαρμογή και ενιαίο portal πελατών",
-    problem:
-      "Κατακερματισμένα δεδομένα σε emails και WhatsApp. Χάσιμο χρόνου σε χειροκίνητη αποστολή φορμών, ερασιτεχνική εικόνα προς τους πελάτες και έλλειψη κεντρικού ελέγχου.",
-    solution:
-      "Κατασκευή custom web εφαρμογής με ασφαλές dashboard διαχείρισης, ρόλους χρηστών, αυτόματο onboarding και κεντρική αποθήκευση εγγράφων.",
-    metrics: [
-      "Όλα τα δεδομένα σε ένα σημείο",
-      "Τα αρχεία βρίσκονται χωρίς αναζήτηση",
-      "Επαγγελματικό περιβάλλον χρήσης",
-    ],
-    architecture: [
-      "Ασφαλής σύνδεση",
-      "Έλεγχος ρόλων χρήστη",
-      "Αποθήκευση αρχείων",
-      "Συγχρονισμός σε πραγματικό χρόνο",
-    ],
-  },
-  {
-    id: "lead-engine",
-    category: "Υποδομή δεδομένων • B2B agencies",
-    title: "Αυτοματοποιημένη συλλογή και εμπλουτισμός leads",
-    problem:
-      "Χειροκίνητη αντιγραφή από υπολογιστικά φύλλα, ανεπιβεβαίωτα emails που καταλήγουν στα spam και αργή δρομολόγηση νέων ευκαιριών.",
-    solution:
-      "Πλήρως αυτοματοποιημένη ροή που αναζητά, επαληθεύει κλιμακωτά, αξιολογεί με AI και τροφοδοτεί άμεσα τα κατάλληλα leads στο CRM.",
-    metrics: [
-      "Χωρίς χειροκίνητη καταχώριση δεδομένων",
-      "Αυτόματη αξιολόγηση και καθαρισμός leads",
-      "Άμεση κλιμάκωση του όγκου επικοινωνίας",
-    ],
-    architecture: [
-      "Είσοδος από λίστα ή φόρμα",
-      "Κλιμακωτή επαλήθευση",
-      "Φίλτρο καταλληλότητας AI",
-      "CRM ή καμπάνια email",
-    ],
-    caseStudy: `/work/${getProof("btl").slug}`,
-  },
-] as const;
-
-/* ------------------------------------------------------------------ */
-/*  Section                                                            */
-/* ------------------------------------------------------------------ */
-
+/**
+ * The indicative architectures — the **highlight**, one line each.
+ *
+ * This section used to be the largest thing on the homepage: three cards
+ * carrying a problem paragraph, a solution paragraph, three metrics and a
+ * disclosure holding a terminal trace, measuring **3.4 phone screens**. On a
+ * page whose job is conversion that is a lot of room for systems that have
+ * not been built for anyone — while the proof strip, the only credibility on
+ * the page, was the smallest section at 0.6.
+ *
+ * S4.1 applies §2.3 here, which had never been applied to this section: the
+ * homepage carries the highlight, the deeper page carries the body. The full
+ * problem/solution/architecture now renders on `/websites` and `/automations`
+ * from the same `SHOWCASE` constant, so the two cannot drift.
+ *
+ * **Now a Server Component.** The disclosure state was the only reason
+ * `ShowcaseCard` needed the client, and nothing here holds state any more.
+ * The card still exists and is still used — on the service pages.
+ *
+ * **«Ενδεικτικά» stays, and stays prominent.** §8.2 requires the label for
+ * architectures describing capability rather than delivered work. What moved
+ * is where it sits: the heading is now a sentence an owner would say (§11.7)
+ * and the qualifier carries in the eyebrow and the lede, which is where a
+ * reader actually takes it in.
+ */
 export default function ShowcaseGrid() {
   return (
     <section
       id="solutions"
       aria-labelledby="solutions-heading"
-      className="scroll-mt-24 py-20 sm:py-28 lg:py-32"
+      className="scroll-mt-24 py-14 sm:py-28 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        {/* ---------------------------- Header --------------------------- */}
-        {/* Emerald is reserved for live status dots — playbook §2.4. Both
-            section eyebrows use the neutral label token.
-
-            Named "ενδεικτικές" on purpose. These describe systems we build,
-            not projects we have shipped and can name — content truth policy
-            §8.2. The heading has to say so before the cards do. */}
         <SectionHeader
           id="solutions-heading"
-          eyebrow="[ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]"
-          title="Ενδεικτικές Αρχιτεκτονικές."
-          lede="Οι αρχιτεκτονικές που ακολουθούν περιγράφουν συστήματα που κατασκευάζουμε — όχι δημοσιευμένα έργα πελατών. Τα ονομαστικά έργα που έχουν παραδοθεί είναι στα Έργα."
+          eyebrow="[ 03 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          title="Τι μπορεί να αναλάβει ένα σύστημα για εσάς."
+          lede="Ενδεικτικά — περιγράφουν συστήματα που κατασκευάζουμε, όχι δημοσιευμένα έργα πελατών."
         />
 
-        {/* D2's exit. The framing above stays exactly as Phase 0 wrote it —
-            §8.2 requires it — but a visitor who wants delivered work now has
-            somewhere to go. Before `/work` existed there was nowhere, which
-            is why the lede promised case studies "σύντομα"; that sentence
-            became false the moment this link had a destination. */}
-        <ArrowLink href="/work" className="mt-6">
-          Δείτε τα ονομαστικά έργα
-        </ArrowLink>
+        <ul className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+          {SHOWCASE.map((item) => (
+            <Card as="li" key={item.id} interactive className="p-6">
+              <h3 className="text-base font-semibold leading-snug text-white">
+                {item.title}
+              </h3>
 
-        {/* ----------------------------- Grid ---------------------------- */}
-        {/* Cards stretch to a common row height, so every "View Architecture"
-            button pins to the same baseline (that is what `justify-between`
-            on the card is for). Expanding one panel grows the row, which is
-            the expected behaviour for an accordion inside a grid. */}
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {CASES.map((item) => (
-            <ShowcaseCard key={item.id} item={item} />
+              {/* The outcome, in the owner's terms. §11.4 — outcome before
+                  mechanism, and the mechanism is one click away. */}
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                {item.oneLiner}
+              </p>
+
+              <ArrowLink
+                href={`/${item.pillar}#architectures`}
+                className="mt-5"
+              >
+                Πώς δουλεύει
+              </ArrowLink>
+            </Card>
           ))}
-        </div>
+        </ul>
 
-        {/* --------------------- Transition banner ----------------------- */}
+        {/* The one mid-page CTA that exists today. It stays, and it matters
+            more now than it did: this section sits high on the page, so this
+            is the first chance to act after the hero. */}
         <Card
           tone="glass"
-          className="mt-14 flex flex-col items-start justify-between gap-5 px-6 py-6 sm:flex-row sm:items-center"
+          className="mt-10 flex flex-col items-start justify-between gap-5 px-6 py-6 sm:flex-row sm:items-center"
         >
-          <p className="text-sm text-zinc-400 sm:text-base">
-            Χρειάζεστε ένα custom σύστημα προσαρμοσμένο στις δικές σας
-            λειτουργίες;
+          <p className="text-sm text-ink-muted">
+            Θέλετε κάτι φτιαγμένο για τη δική σας δουλειά;
           </p>
 
           <ScrollLink
             to="audit"
-            className="btn-primary min-h-tap shrink-0 px-5 py-3 text-xs"
+            className="btn-primary min-h-tap shrink-0 px-5 py-3 text-sm"
           >
-            Σχεδιάστε τη λύση σας — Κλείστε ένα 15-λεπτο Audit
+            Κλείστε ένα 15λεπτο audit
           </ScrollLink>
         </Card>
+
+        <ArrowLink href="/work" className="mt-8">
+          Δείτε τα ονομαστικά έργα
+        </ArrowLink>
       </div>
     </section>
   );

@@ -8,6 +8,7 @@ import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
 import { cn } from "@/lib/utils";
+import type { ShowcaseCase } from "@/lib/showcase";
 
 /**
  * One showcase case, and the only part of the section that needs JavaScript.
@@ -16,27 +17,17 @@ import { cn } from "@/lib/utils";
  * disclosure state that lives here, which dragged the section shell, its
  * header and the whole `CASES` array into the bundle with it. Splitting the
  * card out leaves the shell on the server and ships only this.
+ *
+ * **S4.1 moved where this renders, not what it is.** The homepage now shows
+ * a one-line summary per system and this full card — problem, solution,
+ * metrics, and the architecture trace behind a disclosure — renders on
+ * `/websites` and `/automations`, where a reader who followed the link has
+ * already asked for the detail. The homepage section was 3.4 phone screens;
+ * a landing page cannot spend that on systems built for nobody.
  */
-export type ShowcaseCase = {
-  id: string;
-  category: string;
-  title: string;
-  problem: string;
-  solution: string;
-  metrics: readonly string[];
-  /* Ordered hops of the system's data flow, rendered as a terminal trace. */
-  architecture: readonly string[];
-  /**
-   * Path to a delivered case study, when this architecture describes a system
-   * that actually runs somewhere.
-   *
-   * D2's resolution: the section keeps its «ενδεικτικές» framing, because
-   * §8.2 requires that label for architectures describing capability, and
-   * gains the exit it was missing. Only `lead-engine` has one — it is the
-   * BTL system, which is named and cleared.
-   */
-  caseStudy?: string;
-};
+/* The shape lives in `lib/showcase.ts`, which is what both this card and
+   the homepage's one-line version read from — S4.1. */
+export type { ShowcaseCase };
 
 /* ------------------------------------------------------------------ */
 /*  Card                                                               */

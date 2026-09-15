@@ -12,7 +12,7 @@
 **Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
 **Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
 **Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
-**Last slice:** S4.0 · 2026-09-15 · the materials — surfaces, type scale, glass, light ground
+**Last slice:** S4.1 · 2026-09-15 · the new homepage structure — showcase relocated, offers surfaced
 **Blocked on:** nothing. Val merged Phase 3.5 as `75d2f39` (PR `#2`), so **V21 is cleared** and Phases 0–3.5 are all live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
@@ -131,6 +131,69 @@ decisions rather than token ones, and the gate for them is S4.6:
 - `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
   yet emitted: Tailwind removes `@layer components` rules nothing references.
   They appear when S4.3 and S4.4 use them.
+
+### S4.1 — the new homepage structure · 2026-09-15 ✅ *(with one gate missed — read the numbers)*
+
+**What moved.** The showcase was the largest thing on the page at **3.4 phone
+screens** — three cards each carrying a problem paragraph, a solution
+paragraph, three metrics and a disclosure holding a terminal trace, all
+describing systems built for nobody. It is now **1.7 screens**: three cards,
+one outcome line each, linking to the page that owns the detail.
+
+Nothing was deleted. `SHOWCASE` moved to `lib/showcase.ts` and the full bodies
+now render on `/websites` (one system) and `/automations` (two) from that same
+constant, so the homepage summary and the full version cannot drift. The
+`ShowcaseCard` component did not change — only where it renders.
+
+**What was added.** `ServicesSection`: the two offers, stated plainly, directly
+under the proof strip. Until now the only sentence on the homepage that said
+out loud what this business sells was the **second paragraph of the About
+section, three quarters of the way down**. That paragraph is the source of the
+new section and was **removed from `AboutSection` in the same commit** rather
+than copied — D1 forbids one claim rendering twice on a page.
+
+**A real bug, found by querying the DOM rather than by reading code.**
+`ServiceSection` derived its heading's id from its `id` prop but never put that
+id on the `<section>` itself. So `#architectures` — the anchor the new homepage
+cards link into — matched nothing, and **every in-page link to a service
+section had been silently dead** since Phase 2. Fixed, with `scroll-mt-24` so
+the fixed header does not cover the target.
+
+**Mobile rhythm.** Seven sections had 80px of vertical padding on a 375px
+screen. Reduced to 56px on mobile only; `sm:` and `lg:` untouched.
+
+### The numbers, including the one that did not move
+
+| | Before S4.0 | Now | Gate |
+|---|---|---|---|
+| Words | 956 | **817** | ≤ 600 ❌ |
+| Height | 10,406px | **9,809px** | — |
+| Phone screens | 12.8 | **12.1** | ≤ 7 ❌ |
+| Showcase section | 3.4 screens | **1.7** | ✅ |
+| AA failures | 0 | **0** (191 elements, `/` + `/automations`) | ✅ |
+| Horizontal overflow | none | none | ✅ |
+
+**The length gate is missed and tightening copy will not close it.** The cause
+is structural and was not visible when the gate was written: **on a 375px
+screen every card grid stacks into a column.** The page has four stacked
+groups — services (2 cards), showcase (3), process (3) and the form — and each
+card costs 230–280px. That is roughly 2,500px of cards before a single
+paragraph. S4.0's larger type added ~600px on its own, which this slice spent
+its savings absorbing.
+
+Getting from 9,809px to ~5,700px means removing about **4,100px** — two
+sections' worth. The only honest ways there:
+
+1. **Drop `process` and `about` from the homepage** (2.4 screens), replacing
+   each with one line and the link that already exists. Both have full pages.
+   This goes further than playbook D1, which says the homepage keeps a
+   *highlight* of each — so it is **Val's decision, not a session's**, and it
+   is asked rather than assumed.
+2. Accept ~10 screens after S4.4 shortens the form block, and move the gate.
+
+**Not done, deliberately:** no copy was cut for length beyond the relocation.
+§8 and §11 say nothing true is removed to save space, and the remaining words
+are answers, labels and the form — not padding.
 
 ## Phase 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge
 

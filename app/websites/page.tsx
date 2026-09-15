@@ -1,6 +1,7 @@
 import FeatureGrid, { type Feature } from "@/components/services/FeatureGrid";
 import ServiceCta from "@/components/services/ServiceCta";
 import ServiceSection from "@/components/services/ServiceSection";
+import ShowcaseCard from "@/components/showcase/ShowcaseCard";
 import ServiceJsonLd from "@/components/seo/ServiceJsonLd";
 import ArrowLink from "@/components/ui/ArrowLink";
 import BulletList from "@/components/ui/BulletList";
@@ -10,6 +11,7 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getRoute } from "@/lib/routes";
 import { routeMetadata } from "@/lib/seo";
+import { showcaseFor } from "@/lib/showcase";
 import { AUDIT_DELIVERABLE, TIMELINE_RANGE } from "@/lib/site";
 
 export const metadata = routeMetadata("/websites");
@@ -101,6 +103,28 @@ export default function WebsitesPage() {
           <BulletList items={AUDIENCE} className="mt-8 max-w-3xl" />
         </ServiceSection>
 
+        {/* --------------------------- Architectures ------------------------- */}
+        {/* Moved here from the homepage in S4.1. The homepage carries one line
+            per system and links in; this is where the problem, the solution
+            and the data flow belong — in front of a reader who followed that
+            link and has therefore asked for the detail.
+
+            «Ενδεικτικά» is required by §8.2 and is in the eyebrow, the title
+            and the lede. These describe systems we build; the one that
+            actually runs for a named client is at `/work`. */}
+        <ServiceSection
+          id="architectures"
+          eyebrow="[ 03 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          title="Πώς δουλεύει ένα τέτοιο σύστημα."
+          lede="Ενδεικτικό — περιγράφει σύστημα που κατασκευάζουμε, όχι δημοσιευμένο έργο πελάτη."
+        >
+          <div className="mt-8 max-w-2xl">
+            {showcaseFor("websites").map((item) => (
+              <ShowcaseCard key={item.id} item={item} />
+            ))}
+          </div>
+        </ServiceSection>
+
         {/* ---------------------------- How it runs -------------------------- */}
         {/* One sentence and a link, not a restatement of the three steps. The
             steps live in `ProcessSection` today and move to `lib/process.ts`
@@ -109,7 +133,7 @@ export default function WebsitesPage() {
             two constants below are interpolated for the same reason. */}
         <ServiceSection
           id="how"
-          eyebrow="[ 03 // ΠΩΣ ΤΡΕΧΕΙ ]"
+          eyebrow="[ 04 // ΠΩΣ ΤΡΕΧΕΙ ]"
           title="Πώς φτάνουμε από τη συζήτηση στο site."
           lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε το εύρος πριν γραφτεί γραμμή κώδικα, και η κατασκευή παραδίδεται σε στάδια, με preview URL σε κάθε ένα. Ο χρόνος είναι ${TIMELINE_RANGE} — όχι υπόσχεση ημερομηνίας.`}
         >
@@ -121,7 +145,7 @@ export default function WebsitesPage() {
         {/* -------------------------- What you keep -------------------------- */}
         <ServiceSection
           id="ownership"
-          eyebrow="[ 04 // ΤΙ ΣΑΣ ΜΕΝΕΙ ]"
+          eyebrow="[ 05 // ΤΙ ΣΑΣ ΜΕΝΕΙ ]"
           title="Τι έχετε στο χέρι σας στο τέλος."
           lede="Τεκμηρίωση για το πώς δουλεύει, μια διαδρομή μέσα από το έργο, και γραπτή συμφωνία για το ποιος κρατά τι. Τους λογαριασμούς όπου ζει το site μπορείτε να τους κρατάτε εσείς ή να τους αναλαμβάνουμε εμείς — αποφασίζεται ανάλογα με πόσο θέλετε να ασχολείστε, και συμφωνείται πριν την παράδοση. Η μηνιαία υποστήριξη είναι προαιρετική, όχι προϋπόθεση για να μείνει το site όρθιο."
         >

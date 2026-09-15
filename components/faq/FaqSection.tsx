@@ -24,12 +24,12 @@ export default function FaqSection() {
     <section
       id="faq"
       aria-labelledby="faq-heading"
-      className="scroll-mt-24 pb-20 sm:pb-28 lg:pb-32"
+      className="scroll-mt-24 pb-14 sm:pb-28 lg:pb-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="faq-heading"
-          eyebrow="[ 04 // ΕΡΩΤΗΣΕΙΣ ]"
+          eyebrow="[ 06 // ΕΡΩΤΗΣΕΙΣ ]"
           title="Αυτά που ρωτούν όλοι, πριν το ρωτήσετε."
         />
 

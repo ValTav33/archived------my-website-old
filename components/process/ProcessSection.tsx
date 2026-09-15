@@ -34,12 +34,12 @@ export default function ProcessSection() {
     <section
       id="process"
       aria-labelledby="process-heading"
-      className="scroll-mt-24 py-20 sm:py-28 lg:py-32"
+      className="scroll-mt-24 py-14 sm:py-28 lg:py-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="process-heading"
-          eyebrow="[ 02 // ΔΙΑΔΙΚΑΣΙΑ ]"
+          eyebrow="[ 04 // ΔΙΑΔΙΚΑΣΙΑ ]"
           title="Τι γίνεται μόλις επικοινωνήσετε."
           lede="Τρία βήματα. Σε κάθε ένα ξέρετε τι παίρνετε και πότε — πριν ξεκινήσει οτιδήποτε."
         />

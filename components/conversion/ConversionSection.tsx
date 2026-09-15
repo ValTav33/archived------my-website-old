@@ -15,7 +15,7 @@ export default function ConversionSection() {
     <section
       id="audit"
       aria-labelledby="audit-heading"
-      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6 lg:px-8"
+      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24 lg:px-8"
     >
       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
         <div className="lg:col-span-5">
@@ -30,7 +30,7 @@ export default function ConversionSection() {
             as="div"
             id="audit-heading"
             size="compact"
-            eyebrow="[ 05 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]"
+            eyebrow="[ 07 // ΑΜΕΣΗ ΕΠΙΚΟΙΝΩΝΙΑ ]"
             title="Ας συζητήσουμε την υποδομή της επιχείρησής σας."
             lede="Είτε θέλετε να ξαναφτιάξετε την ιστοσελίδα σας, είτε να σταματήσει η καθημερινή δουλειά ρουτίνας να γίνεται με το χέρι — ας το δούμε μαζί."
           />

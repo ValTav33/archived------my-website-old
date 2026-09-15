@@ -34,7 +34,17 @@ export default function ServiceSection({
   const headingId = `${id}-heading`;
 
   return (
-    <section aria-labelledby={headingId} className={cn("mt-20", className)}>
+    /* The `id` lands on the section as well as deriving the heading's, which
+       it did not until S4.1. Without it `#architectures` — the anchor the
+       homepage links into — matched nothing, and every in-page link to a
+       service section silently did nothing. Found by querying the rendered
+       DOM for the anchor rather than by reading the code, which is the only
+       way this class of bug shows up. */
+    <section
+      id={id}
+      aria-labelledby={headingId}
+      className={cn("scroll-mt-24 mt-20", className)}
+    >
       <SectionHeader
         as="div"
         id={headingId}

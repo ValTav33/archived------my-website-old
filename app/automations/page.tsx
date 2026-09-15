@@ -1,6 +1,7 @@
 import FeatureGrid, { type Feature } from "@/components/services/FeatureGrid";
 import ServiceCta from "@/components/services/ServiceCta";
 import ServiceSection from "@/components/services/ServiceSection";
+import ShowcaseCard from "@/components/showcase/ShowcaseCard";
 import ServiceJsonLd from "@/components/seo/ServiceJsonLd";
 import ArrowLink from "@/components/ui/ArrowLink";
 import BulletList from "@/components/ui/BulletList";
@@ -10,6 +11,7 @@ import PageShell from "@/components/ui/PageShell";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getRoute } from "@/lib/routes";
 import { routeMetadata } from "@/lib/seo";
+import { showcaseFor } from "@/lib/showcase";
 import { AUDIT_DELIVERABLE, TIMELINE_RANGE, getProof } from "@/lib/site";
 
 export const metadata = routeMetadata("/automations");
@@ -121,13 +123,31 @@ export default function AutomationsPage() {
           </Card>
         </ServiceSection>
 
+        {/* --------------------------- Architectures ------------------------- */}
+        {/* Moved here from the homepage in S4.1, and placed deliberately after
+            the delivered flow above: what actually runs first, what we could
+            build second. «Ενδεικτικά» is §8.2 and is in the eyebrow, the
+            title and the lede. */}
+        <ServiceSection
+          id="architectures"
+          eyebrow="[ 04 // ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ ]"
+          title="Πώς δουλεύουν τέτοια συστήματα."
+          lede="Ενδεικτικά — περιγράφουν συστήματα που κατασκευάζουμε, όχι δημοσιευμένα έργα πελατών."
+        >
+          <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {showcaseFor("automations").map((item) => (
+              <ShowcaseCard key={item.id} item={item} />
+            ))}
+          </div>
+        </ServiceSection>
+
         {/* ---------------------------- How it runs -------------------------- */}
         {/* One sentence and a link, as on `/websites` and for the same reason:
             the three steps live in one place and S2.6 is where that place
             becomes a module. Both constants are interpolated. */}
         <ServiceSection
           id="how"
-          eyebrow="[ 04 // ΠΩΣ ΤΡΕΧΕΙ ]"
+          eyebrow="[ 05 // ΠΩΣ ΤΡΕΧΕΙ ]"
           title="Πώς φτάνουμε από τη συζήτηση στη ροή."
           lede={`Ξεκινάμε με ένα δωρεάν audit — παίρνετε ${AUDIT_DELIVERABLE}. Μετά συμφωνούμε ποια διαδικασία αυτοματοποιείται πρώτη, και η κατασκευή παραδίδεται σε στάδια. Ο χρόνος είναι ${TIMELINE_RANGE} — όχι υπόσχεση ημερομηνίας.`}
         >
@@ -139,7 +159,7 @@ export default function AutomationsPage() {
         {/* ----------------------------- Control ----------------------------- */}
         <ServiceSection
           id="control"
-          eyebrow="[ 05 // ΠΟΙΟΣ ΕΧΕΙ ΤΟΝ ΕΛΕΓΧΟ ]"
+          eyebrow="[ 06 // ΠΟΙΟΣ ΕΧΕΙ ΤΟΝ ΕΛΕΓΧΟ ]"
           title="Σε ποιανού τα χέρια τρέχουν οι ροές."
           lede="Σε λογαριασμούς που συμφωνούνται από την αρχή: δικούς σας, ή διαχειριζόμενους από εμάς αν δεν θέλετε να ασχολείστε. Τα δεδομένα και τα κλειδιά μένουν εκεί, και ξέρετε ανά πάσα στιγμή πού βρίσκονται και ποιος έχει πρόσβαση."
         >

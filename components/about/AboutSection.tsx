@@ -21,7 +21,7 @@ import { PORTRAIT, SITE } from "@/lib/site";
  * and are deliberately NOT repeated here — the review sweep greps this repo
  * for them, and a comment quoting them turns that sweep into noise.
  *
- * Deliberately short. Four sentences that a prospect can finish, ending on
+ * Deliberately short. Three sentences that a prospect can finish, ending on
  * what we will not do — which is the part that is hard to fake and therefore
  * the part worth reading.
  */
@@ -41,7 +41,11 @@ const PARAGRAPHS = [
      exists, §2.4. No premises noun anywhere in here: §2.1 bans «το γραφείο
      μας» and «έδρα» is the same claim in a more formal register. */
   `Με τον ${SITE.personAccusative}. Δουλεύουμε από τη Θεσσαλονίκη — Εύοσμος — και εξυπηρετούμε όλη την Ελλάδα εξ αποστάσεως. Οι ώρες είναι πραγματικές: ${SITE.hoursLong}.`,
-  "Κατασκευάζουμε δύο πράγματα: ιστοσελίδες και web εφαρμογές φτιαγμένες από την αρχή για τη δική σας δουλειά, και αυτοματισμούς που αναλαμβάνουν τη ρουτίνα η οποία σήμερα τρώει ώρες με το χέρι.",
+  /* The "we build two things" paragraph that used to sit here is gone as of
+     S4.1 — it is now `ServicesSection`, near the top of the page, where a
+     visitor meets the offer instead of discovering it three quarters of the
+     way down. Removed rather than copied: D1 forbids the same claim twice on
+     one page, and this section's job is who, not what. */
   /* Replaces the ownership promise S2 removed. The anxiety is the same one —
      "what do I actually end up with" — answered from what holds in every
      package instead of from one that does not. */
@@ -62,12 +66,12 @@ export default function AboutSection() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="scroll-mt-24 pb-20 sm:pb-28 lg:pb-32"
+      className="scroll-mt-24 pb-14 sm:pb-28 lg:pb-32"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeader
           id="about-heading"
-          eyebrow="[ 03 // ΠΟΙΟΙ ΕΙΜΑΣΤΕ ]"
+          eyebrow="[ 05 // ΠΟΙΟΙ ΕΙΜΑΣΤΕ ]"
           title="Με ποιον θα δουλέψετε."
         />
 
