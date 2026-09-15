@@ -1,6 +1,6 @@
 # VAL ACTIONS — the queue of things only Val can do
 
-**Last synced:** 2026-09-14, after the Phase 3.5 content pass. **Nothing on this list is blocking.**
+**Last synced:** 2026-09-15, after Phase 4 was pushed. **V22 is blocking.**
 
 ---
 
@@ -316,28 +316,50 @@ six fields and Greek intact, and you can hit reply and reach the visitor
 
 ---
 
-### V21 — Merge the Phase 3.5 PR 🔴
+### V22 — Merge the Phase 4 PR, and walk it on your phone first 🔴
 
-**Why it is yours:** the same three walls as V4. `gh` is not installed, the
-GitHub connector is unauthorised in this session, and a local merge onto
-`main` is refused by the permission classifier as *Merge Without Review* —
-which is playbook §5 enforced by tooling rather than by discipline.
+**Why it is yours:** the same three walls as V4 and V21 — `gh` is not
+installed, the GitHub connector is unauthorised in this session, and a local
+merge onto `main` is refused by the permission classifier.
 
-**One PR, one branch.** `phase/3.5-content`, branched cleanly from `main`, so
-there is no stack and no rebase this time.
+**One branch, no stack, no rebase.** `phase/4-conversion`, cut from `main` at
+`75d2f39`, pushed.
 
 ```
-https://github.com/ValTav33/my-website/compare/main...phase/3.5-content?expand=1
+https://github.com/ValTav33/my-website/compare/main...phase/4-conversion?expand=1
 ```
 
-Title, then paste the body a session hands you, then **Squash and merge**.
+Title: `Phase 4 — Conversion & Craft`. Paste the body the session handed you,
+then **Squash and merge**.
 
-**What this changes on the live site:** the surname, every ownership and
-account claim, every technology name, the FAQ set, the homepage's about
-paragraphs, and a new `/pricing` route. No backend behaviour changes at all —
-the form, the database and the cron are untouched by this phase.
+**Do the phone pass BEFORE the merge, not after — and this time it is not a
+formality.** Everything this phase added moves, and **the Browser pane runs no
+animation frames at all**, so no entrance, no line-draw and no particle drift
+has ever been *seen*. They are verified as markup, computed values and class
+state. That is the strongest claim this session can make about them.
 
-**Done when:** `main` carries it and production serves the new SHA.
+Open the Vercel preview URL on your actual phone and check:
+
+- The **dust** in the hero — sparse and slow, or busy and cheap? It is the
+  first thing to cut if you dislike it, and §2.4 already says it is the first
+  thing to cut if it costs speed.
+- The **header** — full-bleed at the top, a floating pill once you scroll,
+  and **white glass with dark text** as it crosses the light band.
+- The **bottom bar** — appears after the hero, disappears over the form,
+  never covers the submit button, sits above the home indicator.
+- The **form** — tap each field. **It must not zoom.** That was a real defect
+  and the fix is the single most valuable thing in this phase.
+- The **cards** — the little line should draw itself once as each section
+  arrives, then stay still.
+- The **light band** — does one white section in a dark site read as
+  deliberate, or as a mistake? This is the biggest aesthetic bet of the phase
+  and it is reversible.
+
+**Also still V2, and still never observed in any phase:** tab through the page
+and confirm a **visible focus ring** on every stop.
+
+**Done when:** you have walked the preview on a phone, said what looked wrong,
+and `main` carries the merge.
 
 ---
 
@@ -504,4 +526,5 @@ line.
 | V5 | Check the deployed SHA after merge | 2026-09-14 — production serves `b76e3f5`, tree byte-identical to the verified branch |
 | V19 | `CRON_SECRET` | 2026-09-14 — set in Vercel; the cron route answers 401 without it on production |
 | V3 | Vercel Deployment Protection | 2026-09-14 — **not needed.** Protected previews turned out to be measurable via the connector's bypass cookie. Setting left on |
+| V21 | Merge the Phase 3.5 PR | 2026-09-15 — merged by Val as `75d2f39`, PR `#2`. `origin/main` now carries the surname fix, the ownership and technology-name sweeps, the new FAQ set and `/pricing`. Phase 4 branched from it cleanly, no stack and no rebase |
 | — | D3 — lead retention period | 2026-09-14 — **24 months**, enforced by the S3.6 job, interpolated into `/privacy` from the code |

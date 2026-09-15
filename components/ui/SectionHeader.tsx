@@ -38,6 +38,7 @@ export default function SectionHeader({
   title,
   lede,
   size = "section",
+  ground = "dark",
   className,
 }: {
   as?: ElementType;
@@ -49,6 +50,10 @@ export default function SectionHeader({
   title: string;
   lede?: ReactNode;
   size?: keyof typeof TITLE;
+  /* The ground it sits on. `text-white` and `text-zinc-400` are both
+     unreadable on `paper`, so this is a real fork rather than a tweak —
+     S4.4, with the conversion band. */
+  ground?: "dark" | "paper";
   className?: string;
 }) {
   const Tag = (as ?? "header") as ElementType;
@@ -56,17 +61,26 @@ export default function SectionHeader({
 
   return (
     <Tag className={cn(size === "section" && "max-w-3xl", className)}>
-      <Eyebrow>{eyebrow}</Eyebrow>
+      <Eyebrow ground={ground}>{eyebrow}</Eyebrow>
 
       <Heading
         id={id}
-        className={cn("mt-4 font-semibold text-white", TITLE[size])}
+        className={cn(
+          "mt-4 font-semibold",
+          ground === "paper" ? "text-graphite" : "text-white",
+          TITLE[size],
+        )}
       >
         {title}
       </Heading>
 
       {lede && (
-        <p className="mt-5 text-sm leading-relaxed text-zinc-400 sm:text-base">
+        <p
+          className={cn(
+            "mt-5 text-base leading-relaxed sm:text-lg",
+            ground === "paper" ? "text-graphite-muted" : "text-ink-muted",
+          )}
+        >
           {lede}
         </p>
       )}

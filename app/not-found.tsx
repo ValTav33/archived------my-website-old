@@ -26,7 +26,7 @@ export default function NotFound() {
     <PageShell className="max-w-3xl">
       <SectionHeader
         titleAs="h1"
-        eyebrow="[ // 404 ]"
+        eyebrow="404"
         title="Αυτή η σελίδα δεν υπάρχει."
         lede="Ο σύνδεσμος μπορεί να είναι λάθος, ή η σελίδα να μετακινήθηκε. Δεν χάθηκε κάτι δικό σας."
       />

@@ -9,39 +9,469 @@
 > queue. A slice that creates or clears a Val-owned item updates it in the
 > same commit.
 
-**Current phase:** 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge (V21)
-**Branch:** `phase/3.5-content`, branched from `main` at `b76e3f5`
-**Spec:** `docs/phases/PHASE-3.5-CONTENT-TRUTH.md`
-**Last slice:** S7 · 2026-09-14 · closeout · **all seven slices done**
-**Blocked on:** **V21 — the merge**, which a session cannot do (see V4's history). One branch, no stack, no rebase. **Phase 4 is next: the appearance work Val actually asked for.** Val merged `#1` on 2026-09-14; production serves `b76e3f5`, whose tree is byte-identical to the branch that was verified on the preview. A real submission on `tavlikossystems.com` reached the inbox and the database, and the test row was deleted afterwards, so every row from here is a real enquiry. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
-
-> **Phase 1 is code-complete and unmerged.** Every measurable gate is met and
-> the branch is pushed; what remains is the phone pass, the keyboard pass and
-> opening + squash-merging the PR — all Val's. Phase 2 started on a branch
-> stacked on Phase 1 rather than waiting. After Phase 1 merges, rebase:
-> `git rebase --onto main phase/1-homepage phase/2-multipage`. `main` is a
-> direct ancestor of `phase/1-homepage`, so the squash merge leaves `main`
-> with an identical tree and the replay conflicts with nothing, at any point
-> in the phase.
+**Current phase:** 4 — Conversion & Craft 🟡 IN PROGRESS
+**Branch:** `phase/4-conversion`, branched from `main` at `75d2f39`
+**Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md`
+**Last slice:** S4.5b · 2026-09-15 · eyebrows plainened, scroll reveals, and the card schematics
+**Blocked on:** **V22 — the phone pass and the merge.** `phase/4-conversion` is pushed with eight commits; the PR body is written. Everything this phase added moves, and the Browser pane runs no animation frames, so **none of the motion has ever been seen** — the phone pass is the gate, not a courtesy. Lighthouse still needs the deployment. Phases 0–3.5 are live. Two optional owner items remain in `docs/VAL-ACTIONS.md`, both downgraded: verify the Resend sending domain (cosmetic — mail already lands in the inbox, not spam) and rotate the two keys (hygiene only; this is a private transcript).
 
 > **Phase order settled 2026-09-11.** Val chose Phase 1 over jumping to
 > Phase 3. The question is closed; do not re-raise it.
 
-> **`deliverAuditRequest` is no longer a stub.** S3.3 wired it to a real mail
-> transport, so the form no longer validates a submission and discards it —
-> the risk playbook §12 rates Severe is closed *in code*. What is not yet
-> proven is the thing the exit gate asks for: **no submission has ever landed
-> in an inbox**, because there is no Resend key (V7).
->
-> **A consequence to understand before this branch reaches production.** With
-> no key configured, a correctly filled form now returns 502 and tells the
-> visitor to call instead of promising 24 hours. That is deliberate — it is
-> the honest failure, chosen over a fallback that makes a missing transport
-> look like a working one (D5) — but it means the key has to exist *before*
-> the merge, not after. Today's silent false success is worse; a loud honest
-> failure on the live site is still not something to ship on purpose.
-
 ---
+
+## Phase 4 — Conversion & Craft 🟡 IN PROGRESS
+
+**Spec:** `docs/phases/PHASE-4-CONVERSION-CRAFT.md` · **Branch:** `phase/4-conversion` from `75d2f39`
+
+The objective in playbook §3 was rewritten twice on 2026-09-15 and §3's row is
+retitled. The original — scroll reveals, bento hierarchy, CI budgets, gated on
+three Lighthouse numbers — tested nothing Val complained about. The replacement
+is conversion first, craft second. Both rewrites and their reasoning are in
+§14, dated 2026-09-15.
+
+**Approval gate for this phase, per Val:** the session stops at the end of
+every slice and asks before starting the next. No slice begins on assumed
+consent.
+
+### Baseline, measured before S4.0 — mobile homepage
+
+Everything the exit gate compares against. Measured 2026-09-15, not estimated.
+
+| | Before |
+|---|---|
+| Words | 956 |
+| Height | 10,406px — **12.8 phone screens** |
+| Text elements | 108 |
+| …at the 12px floor | **59 (55%)** |
+| …in JetBrains Mono | **61 (56%)** |
+| Images / video | **0 / 0** |
+| Surface ramp vs page | **1.00 → 1.18**; a card at **1.04:1** |
+| Most-used text colour | `ink-ghost` (the *label* token) on 28 elements; `ink-muted`, the body token, on 4 |
+| Ways to act, mobile journey | 2 |
+| Longest stretch with no CTA | **~9,000px** |
+| Raw `text-zinc-*` utilities | **60, across 27 files** — §10.1 drift since Phase 1 |
+
+Largest section: «Ενδεικτικές Αρχιτεκτονικές» at **3.4 phone screens**.
+Smallest: the proof strip, the only credibility on the page, at **0.6**.
+
+### Reference measurements — apple.com, 2026-09-15
+
+Val named Apple as the target, so it was measured rather than recalled. Three
+of the things he asked for turned out not to be things Apple does.
+
+- Adjacent homepage tiles alternate `#000000` ↔ `#F5F5F7` — about **19:1**.
+  Apple does **not** use "similar shades".
+- Body text **17px**; only **5.8%** of text nodes at 12px. Two font weights,
+  three dominant text colours.
+- **220 images and 13 videos** on one product page.
+- The global nav is full-bleed, 48px, **`border-radius: 0`**. The rounded
+  thing is the *button* (`border-radius: 980px`).
+- `scroll-behavior` is **`auto`**, not `smooth`. Ours is `smooth`.
+- **27** `prefers-reduced-motion` rules.
+- Headings left-aligned **33** times, centred **7** — Apple centres the big
+  moments only.
+
+### S4.0 — the materials · 2026-09-15 ✅
+
+No section redesigned; the material the sections are made of was rebuilt.
+
+- **Surface ramp widened** from 1.00 → 1.18 to **1.00 → 1.63** on the same
+  cool-slate axis. The default `Card` surface goes from **1.04:1 to 1.22:1**
+  against the page. Values were solved for a target ratio, not chosen by eye,
+  and the arithmetic is in the config comments.
+- **Ink ramp lifted with it, and for a reason that was measured:**
+  `ink-ghost` fell to **4.07:1** on the new card surface, below AA. Every text
+  token is now solved against `obsidian-700` — the *lightest* surface in the
+  system and therefore the worst case. New §10.9 formalises this.
+- **Type scale raised at the bottom**: `xs` 13→14, `sm` 14→15, `base` 16→**17**
+  (apple.com's body size), `lg` 18→19 to close the gap to `xl`. Everything from
+  `xl` up is Tailwind's default, untouched — the scale was never missing steps,
+  the page just never used them.
+- **Light ground added**: `paper` / `graphite` / `rule`, with its own
+  AA-verified type ramp. Still monochrome — white carries no hue. `paper`
+  against the page is **18.4:1**, versus the ~1.4:1 ceiling of two adjacent
+  dark bands.
+- **Glass primitives added**: `.glass`, `.glass-strong`, `.glass-on-paper`,
+  `.surface-paper`, plus `shadow-glass` tokens. The part that was missing is
+  the **rim light** — without it a blurred translucent surface on near-black
+  is indistinguishable from a flat dark fill. `-webkit-` prefix included,
+  because Safari is the browser on the phones this site is for.
+- **The rim light was then rebuilt on all four edges**, after Val supplied a
+  21st.dev liquid-glass component. The component itself is not adopted — its
+  effect is `backdrop-filter: url(#svg)`, which `CSS.supports` reports as
+  **false** for the `-webkit-` form and therefore renders nothing in Safari;
+  it is Tailwind v4 syntax against our 3.4.17; it references shadcn tokens
+  this project does not define; and its `MetalButton` ships gold and bronze
+  gradients. Its one good idea — a layered inset rim instead of a single top
+  highlight — is now in `.glass`. Two candidate stacks were compared in the
+  browser: the heavier one read as a plastic capsule, the restrained one as
+  glass. §14, 2026-09-15.
+- `body` set to 17px/1.65 so unclassed text inherits the readable size.
+- Playbook §2.4, §10 and §3's Phase 4 row amended; six entries appended to §14.
+
+**Verified in the browser, not assumed:** the default card now paints
+`rgb(28,32,42)` at **1.22:1** against the page; `body` computes to 17px;
+`.glass` is emitted with its `backdrop-filter` and edge-light intact. The
+floating glass pill was applied to the live header as a throwaway in-page test
+and photographed before being discarded — the material reads correctly, which
+is what S4.3 will build on.
+
+**Known and expected — S4.0 moved none of these**, because they are component
+decisions rather than token ones, and the gate for them is S4.6:
+
+- 12px text is **still 55%** and monospace **still 56%**. Both come from
+  components reaching for `text-mono-xs` and `font-mono`, not from the scale.
+- The page got **longer**, 10,406 → 10,971px, because the type is bigger. The
+  spec predicted this and sequences S4.1 (the text cut) after S4.0 for exactly
+  that reason.
+- The 60 raw `text-zinc-*` utilities are untouched; `zinc-400` is still doing
+  the job `ink-muted` should. **Backlogged**, not absorbed — it is 27 files and
+  belongs in its own slice.
+- `.glass-strong`, `.glass-on-paper` and `.surface-paper` are defined but not
+  yet emitted: Tailwind removes `@layer components` rules nothing references.
+  They appear when S4.3 and S4.4 use them.
+
+### S4.5b — the eyebrows, and motion through the page · 2026-09-15 ✅
+
+**The eyebrows lost their brackets and numbers**, on Val's call: keep the
+label, drop the number. `[ 04 // ΔΙΑΔΙΚΑΣΙΑ ]` is now `ΔΙΑΔΙΚΑΣΙΑ`, in **36
+places across 17 files**. Two reasons beyond taste: it is the register §2.4
+deleted when it removed `SYS.ENG` and `LATENCY: NORMAL`, and the numbers had
+to be renumbered by hand every time a section moved — which S4.1 had just done
+across four files.
+
+**Descriptive text left the code face.** `Badge` was `font-mono text-mono-xs`
+and a badge on this site carries prose — «Διαθέσιμοι για νέα έργα», a city, a
+service category. Same for the proof strip's line-of-business captions and the
+opening hours. The code face stays where it means something: the terminal
+widget, and numbers that benefit from tabular alignment.
+
+**`Reveal` — and it fails open.** The obvious implementation starts at
+`opacity: 0` and lets JavaScript reveal it, which hides content whenever the
+script does not run. Here the server render carries **no styles at all**; the
+effect arms the animation, and **only for blocks still below the fold**, so
+nothing the visitor is already looking at is hidden and then faded back in. It
+never arms under `prefers-reduced-motion` — the right reduced-motion state for
+an entrance is *already arrived*, not *arrives instantly*.
+
+It holds no React state: the effect writes `data-reveal` straight onto the
+node. That is what an effect is for, and it satisfied the cascading-render
+lint rule rather than suppressing it.
+
+**`FlowGlyph` — the animated element standing in for photography.** Each
+showcase card draws the **shape** of its system: how many steps, and that they
+are connected. No labels, no asserted result, `aria-hidden` because every hop
+is named in words on the page the card links to. It **draws once** rather than
+looping — three looping glyphs in one row would break §2.4's 1–2 animated
+elements per viewport three times over — and it inherits its trigger from the
+`Reveal` above it, so there is one scroll boundary per section, not four.
+
+**One defect introduced and caught before commit:** `Reveal` wrapped each card
+individually with `display: contents`, which put a `div` between a `<ul>` and
+its `<li>`s and broke the grid. Wrapping the list once fixes both, and is what
+the animation budget wanted anyway.
+
+### Cumulative, against the S4.0 baseline
+
+| | Baseline | Now |
+|---|---|---|
+| Monospace share | **56%** | **26%** — and **15%** excluding the terminal widget |
+| Text at the 12px floor | **55%** | **24%** — **13%** excluding the terminal widget |
+| AA failures | 0 | **0** across 114 elements |
+| Heading-level skips | — | **none** |
+| Horizontal overflow | none | **none** |
+| Sub-44px tap targets | 2 (both hidden) | **same 2** |
+
+**The type gate is met on the honest reading.** The pipeline simulator is a
+terminal; monospace is correct there, and counting it against a "less
+monospace" target would be measuring the wrong thing. Excluding it, both
+figures are under the 20% the spec asks for. Including it they are 26% and 24%
+— stated both ways rather than picking the flattering one.
+
+### Still not verified anywhere: the motion itself
+
+Everything in this slice moves, and **the Browser pane runs no animation
+frames at all**, so no entrance, no draw and no drift has been *seen* — only
+verified as markup, computed values and class state. This needs Val's phone,
+and it joins V2.
+
+### S4.5a — the hero, and the dust · 2026-09-15 ✅
+
+**The simulator is in view on a phone.** It used to start at **777px on an
+812px screen** — a 35px sliver of the only element on this site that
+demonstrates rather than describes. It now starts at 624px with **188px
+visible without scrolling**.
+
+The fix needed no `order-*` class. The hero is three grid children instead of
+two: proposition, simulator, trust list. On a phone that stacks in source
+order and lifts the simulator above the trust points; at `lg` the twelve-column
+grid auto-places them back into 7 + 5 with the trust list returning underneath
+the actions. The old layout, unchanged, on desktop.
+
+**Centred on a phone, left from `lg`** — D6, and the Apple measurement behind
+it: their headings are left-aligned 33 times and centred 7. The big moments
+only, never the body.
+
+**The trust points stopped being 12px uppercase monospace** and are 15px
+sentence case. They are a conversion claim, not a system label.
+
+**Dust, and not a canvas.** Eighteen dots on a pure CSS keyframe —
+`transform`/`opacity` only, so it runs on the compositor and never touches the
+main thread. The usual implementation is a canvas and a `requestAnimationFrame`
+loop, which is both the most common dark-tech cliché of the last five years and
+a permanent phone cost against a Performance ≥ 95 gate. The positions are a
+fixed table rather than `Math.random()`: a random field differs between server
+render and hydration, and one you cannot reproduce is one you cannot tune.
+`aria-hidden`, `pointer-events-none`, and **hidden outright** under reduced
+motion rather than left to the global rule, which would freeze it mid-drift as
+a static speckle.
+
+### Cumulative, against the S4.0 baseline
+
+| | Baseline | Now |
+|---|---|---|
+| Monospace share | **56%** | **32%** |
+| Text at the 12px floor | **55%** | **30%** |
+| Text nodes | 108 | 91 |
+| Simulator visible on a phone | 35px | **188px** |
+| Page height | 10,406px | 9,626px |
+| AA failures | 0 | **0** across 114 elements |
+
+**The type gates are ≤ 20% and are not met yet.** What is left is almost
+entirely the `[ 0N // ΕΤΙΚΕΤΑ ]` section eyebrows and the simulator's terminal
+text. The simulator's is legitimate — it is a terminal. The eyebrows are the
+remaining lever, and removing them is a **visual identity decision**, so it is
+asked rather than taken: §2.4 removed `SYS.ENG` and `LATENCY: NORMAL` as
+jargon, and the numbered bracket is arguably the same register in a different
+costume — but it is also a large part of what the site currently looks like.
+
+**Not done in this slice**, and still open in the spec: scroll reveals through
+the page, and the animated schematics that stand in for the photography Val
+declined. Both are motion, and **motion is the one thing this environment
+cannot verify at all** — the pane runs no animation frames — so they are worth
+their own slice and their own phone pass.
+
+### S4.2 + S4.4 — the offer, and the light band · 2026-09-15 ✅
+
+**Merged into one slice, deliberately.** Both touch the same region of the
+page. The playbook says one *section* per slice, and committing the conversion
+block twice — once to restyle it, once to rewrite its argument — would produce
+an intermediate state that is neither, and two diffs nobody can review
+separately.
+
+**The light band.** `#audit` is now full-bleed `paper`: **18.4:1** against the
+page, the largest value step available anywhere on this site, and the answer
+to "it's a two-colour thing" that costs no hue at all. Two adjacent dark bands
+top out near 1.4:1. Apple alternates its own tiles at roughly 19:1, measured.
+
+**The offer stopped being a footnote.** The heading was «Ας συζητήσουμε την
+υποδομή της επιχείρησής σας» — a subject line. `AUDIT_DELIVERABLE` is now the
+largest sentence in the section, still interpolated from the one constant so
+it cannot drift from the promise `/process` and `/websites` make. The client
+names come back beside the button, where the doubt is; they had appeared once
+at the top and vanished for eleven screens.
+
+**A real bug fixed, not a preference.** Form fields were `text-sm` — 14px
+before S4.0, 15px after. **Safari on iPhone zooms the whole page when a
+control under 16px takes focus**, so every visitor on the phone this site is
+built for got a lurching viewport on every field, on the one form the business
+depends on. All six controls are now 17px. Verified in the DOM, per control.
+
+Labels were 12px uppercase monospace in the second-dimmest grey on the page —
+the worst available treatment for the one thing a visitor must read to fill a
+form correctly. Now plain, near-black, same size as the input.
+
+**The form presents as four fields, not six.** `name`, `email`, `phone` and
+`intent` are all `not null` in `0001_audit_requests.sql`, so making one
+optional is a migration and this phase changes no backend. The two already
+optional fields fold into a native `<details>`. **Phone stays required on
+purpose** — the deliverable is a phone call.
+
+`DirectContactCard` no longer renders on the homepage. The channel rail lives
+on `/contact`, which owns it (§2.3, D1). A landing page's conversion block
+sells one thing.
+
+**The form is a `paper-card` everywhere, including on `/contact`'s dark page.**
+One styling, no `tone` prop, no second code path — §10.5. `color-scheme: light`
+rides along, so native selects and autofill are painted for a light document
+rather than growing a black native menu on a white card.
+
+### A defect this slice introduced, and caught by measuring
+
+Making the band light put the **dark glass header over white**. The composite
+is about #F6F7F9, on which the white brand mark is **1.02:1** — white on
+white. Not visible in a screenshot; found by compositing the header's fill
+over the band and doing the arithmetic.
+
+The header now changes ground with the page beneath it: `.glass-on-paper`,
+graphite brand, ink CTA. Verified with real input — brand **19.25:1**,
+hamburger **8.6:1**, and back to 17.13:1 over the dark page.
+
+`Eyebrow` and `SectionHeader` gained a `ground` prop for the same reason;
+`ink-ghost` is 1.2:1 on paper. `Card` gained a `paper` tone, and its hover
+hairline now follows the tone rather than always being white.
+
+### The finding that invalidated three hours of my own tests
+
+**`window.scrollTo` changes `scrollY` in the Browser pane but fires ZERO
+scroll events.** Measured directly: two programmatic scrolls, `scrollY` 1500
+then 3000, listener called **0 times**.
+
+Every JS-driven scroll test of a scroll-listener feature in this pane is
+therefore meaningless, and several readings in this slice and the last looked
+like component bugs because of it. `IntersectionObserver` *does* fire, but
+delivery ran 1.5–5.5s behind. **Only the `computer` scroll tool produces real
+scroll events.**
+
+Combined with the two already recorded — transitions never advance because the
+pane runs no animation frames, and `:focus` never matches — this is the third
+member of the same family. **Rule: to test anything scroll-driven, scroll with
+real input and assert on class lists.**
+
+### Numbers
+
+| | Before | Now |
+|---|---|---|
+| Form controls under 16px (iOS zoom) | **6 of 6** | **0 of 6** |
+| Fields shown at rest | 6 | **4** + a disclosure |
+| The offer | 13px, beside the form | **the section's largest sentence** |
+| Light surfaces on the site | 0 | **1** |
+| Header contrast over the band | **1.02:1** | **19.25:1** |
+| AA failures on the band | — | **0** across 19 elements |
+
+### S4.3 — somewhere to act, always · 2026-09-15 ✅
+
+Brought forward ahead of S4.2 when Val chose to keep every section and add more
+over time: on a page that grows, CTAs only at the top and the bottom get worse
+with every section, and every future section inherits this once it exists.
+
+**`MobileCtaBar`** — a glass pill fixed above the home indicator, carrying the
+audit CTA and a call button. Val chose both actions, and the phone is not
+decoration: the thing being sold *is* a fifteen-minute call. It lives in the
+layout, not on the homepage, so every route has it.
+
+Four rules it obeys, each verified rather than assumed:
+
+- **Never covers what it points at.** Hides while `#audit` is on screen, and
+  does not render on `/contact` at all, where the form is the page.
+- **Never competes with the hero**, which already carries both actions full
+  size. Waits until the hero has left.
+- **Not reachable while hidden** — `inert` + `aria-hidden`, not merely
+  translated away. An off-screen element that still takes Tab is the exact bug
+  S3.5 fixed on the collapsed FAQ panel.
+- **Safe area** via `env(safe-area-inset-bottom)`, `transform`-only motion,
+  and phones only.
+
+**The header now morphs.** Flat and full-bleed at the top of the page;
+**a floating rounded pill** once you are past ~8px of scroll — Val's "circular
+edges", earned as a transition rather than applied as a default, and the same
+family as Apple's local nav. Measured on `/macbook-pro/`, Apple's own global
+nav is `border-radius: 0`; the rounded thing there is the button. Ours already
+were.
+
+**The drawer was the risk and it is untouched.** It is a sibling of `nav`
+inside `header`, and its scrim is anchored at `top-16` — the flat bar's exact
+height. So only the inner bar morphs, and **opening the drawer forces the flat
+shape back regardless of scroll**, which keeps that `top-16` true in every
+state rather than true by luck. Verified end to end: opens, `aria-expanded`
+flips, six links, focus moves inside the panel, background scroll freezes,
+Escape closes it and **focus returns to the hamburger**, scrim `top` = 64px.
+
+### A method note worth keeping — the Browser pane freezes transitions
+
+Three separate readings in this slice looked like bugs and were not. The pane
+reports `visibilityState: "hidden"` and never runs animation frames, so **a CSS
+transition never advances and `getComputedStyle` returns the value it started
+from, forever.** The header read `border-radius: 9999px` while its class list
+said `rounded-none`; the CTA bar read an identity `transform` while its class
+said `translate-y-full`.
+
+`IntersectionObserver` *does* fire here, including on scroll — that was checked
+directly — but delivery is slow enough that a looped test disagrees with
+itself, and `window.scrollTo` with `scroll-behavior: smooth` compounds it.
+
+**So: assert on class lists, not on computed animated values, and set
+`scroll-behavior: auto` for the duration of a positional test.** This is the
+same family as the Phase 1 finding that `:focus` never matches in the pane.
+
+### The gate this closes
+
+| | Before | Now |
+|---|---|---|
+| Ways to act, mobile journey | 2 | **6** — hero (2), mid-page showcase CTA, sticky bar (2), the form |
+| Longest stretch with no CTA in reach | **~9,000px** | **0** — the hero carries its own, the sticky bar covers everything between, the form is its own |
+| AA failures | 0 | **0** across 110 elements with the bar on screen |
+| Tap targets under 44 | 2 (skip link, honeypot — both hidden) | same 2 |
+| Horizontal overflow | none | none |
+
+### S4.1 — the new homepage structure · 2026-09-15 ✅ *(with one gate missed — read the numbers)*
+
+**What moved.** The showcase was the largest thing on the page at **3.4 phone
+screens** — three cards each carrying a problem paragraph, a solution
+paragraph, three metrics and a disclosure holding a terminal trace, all
+describing systems built for nobody. It is now **1.7 screens**: three cards,
+one outcome line each, linking to the page that owns the detail.
+
+Nothing was deleted. `SHOWCASE` moved to `lib/showcase.ts` and the full bodies
+now render on `/websites` (one system) and `/automations` (two) from that same
+constant, so the homepage summary and the full version cannot drift. The
+`ShowcaseCard` component did not change — only where it renders.
+
+**What was added.** `ServicesSection`: the two offers, stated plainly, directly
+under the proof strip. Until now the only sentence on the homepage that said
+out loud what this business sells was the **second paragraph of the About
+section, three quarters of the way down**. That paragraph is the source of the
+new section and was **removed from `AboutSection` in the same commit** rather
+than copied — D1 forbids one claim rendering twice on a page.
+
+**A real bug, found by querying the DOM rather than by reading code.**
+`ServiceSection` derived its heading's id from its `id` prop but never put that
+id on the `<section>` itself. So `#architectures` — the anchor the new homepage
+cards link into — matched nothing, and **every in-page link to a service
+section had been silently dead** since Phase 2. Fixed, with `scroll-mt-24` so
+the fixed header does not cover the target.
+
+**Mobile rhythm.** Seven sections had 80px of vertical padding on a 375px
+screen. Reduced to 56px on mobile only; `sm:` and `lg:` untouched.
+
+### The numbers, including the one that did not move
+
+| | Before S4.0 | Now | Gate |
+|---|---|---|---|
+| Words | 956 | **817** | ≤ 600 ❌ |
+| Height | 10,406px | **9,809px** | — |
+| Phone screens | 12.8 | **12.1** | ≤ 7 ❌ |
+| Showcase section | 3.4 screens | **1.7** | ✅ |
+| AA failures | 0 | **0** (191 elements, `/` + `/automations`) | ✅ |
+| Horizontal overflow | none | none | ✅ |
+
+**The length gate is missed and tightening copy will not close it.** The cause
+is structural and was not visible when the gate was written: **on a 375px
+screen every card grid stacks into a column.** The page has four stacked
+groups — services (2 cards), showcase (3), process (3) and the form — and each
+card costs 230–280px. That is roughly 2,500px of cards before a single
+paragraph. S4.0's larger type added ~600px on its own, which this slice spent
+its savings absorbing.
+
+Getting from 9,809px to ~5,700px would have meant removing about **4,100px** —
+two sections' worth.
+
+**Asked, and answered: the gate is withdrawn.** Val: *«κρατάμε αυτές που έχει
+και βάζουμε περισσότερες ενότητες στο μέλλον.»* Every section stays and the
+homepage is expected to grow. A cap on total length fights that plan, so the
+exit gate's **Longest stretch with no CTA** row — ~9,000px today, 0 required —
+becomes the load-bearing one, joined by two density rules: every section links
+out or carries a CTA, and no claim renders twice on the page. Playbook §14.
+
+**This re-orders the phase: S4.3, the CTAs, moves ahead of S4.2.** On a page
+that is going to get longer, CTAs only at the top and the bottom get worse
+with every section added, and every future section inherits the sticky bar
+once it exists.
+
+**Not done, deliberately:** no copy was cut for length beyond the relocation.
+§8 and §11 say nothing true is removed to save space, and the remaining words
+are answers, labels and the form — not padding.
 
 ## Phase 3.5 — Content Truth Pass ✅ CODE-COMPLETE · awaiting the merge
 
@@ -2302,6 +2732,18 @@ Workarounds that do prove the real behaviour: force
 by hand before screenshotting. Both were used here.
 
 ### Backlog row raised against a §10 non-negotiable
+
+**Raised in S4.0 · 2026-09-15 — the raw-`zinc` sweep.** `grep` finds **60 raw
+Tailwind palette utilities across 27 files**: 42 `text-zinc-400`, 11
+`text-zinc-300`, 6 `text-zinc-100`, 1 `bg-zinc-200`. `text-zinc-400` is the de
+facto body colour of this site while the `ink` ramp it was built to replace is
+used 49 times in total — §10.1 says tokens only, and this has been drifting
+since Phase 1. It is why S4.0's ink lift did not reach every paragraph: the
+hero's sub-headline and every `SectionHeader` lede are `zinc`, not `ink`.
+**Deliberately not absorbed into a visual slice** — 27 files is its own commit,
+and mixing it into a slice that also moves surfaces makes the diff
+unreviewable. Do it as a standalone `refactor(tokens)` before the Phase 4 PR if
+there is room, otherwise first thing after.
 
 §10.6 says motion degrades and **everything** respects `prefers-reduced-motion`.
 `globals.css` collapses CSS animations and transitions under the media query,

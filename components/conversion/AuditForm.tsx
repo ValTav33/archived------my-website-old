@@ -26,13 +26,25 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 
 /* Shared between input/select/textarea so focus and error styling stay
    identical across control types. */
+/* Shared between input/select/textarea so focus and error styling stay
+   identical across control types.
+
+   **`text-base` is 17px and that is a bug fix, not a preference.** Safari on
+   iPhone zooms the whole page when a control smaller than 16px takes focus.
+   These were `text-sm` — 14px before S4.0, 15px after — so every visitor on
+   the phone this site is built for got a lurching viewport on every field,
+   on the one form the business depends on.
+
+   The fill is a real well rather than a border alone: `paper-sunken` against
+   the card is 1.19:1, which reads as an inset on a light ground the way
+   1.04:1 never did on a dark one. */
 const FIELD_BASE =
-  "w-full rounded-lg border bg-obsidian-775 px-4 py-3 text-sm text-zinc-100 transition-colors placeholder:text-ink-ghost focus:outline-none disabled:opacity-60";
+  "w-full rounded-lg border bg-paper-sunken px-4 py-3 text-base text-graphite transition-colors placeholder:text-graphite-faint focus:outline-none disabled:opacity-60";
 
 const fieldTone = (hasError: boolean) =>
   hasError
-    ? "border-red-500/40 focus:border-red-500/60"
-    : "border-hairline focus:border-white/[0.25]";
+    ? "border-alert-ink/50 focus:border-alert-ink"
+    : "border-rule focus:border-rule-strong";
 
 export default function AuditForm() {
   const [values, setValues] = useState<AuditPayload>(EMPTY_AUDIT_PAYLOAD);
@@ -143,11 +155,11 @@ export default function AuditForm() {
   /* ------------------------ Success confirmation ------------------------ */
   if (status === "success") {
     return (
-      <Card role="status" aria-live="polite" className="p-6 md:p-8">
+      <Card role="status" tone="paper" aria-live="polite" className="p-6 md:p-8">
         <div className="flex flex-col items-start">
           <span
             aria-hidden
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-live/30 bg-live/10 text-live"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-live/40 bg-live/10 text-live"
           >
             <Check className="h-5 w-5" strokeWidth={2.5} />
           </span>
@@ -155,20 +167,20 @@ export default function AuditForm() {
           <h3
             ref={successHeadingRef}
             tabIndex={-1}
-            className="mt-5 text-xl font-semibold text-white"
+            className="mt-5 text-xl font-semibold text-graphite"
           >
             Το αίτημα καταχωρήθηκε.
           </h3>
 
-          <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+          <p className="mt-3 text-base leading-relaxed text-graphite-muted">
             Λάβαμε το αίτημά σας. Θα επικοινωνήσουμε για την κλήση των 15
             λεπτών και θα στείλουμε τη γραπτή σύνοψη εντός 24 ωρών.
           </p>
 
-          <Card tone="sunken" className="mt-6 w-full p-3.5 font-mono text-mono-xs">
-            <p className="text-ink-ghost">$ audit --status</p>
-            <p className="mt-2 flex gap-2 text-zinc-300">
-              <span className="text-ink-ghost">01</span>
+          <Card tone="sunken" className="mt-6 w-full border-rule bg-paper p-3.5 font-mono text-mono-xs">
+            <p className="text-graphite-faint">$ audit --status</p>
+            <p className="mt-2 flex gap-2 text-graphite-muted">
+              <span className="text-graphite-faint">01</span>
               Το αίτημα καταχωρήθηκε · απάντηση εντός 24 ωρών
             </p>
           </Card>
@@ -176,7 +188,7 @@ export default function AuditForm() {
           <button
             type="button"
             onClick={reset}
-            className="btn-secondary mt-6 min-h-tap px-4 py-2.5 text-xs"
+            className="mt-6 inline-flex min-h-tap items-center justify-center gap-2 rounded-full border border-rule bg-paper px-4 py-2.5 text-sm font-medium text-graphite transition-colors duration-200 hover:border-rule-strong"
           >
             Νέο αίτημα
           </button>
@@ -189,6 +201,7 @@ export default function AuditForm() {
   return (
     <Card
       as="form"
+      tone="paper"
       onSubmit={handleSubmit}
       noValidate
       className="p-6 md:p-8"
@@ -274,24 +287,6 @@ export default function AuditForm() {
           />
         </Field>
 
-        <Field id="audit-website" label="Τρέχον Website" error={errors.website}>
-          <input
-            id="audit-website"
-            name="website"
-            type="url"
-            inputMode="url"
-            autoComplete="url"
-            placeholder="https://..."
-            value={values.website}
-            disabled={isSubmitting}
-            onChange={(event) => update("website", event.target.value)}
-            aria-invalid={Boolean(errors.website)}
-            aria-describedby={
-              errors.website ? "audit-website-error" : undefined
-            }
-            className={cn(FIELD_BASE, fieldTone(Boolean(errors.website)))}
-          />
-        </Field>
 
         <Field
           id="audit-intent"
@@ -344,35 +339,81 @@ export default function AuditForm() {
           </div>
         </Field>
 
-        <Field
-          id="audit-brief"
-          label="Σύντομη περιγραφή αναγκών"
-          error={errors.brief}
-        >
-          <textarea
+
+        {/* The two optional fields, folded away.
+
+            The form's required set is `name`, `email`, `phone` and `intent` —
+            all four are `not null` in `0001_audit_requests.sql`, so making one
+            optional is a migration and this phase changes no backend. What was
+            wrong was not the count but the presentation: six fields at equal
+            weight reads as a long form, and a free fifteen-minute call should
+            not look like paperwork. Four asked, two offered.
+
+            **Phone stays required on purpose** — the deliverable is a call.
+
+            A native `<details>` rather than a custom disclosure: it is
+            keyboard-operable, announced and toggleable with no JavaScript at
+            all, which is exactly the trade the FAQ's custom version had to
+            re-earn by hand. */}
+        <details className="group rounded-lg border border-rule bg-paper/60">
+          <summary className="flex min-h-tap cursor-pointer list-none items-center justify-between gap-3 px-4 text-sm font-medium text-graphite [&::-webkit-details-marker]:hidden">
+            Προσθέστε λεπτομέρειες
+            <span className="text-sm font-normal text-graphite-faint">
+              προαιρετικό
+            </span>
+          </summary>
+
+          <div className="space-y-5 px-4 pb-4 pt-1">
+          <Field id="audit-website" label="Τρέχον Website" error={errors.website}>
+            <input
+              id="audit-website"
+              name="website"
+              type="url"
+              inputMode="url"
+              autoComplete="url"
+              placeholder="https://..."
+              value={values.website}
+              disabled={isSubmitting}
+              onChange={(event) => update("website", event.target.value)}
+              aria-invalid={Boolean(errors.website)}
+              aria-describedby={
+                errors.website ? "audit-website-error" : undefined
+              }
+              className={cn(FIELD_BASE, fieldTone(Boolean(errors.website)))}
+            />
+          </Field>
+
+          <Field
             id="audit-brief"
-            name="brief"
-            rows={4}
-            placeholder="Π.χ. το site μας αργεί, και χάνουμε 3 ώρες/ημέρα σε χειροκίνητη καταχώρηση παραγγελιών…"
-            value={values.brief}
-            disabled={isSubmitting}
-            onChange={(event) => update("brief", event.target.value)}
-            aria-invalid={Boolean(errors.brief)}
-            aria-describedby={errors.brief ? "audit-brief-error" : undefined}
-            className={cn(
-              FIELD_BASE,
-              fieldTone(Boolean(errors.brief)),
-              "resize-y",
-            )}
-          />
-        </Field>
+            label="Σύντομη περιγραφή αναγκών"
+            error={errors.brief}
+          >
+            <textarea
+              id="audit-brief"
+              name="brief"
+              rows={4}
+              placeholder="Π.χ. το site μας αργεί, και χάνουμε 3 ώρες/ημέρα σε χειροκίνητη καταχώρηση παραγγελιών…"
+              value={values.brief}
+              disabled={isSubmitting}
+              onChange={(event) => update("brief", event.target.value)}
+              aria-invalid={Boolean(errors.brief)}
+              aria-describedby={errors.brief ? "audit-brief-error" : undefined}
+              className={cn(
+                FIELD_BASE,
+                fieldTone(Boolean(errors.brief)),
+                "resize-y",
+              )}
+            />
+          </Field>
+          </div>
+        </details>
       </div>
 
       {/* --------------------------- Submit ---------------------------- */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="btn-primary mt-7 w-full px-5 py-3.5 text-sm disabled:cursor-not-allowed disabled:opacity-70"
+        className="btn-ink mt-7 min-h-tap w-full px-5 py-4 text-base disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isSubmitting && (
           <LoaderCircle className="h-4 w-4 animate-spin" strokeWidth={2.2} />
@@ -385,16 +426,23 @@ export default function AuditForm() {
       {status === "error" && submitMessage && (
         <p
           role="alert"
-          className="mt-3 rounded-lg border border-red-500/25 bg-red-500/[0.07] px-3.5 py-2.5 text-xs text-red-300"
+          className="mt-3 rounded-lg border border-alert-ink/30 bg-alert-ink/[0.06] px-3.5 py-2.5 text-sm text-alert-ink"
         >
           {submitMessage}
         </p>
       )}
 
-      <p className="mt-4 text-center text-xs leading-relaxed text-ink-faint">
-        Θα λάβετε {AUDIT_DELIVERABLE}. Τα στοιχεία σας χρησιμοποιούνται μόνο
-        για αυτό.
-      </p>
+      {/* Reassurance at the decision point — the moment the doubt actually
+          arrives. Every clause is already true and already stated elsewhere
+          on the site: the deliverable interpolates from one constant, the
+          "no cost, no commitment" is what `/process` step 01 says, and the
+          data sentence is what `/privacy` describes. Nothing new is promised
+          here to make the button easier to press. */}
+      <ul className="mt-4 space-y-1.5 text-center text-sm leading-relaxed text-graphite-muted">
+        <li>Θα λάβετε {AUDIT_DELIVERABLE}.</li>
+        <li>Χωρίς κόστος και χωρίς δέσμευση να συνεχίσετε.</li>
+        <li>Τα στοιχεία σας χρησιμοποιούνται μόνο για αυτό.</li>
+      </ul>
     </Card>
   );
 }
@@ -418,13 +466,17 @@ function Field({
 }) {
   return (
     <div>
+      {/* Was 12px uppercase monospace in the second-dimmest grey on the page,
+          which is the worst available treatment for the one thing a visitor
+          must read to fill a form correctly. Now plain, near-black, and the
+          same size as the input it labels. */}
       <label
         htmlFor={id}
-        className="mb-2 block font-mono text-mono-xs uppercase tracking-[0.12em] text-ink-faint"
+        className="mb-2 block text-sm font-medium text-graphite"
       >
         {label}
         {required && (
-          <span aria-hidden className="ml-1 text-ink-ghost">
+          <span aria-hidden className="ml-1 text-graphite-faint">
             *
           </span>
         )}
@@ -433,7 +485,7 @@ function Field({
       {children}
 
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-400">
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-alert-ink">
           {error}
         </p>
       )}

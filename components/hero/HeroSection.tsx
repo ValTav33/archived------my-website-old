@@ -1,4 +1,5 @@
 import { ArrowRight, Phone } from "lucide-react";
+import Dust from "@/components/hero/Dust";
 import PipelineSimulator from "@/components/hero/PipelineSimulator";
 import Badge from "@/components/ui/Badge";
 import ScrollLink from "@/components/ui/ScrollLink";
@@ -36,7 +37,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden pb-20 pt-28 sm:pb-28 sm:pt-32 lg:pb-36 lg:pt-40"
+      className="relative overflow-hidden pb-14 pt-20 sm:pb-28 sm:pt-32 lg:pb-36 lg:pt-40"
     >
       {/* 32px engineering grid at 3% white, masked so it dissolves outward.
           This is the only background decoration — no glow blobs, no washes. */}
@@ -45,12 +46,32 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-0 -z-10 bg-grid-faint bg-grid [mask-image:radial-gradient(65%_55%_at_50%_20%,black,transparent)]"
       />
 
+      {/* Sparse, slow, hero only, `transform`/`opacity` only, gone entirely
+          under reduced motion — playbook §2.4's particles row, which permits
+          this on exactly those conditions and on holding the perf budget. */}
+      <Dust />
+
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-10 xl:gap-16">
+        {/* Three grid children, and the order is the whole trick.
+
+            On a phone this is one column, so they stack in source order:
+            proposition, simulator, trust points. The simulator used to start
+            at **777px on an 812px screen** — a 35px sliver of the only thing
+            on this site that demonstrates rather than describes. Moving the
+            trust list below it lifts it into view without an `order-*` class
+            anywhere.
+
+            At `lg` the twelve-column grid auto-places them back into the
+            original layout: 7 + 5 on the first row, and the trust list
+            returning to 7 on the second, directly under the actions. */}
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:items-center lg:gap-10 xl:gap-16">
           {/* ================= Left: value proposition ================= */}
-          <div className="lg:col-span-7">
+          {/* Centred on a phone, left-aligned from `lg`. D6, and the Apple
+              measurement behind it: their headings are left-aligned 33 times
+              and centred 7 — the big moments only, never the body. */}
+          <div className="text-center lg:col-span-7 lg:text-left">
             {/* ---- Live availability pill ---- */}
-            <div className={RISE} style={delay(0)}>
+            <div className={`${RISE} flex justify-center lg:justify-start`} style={delay(0)}>
               <Badge variant="status">
                 {/* The single chromatic element in the layout: a live dot. */}
                 <StatusDot />
@@ -70,7 +91,7 @@ export default function HeroSection() {
 
             {/* ---- Subheadline ---- */}
             <p
-              className={`${RISE} mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg`}
+              className={`${RISE} mx-auto mt-5 max-w-2xl text-base leading-relaxed text-ink-muted md:text-lg lg:mx-0`}
               style={delay(160)}
             >
               Φτιάχνουμε ιστοσελίδες και web εφαρμογές που φορτώνουν
@@ -80,7 +101,7 @@ export default function HeroSection() {
 
             {/* ---- Action group ---- */}
             <div
-              className={`${RISE} mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center`}
+              className={`${RISE} mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center lg:justify-start`}
               style={delay(240)}
             >
               {/* Primary: solid white, arrow revealed on hover. */}
@@ -107,16 +128,26 @@ export default function HeroSection() {
                   <span className="font-mono text-sm text-white tabular-nums">
                     Κλήση: {SITE.phoneDisplay}
                   </span>
-                  <span className="font-mono text-mono-xs text-ink-faint">
+                  <span className="text-sm text-ink-faint">
                     {SITE.hoursShort}
                   </span>
                 </span>
               </a>
             </div>
 
-            {/* ---- Micro-trust footer ---- */}
+          </div>
+
+          {/* ================= Telemetry widget ================= */}
+          {/* Second on a phone — directly under the actions — and the right
+              rail from `lg`. */}
+          <div className={`${RISE} lg:col-span-5`} style={delay(400)}>
+            <PipelineSimulator />
+          </div>
+
+          {/* ================= Micro-trust footer ================= */}
+          <div className="lg:col-span-7">
             <ul
-              className={`${RISE} mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-mono-xs uppercase tracking-[0.1em] text-ink-faint`}
+              className={`${RISE} flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-ink-faint lg:justify-start`}
               style={delay(320)}
             >
               {TRUST_POINTS.map((point, index) => (
@@ -130,11 +161,6 @@ export default function HeroSection() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* ================= Right: telemetry widget ================= */}
-          <div className={`${RISE} lg:col-span-5`} style={delay(400)}>
-            <PipelineSimulator />
           </div>
         </div>
       </div>

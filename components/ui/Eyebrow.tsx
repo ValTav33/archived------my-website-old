@@ -4,24 +4,38 @@ import { cn } from "@/lib/utils";
 /**
  * The monospace label that sits above a heading or a block of detail.
  *
- * Two forms, because the page has always had two and writing either string by
- * hand is how the seventh one drifts:
+ * Two forms:
  *
- *   `bracket`  [ 01 // ΕΝΔΕΙΚΤΙΚΕΣ ΑΡΧΙΤΕΚΤΟΝΙΚΕΣ ]   — a section eyebrow
- *   `label`    ΕΝΑΛΛΑΚΤΙΚΑ                            — a micro label inside a block
+ *   `bracket`  ΕΝΔΕΙΚΤΙΚΑ ΣΥΣΤΗΜΑΤΑ   — a section eyebrow
+ *   `label`    ΕΝΑΛΛΑΚΤΙΚΑ            — a micro label inside a block
  *
- * **Numbering is deliberately not automatic.** The `[ 01 // ]` numbers are
- * hand-assembled so that Phase 2 splitting sections into routes cannot
- * silently renumber them.
+ * **The brackets and the numbers are gone as of S4.5b.** Every section eyebrow
+ * on the site read `[ 04 // ΔΙΑΔΙΚΑΣΙΑ ]`, which is the register §2.4 removed
+ * when it deleted `SYS.ENG` and `LATENCY: NORMAL`, wearing a different
+ * costume — and the numbers additionally had to be renumbered by hand every
+ * time a section was inserted, which S4.1 had just done across four files.
+ *
+ * Val's call: keep the label, drop the number. The `bracket` variant name is
+ * kept because it is still the section-level form and renaming it would touch
+ * thirty call sites to say the same thing.
  */
 const VARIANT = {
   bracket: "tracking-wider",
   label: "uppercase tracking-[0.16em]",
 } as const;
 
+/* Which ground it sits on. `ink-ghost` is 1.2:1 on `paper` — invisible —
+   so a light band needs its own value rather than a className override at
+   every call site. Added in S4.4 with the conversion band. */
+const GROUND = {
+  dark: "text-ink-ghost",
+  paper: "text-graphite-faint",
+} as const;
+
 type EyebrowOwnProps<T extends ElementType> = {
   as?: T;
   variant?: keyof typeof VARIANT;
+  ground?: keyof typeof GROUND;
   className?: string;
 };
 
@@ -31,6 +45,7 @@ type EyebrowProps<T extends ElementType> = EyebrowOwnProps<T> &
 export default function Eyebrow<T extends ElementType = "p">({
   as,
   variant = "bracket",
+  ground = "dark",
   className,
   ...rest
 }: EyebrowProps<T>) {
@@ -39,7 +54,8 @@ export default function Eyebrow<T extends ElementType = "p">({
   return (
     <Tag
       className={cn(
-        "font-mono text-mono-xs text-ink-ghost",
+        "font-mono text-mono-xs",
+        GROUND[ground],
         VARIANT[variant],
         className,
       )}

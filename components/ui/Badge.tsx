@@ -57,7 +57,12 @@ export default function Badge<T extends ElementType = "span">({
   return (
     <Tag
       className={cn(
-        "inline-flex items-center gap-2 border border-hairline font-mono text-mono-xs",
+        /* Was `font-mono text-mono-xs`. A badge on this site carries prose —
+           «Διαθέσιμοι για νέα έργα», a location, a service category — not a
+           system value, so it reads in the text face at a size a person can
+           read. The code face stays where it means something: the terminal
+           widget, and numbers that benefit from tabular alignment. */
+        "inline-flex items-center gap-2 border border-hairline text-xs",
         SHAPE[shape],
         VARIANT[variant],
         interactive &&

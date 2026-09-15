@@ -2,24 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes flow-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flow-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dust-drift {
+  0% {
+    transform: translate3d(0, 14px, 0);
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(6px, -34px, 0);
+    opacity: 0;
+  }
+}
+
 @layer base {
   :root {
     /* Mirrors of the Tailwind tokens, for surfaces that can't use utilities
        (SVG, inline gradients, scrollbars). Monochrome by design. */
     --obsidian: #08090d;
-    --surface: #0f1117;
-    --surface-raised: #141721;
+    --surface: #1c202a;
+    --surface-raised: #2a303f;
     --ink: #ffffff;
     --ink-bright: #f8fafc;
-    --ink-muted: #94a3b8;
-    --ink-faint: #8b98ac;
-    --ink-ghost: #788699;
+    --ink-muted: #bbc4d2;
+    --ink-faint: #aab4c2;
+    --ink-ghost: #99a3b2;
     /* Decorative only — fails AA by design. aria-hidden marks, never text. */
     --decor: #475569;
     --hairline: rgba(255, 255, 255, 0.07);
     --hairline-strong: rgba(255, 255, 255, 0.15);
     /* The single chromatic value in the system — status dots only. */
     --live: #10b981;
+
+    /* The light ground and its own type ramp — S4.0. Still monochrome: white
+       carries no hue. Mirrors `paper` / `graphite` / `rule` in the Tailwind
+       config for the same reason every other pair here is mirrored. */
+    --paper: #f5f6f8;
+    --paper-raised: #ffffff;
+    --paper-sunken: #e9ebef;
+    --graphite: #0a0b0f;
+    --graphite-muted: #434b59;
+    --graphite-faint: #545d6d;
+    --rule: rgba(10, 11, 15, 0.1);
+    --rule-strong: rgba(10, 11, 15, 0.22);
 
     color-scheme: dark;
   }
@@ -43,6 +92,10 @@
   body {
     background-color: var(--obsidian);
     color: var(--ink-muted);
+    /* 17px, matching the `base` step. Unclassed text inherits the readable
+       size rather than the browser's 16px default — S4.0. */
+    font-size: 1.0625rem;
+    line-height: 1.65;
     /* Keeps white-on-near-black type crisp rather than bloomed on macOS. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -95,14 +148,278 @@
     background-color: var(--obsidian);
   }
 
+  /* --------------------------------------------------------------------
+     GLASS — the signature material, added in S4.0.
+
+     Three parts, and it needs all three or it reads as a grey box:
+
+       1. a translucent fill, so what is behind it still contributes
+       2. `backdrop-filter`, so what is behind it is blurred rather than
+          merely dimmed
+       3. the inset top highlight — the EDGE LIGHT. This is the part that
+          was missing. It is the lit bevel the eye uses to place a pane in
+          front of a background, and without it a blurred translucent
+          surface on a near-black page is indistinguishable from a flat
+          dark fill.
+
+     The fourth requirement is not CSS: glass needs something bright behind
+     it to blur. On an empty black page there is nothing to refract. That is
+     why the light band and the animated elements are load-bearing rather
+     than decorative — see the phase spec.
+
+     `-webkit-` prefix is required: Safari still ships `backdrop-filter`
+     prefixed, and Safari is the browser on the phones this site is built
+     for. Without it the material silently degrades to a flat tint on iOS.
+     -------------------------------------------------------------------- */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.055);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    /* The rim light — FOUR edges, not one.
+
+       The first version of this had a single `inset 0 1px 0` top highlight,
+       which is the common shorthand and is not enough: a pane of glass
+       catches light on every edge, brightest where the light falls and
+       faintest opposite it. Lit top, faint sides, near-dark bottom, and a
+       barely-there inner bloom for the thickness of the pane. Compared
+       side by side in the browser against a heavier six-shadow stack, which
+       read as a plastic capsule rather than as glass — restraint is what
+       makes the material convincing, which is also true of Apple's. */
+    box-shadow:
+      inset 0 1.5px 0.5px -1px rgba(255, 255, 255, 0.45),
+      inset 1.5px 0 1px -1px rgba(255, 255, 255, 0.16),
+      inset -1.5px 0 1px -1px rgba(255, 255, 255, 0.16),
+      inset 0 -1.5px 1px -1px rgba(255, 255, 255, 0.1),
+      inset 0 0 12px 2px rgba(255, 255, 255, 0.025),
+      0 10px 36px -20px rgba(0, 0, 0, 0.95);
+  }
+
+  /* The lifted state — a floating pane rather than a band flush to an edge.
+     Brighter fill, deeper blur, stronger edge light, real shadow. */
+  .glass-strong {
+    background-color: rgba(255, 255, 255, 0.075);
+    -webkit-backdrop-filter: blur(28px) saturate(1.8);
+    backdrop-filter: blur(28px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 2px 0.5px -1px rgba(255, 255, 255, 0.55),
+      inset 2px 0 1px -1px rgba(255, 255, 255, 0.2),
+      inset -2px 0 1px -1px rgba(255, 255, 255, 0.2),
+      inset 0 -2px 1px -1px rgba(255, 255, 255, 0.13),
+      inset 0 0 14px 2px rgba(255, 255, 255, 0.035),
+      0 16px 48px -22px rgba(0, 0, 0, 0.95);
+  }
+
+  /* Glass crossing the light band. The fill and the edge light both invert:
+     over `paper`, a white highlight is invisible and a white tint is the
+     background. Without this the header dissolves the moment it reaches the
+     conversion section. */
+  .glass-on-paper {
+    background-color: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid var(--rule);
+    /* The rim inverts over a light ground: the lit edge is white against a
+       darker surround on dark, and a *shadowed* edge against a brighter
+       surround on light. Reusing the dark stack here paints white on white
+       and the pane disappears. */
+    box-shadow:
+      inset 0 1.5px 0.5px -1px rgba(255, 255, 255, 0.95),
+      inset 0 -1.5px 1px -1px rgba(10, 11, 15, 0.12),
+      inset 1.5px 0 1px -1px rgba(10, 11, 15, 0.06),
+      inset -1.5px 0 1px -1px rgba(10, 11, 15, 0.06),
+      0 10px 36px -22px rgba(10, 11, 15, 0.3);
+  }
+
+  /* The light ground. `color-scheme: light` is set locally so form controls,
+     scrollbars and the focus ring inside this band are drawn by the browser
+     for a light surface rather than inheriting the document's dark scheme —
+     which is what otherwise produces a dark-chrome select on a white card. */
+  /* Two ways onto the light ground, sharing one set of rules.
+
+     `.surface-paper` is a full-bleed band — the conversion section on the
+     homepage. `.paper-card` is a single bright card that can sit on ANY
+     ground, which is what the audit form uses: the form renders on both `/`
+     (inside the band) and `/contact` (on the dark page), and one styling that
+     works in both places beats a `tone` prop and two code paths — §10.5.
+
+     `color-scheme: light` is the part that is easy to forget and impossible
+     to miss once wrong: without it the browser paints `select` dropdowns,
+     autofill and the scrollbar for a dark document, so a white form grows a
+     black native menu the moment someone opens it. */
+  .surface-paper {
+    background-color: var(--paper);
+  }
+
+  .surface-paper,
+  .paper-card {
+    color: var(--graphite-muted);
+    color-scheme: light;
+  }
+
+  .paper-card {
+    background-color: var(--paper-raised);
+    border: 1px solid var(--rule);
+  }
+
+  .surface-paper :is(h1, h2, h3, h4),
+  .paper-card :is(h1, h2, h3, h4) {
+    color: var(--graphite);
+  }
+
+  /* ------------------------------------------------------------------
+     THE HEADER CROSSING THE LIGHT BAND.
+
+     `.glass` over `paper` composites to about #F6F7F9, on which the white
+     brand mark is **1.07:1** — white on white. Introduced the moment the
+     conversion section became a light band, and caught by measuring the
+     composite rather than by looking at it.
+
+     Done in CSS, in one place, rather than as a `ground` prop threaded
+     through the brand, every nav link, the hamburger and `Badge`. The marker
+     classes exist only for this. Specificity: `.nav-on-paper .nav-brand` is
+     two classes and beats Tailwind's single-class `text-white`.
+     ------------------------------------------------------------------ */
+  /* The descendant selector is load-bearing: `.nav-brand` sits on the link
+     while `text-white` sits on the `span` inside it, so colouring only the
+     link leaves the actual text white — measured at 1.02:1 before this was
+     corrected. */
+  .nav-on-paper .nav-brand,
+  .nav-on-paper .nav-brand * {
+    color: var(--graphite);
+  }
+
+  .nav-on-paper .nav-link {
+    color: var(--graphite-muted);
+  }
+
+  .nav-on-paper .nav-link:hover,
+  .nav-on-paper .nav-link[aria-current="page"] {
+    color: var(--graphite);
+  }
+
+  .nav-on-paper .nav-icon {
+    color: var(--graphite-muted);
+    border-color: var(--rule);
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .nav-on-paper .nav-icon:hover {
+    color: var(--graphite);
+    border-color: var(--rule-strong);
+  }
+
+  /* The site's focus ring is white, which is invisible here. */
+  .surface-paper :focus-visible,
+  .paper-card :focus-visible,
+  .nav-on-paper :focus-visible {
+    outline-color: rgba(10, 11, 15, 0.7);
+  }
+
   /* Primary action: high-contrast solid white. */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-white font-medium text-black transition-colors duration-200 hover:bg-zinc-200;
   }
 
+  /* Primary action ON THE LIGHT GROUND. `btn-primary` is white on black —
+     invisible on a white card, which is the trap a light band sets for a
+     design system built dark-first. Near-black on white is 21:1, the highest
+     contrast available, and it is the button the whole page points at. */
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-graphite font-medium text-white transition-colors duration-200 hover:bg-graphite-muted;
+  }
+
   /* Secondary action: matte obsidian glass. */
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-hairline bg-white/[0.03] font-medium text-white transition-colors duration-200 hover:bg-white/[0.07];
+  }
+}
+
+@layer components {
+  /* The entrance. `idle` — the server render — is deliberately unstyled, so
+     a block is visible whether or not the script ever runs. Only `armed` puts
+     it out of sight, and only the client does that, and only for blocks that
+     are still below the fold. See `Reveal`. */
+  .reveal {
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+
+  .reveal[data-reveal="armed"] {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+
+  /* The card schematic. Driven by the `Reveal` above it rather than by its
+     own observer: one boundary per card, not two. Unstyled at rest, so it is
+     fully drawn whenever the script has not armed anything. */
+  [data-reveal="armed"] .flow-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  [data-reveal="armed"] .flow-node {
+    opacity: 0;
+  }
+
+  /* Without `fill-box` a `scale()` on an SVG circle scales about the SVG's
+     own origin, so the dots fly in from the top-left corner instead of
+     growing in place. */
+  .flow-node {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  [data-reveal="shown"] .flow-line {
+    animation: flow-draw 0.9s ease-out both;
+  }
+
+  [data-reveal="shown"] .flow-node {
+    animation: flow-pop 0.35s ease-out both;
+  }
+
+  /* ------------------------------------------------------------------
+     DUST — the particle field, hero only.
+
+     Val asked for "obsidian with white particles". The usual implementation
+     is a canvas and a `requestAnimationFrame` loop, which is the most common
+     dark-tech cliché of the last five years AND a permanent main-thread cost
+     on a phone, against a phase gate of Performance >= 95.
+
+     This is neither: a handful of absolutely positioned dots drifting on a
+     pure CSS keyframe. `transform` and `opacity` only, so it runs on the
+     compositor and never touches layout or the main thread. Sparse and slow
+     on purpose — read as dust in a dark room, not as a screensaver.
+
+     Hidden outright under reduced motion rather than left to the global rule,
+     which collapses durations to 0.01ms and would freeze the dots mid-drift
+     as a static speckle. Absent is the correct reduced-motion state for
+     something that exists only to move.
+     ------------------------------------------------------------------ */
+  .dust span {
+    position: absolute;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.55);
+    animation-name: dust-drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dust {
+      display: none;
+    }
+
+    /* The right reduced-motion state for a drawing is "already drawn". */
+    [data-reveal] .flow-line,
+    [data-reveal] .flow-node {
+      animation: none;
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
   }
 }
 
